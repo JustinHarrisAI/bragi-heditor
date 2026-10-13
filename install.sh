@@ -18,7 +18,8 @@ done
 say() { printf '\033[1;33m[heditor]\033[0m %s\n' "$*"; }
 
 # get the source (this checkout, or clone/update ~/.heditor/src)
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || true)"
+HERE=""
+if [[ -n "${BASH_SOURCE[0]:-}" && -f "${BASH_SOURCE[0]}" ]]; then HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; fi
 if [[ -n "$HERE" && -f "$HERE/skills/heditor/SKILL.md" ]]; then SRC="$HERE"
 elif [[ -d "$SRC/.git" ]]; then git -C "$SRC" pull --ff-only -q
 else command -v git >/dev/null || { say "git is required"; exit 1; }; git clone -q --depth 1 "$REPO" "$SRC"; fi
