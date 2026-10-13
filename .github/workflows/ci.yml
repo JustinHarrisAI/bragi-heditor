@@ -1,0 +1,27 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Python syntax
+        run: python -m py_compile skills/heditor/scripts/*.py skills/heditor/scripts/reelkit/*.py skills/heditor/templates/*.py
+      - name: Shell syntax
+        run: bash -n install.sh && bash -n skills/heditor/scripts/setup.sh && bash -n skills/heditor/scripts/heditor
+      - name: SKILL.md frontmatter and catalog
+        run: |
+          python - <<'PY'
+          import json, re, pathlib
+          s = pathlib.Path("skills/heditor/SKILL.md").read_text()
+          fm = re.match(r"^---\n(.*?)\n---\n", s, re.S).group(1)
+          assert re.search(r"^name: heditor$", fm, re.M) and "description:" in fm
+          cat = json.loads(pathlib.Path("skills/heditor/assets/catalog.json").read_text())
+          assert cat["music"] and cat["sfx"]
+          styles = sorted(p.stem for p in pathlib.Path("skills/heditor/references/styles").glob("*.md") if p.stem != "INDEX")
+          idx = pathlib.Path("skills/heditor/references/styles/INDEX.md").read_text()
+          assert all(f"`{x}`" in idx for x in styles), styles
+          print("ok", len(styles), "styles")
+          PY

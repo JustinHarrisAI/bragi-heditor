@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+.DS_Store
+# never commit media or downloaded assets
+*.mp4
+*.mov
+*.wav
+*.mp3
+*.m4a
+*.ttf
+*.woff2
+cuts/
+probe/
+render/
+.pytest_cache/
