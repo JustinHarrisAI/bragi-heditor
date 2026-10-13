@@ -17,8 +17,8 @@ case "$cmd" in
   new)     # heditor new <work_dir> <source_video>
            need_work "${1:-}"; W="$(mkdir -p "$1" && cd "$1" && pwd)"; SRC="${2:-}"
            mkdir -p "$W/qa" "$W/composition"
-           cp -n "$SKILL_DIR/templates/composition-package.json" "$W/composition/package.json"
-           for f in prepare.py build.py DESIGN.md; do cp -n "$SKILL_DIR/templates/$f" "$W/$f"; done
+           [[ -e "$W/composition/package.json" ]] || cp "$SKILL_DIR/templates/composition-package.json" "$W/composition/package.json"
+           for f in prepare.py build.py DESIGN.md; do [[ -e "$W/$f" ]] || cp "$SKILL_DIR/templates/$f" "$W/$f"; done
            [[ -n "$SRC" ]] && sed -i.bak "s#^SOURCE = .*#SOURCE = \"$(readlink -f "$SRC")\"#" "$W/prepare.py" && rm -f "$W/prepare.py.bak"
            echo "created $W (edit prepare.py BLOCKS, then: heditor prepare $W)" ;;
   probe)   # heditor probe <source_video> [seconds...]  -> frames to locate the speaker/camera
