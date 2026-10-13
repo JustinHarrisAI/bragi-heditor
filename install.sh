@@ -26,27 +26,39 @@ else command -v git >/dev/null || { say "git is required"; exit 1; }; git clone 
 SKILL="$SRC/skills/heditor"
 say "source: $SKILL"
 
-declare -A DIRS=(
-  [claude]="$HOME/.claude/skills"
-  [codex]="$HOME/.agents/skills"
-  [opencode]="$HOME/.config/opencode/skills"
-  [cursor]="$HOME/.cursor/skills"
-  [hermes]="$HOME/.hermes/skills/creative"
-)
-declare -A MARKERS=([claude]="$HOME/.claude" [codex]="$HOME/.codex" [opencode]="$HOME/.config/opencode" [cursor]="$HOME/.cursor" [hermes]="$HOME/.hermes")
+# plain case functions instead of associative arrays: macOS ships bash 3.2
+skill_dir_for() {
+  case "$1" in
+    claude) echo "$HOME/.claude/skills" ;;
+    codex) echo "$HOME/.agents/skills" ;;
+    opencode) echo "$HOME/.config/opencode/skills" ;;
+    cursor) echo "$HOME/.cursor/skills" ;;
+    hermes) echo "$HOME/.hermes/skills/creative" ;;
+    *) echo "" ;;
+  esac
+}
+marker_for() {
+  case "$1" in
+    claude) echo "$HOME/.claude" ;;
+    codex) echo "$HOME/.codex" ;;
+    opencode) echo "$HOME/.config/opencode" ;;
+    cursor) echo "$HOME/.cursor" ;;
+    hermes) echo "$HOME/.hermes" ;;
+  esac
+}
 targets=()
 case "$AGENT" in
   all) targets=(claude codex opencode cursor hermes) ;;
-  auto) for a in claude codex opencode cursor hermes; do [[ -d "${MARKERS[$a]}" ]] && targets+=("$a"); done
+  auto) for a in claude codex opencode cursor hermes; do [[ -d "$(marker_for "$a")" ]] && targets+=("$a"); done
         [[ ${#targets[@]} -gt 0 ]] || targets=(codex) ;;
   *) targets=("$AGENT") ;;
 esac
 for a in "${targets[@]}"; do
-  d="${DIRS[$a]:-}"; [[ -n "$d" ]] || { say "unknown agent $a"; continue; }
+  d="$(skill_dir_for "$a")"; [[ -n "$d" ]] || { say "unknown agent $a"; continue; }
   mkdir -p "$d"; rm -rf "$d/heditor"
   if [[ "$MODE" == "copy" ]]; then cp -R "$SKILL" "$d/heditor"; else ln -s "$SKILL" "$d/heditor"; fi
   say "installed for $a -> $d/heditor"
 done
 say "other agents: npx skills add pycodebr/heditor -g"
-if [[ $RUN_SETUP -eq 1 ]]; then bash "$SKILL/scripts/setup.sh" "${SETUP_ARGS[@]}"; fi
+if [[ $RUN_SETUP -eq 1 ]]; then bash "$SKILL/scripts/setup.sh" ${SETUP_ARGS[@]+"${SETUP_ARGS[@]}"}; fi
 say "done. Edit ~/.heditor/brand.json, restart your agent and ask: \"edit this video in creative mode\"."

@@ -74,7 +74,7 @@ CHROME_PATH="$(npx --yes "hyperframes@$HYPERFRAMES_VERSION" browser path 2>/dev/
 
 # 4) assets -------------------------------------------------------------------
 say "downloading fonts, GSAP, face model, music and SFX (first run takes a few minutes)"
-HEDITOR_HOME="$HEDITOR_HOME" "$VENV/bin/python" "$SKILL_DIR/scripts/fetch_assets.py" --whisper "$WHISPER" "${FETCH_ARGS[@]}" || \
+HEDITOR_HOME="$HEDITOR_HOME" "$VENV/bin/python" "$SKILL_DIR/scripts/fetch_assets.py" --whisper "$WHISPER" ${FETCH_ARGS[@]+"${FETCH_ARGS[@]}"} || \
   say "some assets failed; re-run setup to retry (see $HEDITOR_HOME/assets-status.json)"
 
 # 5) env file -----------------------------------------------------------------

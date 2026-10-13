@@ -12,7 +12,7 @@ from pathlib import Path
 from PIL import Image
 from playwright.sync_api import sync_playwright
 
-WORK = Path(sys.argv[3]) if len(sys.argv) > 3 else Path(".")
+WORK = (Path(sys.argv[3]) if len(sys.argv) > 3 else Path(".")).resolve()  # as_uri() needs an absolute path
 CHROME = os.environ.get("HEDITOR_CHROME") or None
 
 SEEK = """async (t) => {
