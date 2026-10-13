@@ -1,10 +1,10 @@
 ---
 name: heditor
-description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920) with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, voice-first mixing, render and QA.
+description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920) with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast, missao), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, voice-first mixing, render and QA.
 license: MIT
 metadata:
   author: PycodeBR (Felipe Azambuja)
-  version: 1.0.1
+  version: 1.1.0
   homepage: https://github.com/pycodebr/heditor
 ---
 
@@ -49,6 +49,7 @@ Named styles (`heditor styles`): see `references/styles/INDEX.md` for when each 
 | `chat` | Light messaging app: the speaker's sentences arrive as messages, the bot replies, video-call PiP |
 | `documentario` | Mini-documentary: letterbox, film grain, serif chapter cards, documentary subtitles, rolling credits |
 | `podcast` | Talk show / podcast: saturated set, ON AIR sign, voice-reactive waveform, giant karaoke captions |
+| `missao` | Open-world game homage: sunset neon world, in-world social clip, character intro freeze-frame, mission card, GPS route, stats screen, mission-complete banner, phone-chat CTA |
 
 ## 2. Workflow (all modes)
 

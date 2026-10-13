@@ -37,6 +37,7 @@ case "$cmd" in
   test)    need_work "${1:-}"; CUT_WORK="$(cd "$1" && pwd)" "$PY" -m pytest -q "$KIT/test_cut.py" ;;
   render)  # heditor render <work_dir> [workers]
            need_work "${1:-}"; mkdir -p "$1/render"
+           export FFMPEG_ENCODE_TIMEOUT_MS="${FFMPEG_ENCODE_TIMEOUT_MS:-3600000}"   # heavy styles on busy machines; set PRODUCER_ENABLE_CHUNKED_ENCODE=true if it still times out
            (cd "$1/composition" && $HF render --fps 30 --quality high --crf 17 --workers "${2:-2}" --strict --no-best-effort --output ../render/render.mp4) ;;
   finalize) # heditor finalize <work_dir> <final_name.mp4> [auto|t1,t2,...]
            need_work "${1:-}"; "$PY" "$KIT/finalize.py" "$1" "$2" "${3:-auto}" ;;

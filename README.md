@@ -53,6 +53,7 @@ O padrão de qualidade é alto: **cada vídeo ganha uma edição pensada para el
 | `chat` | App de mensagens claro: as frases chegam como mensagens, o bot responde e a câmera vira videochamada |
 | `documentario` | Minidocumentário: faixas de cinema, grão de filme, capítulos em serifa e créditos finais |
 | `podcast` | Talk show: cenário saturado, letreiro NO AR, onda sonora que reage à voz e legenda karaokê gigante |
+| `missao` | Homenagem a jogo de mundo aberto: pôr do sol neon, vídeo vertical num app do "jogo", apresentação do personagem em imagem congelada, cartão de missão, rota no GPS, tela de atributos, MISSÃO CUMPRIDA e CTA no celular. Nasceu do pedido "modo criativo no estilo GTA 6" |
 
 Detalhes de cada um em [`skills/heditor/references/styles/`](skills/heditor/references/styles/).
 
@@ -181,7 +182,7 @@ Issues e PRs são bem-vindos: novos estilos (com a ficha completa em `references
 
 **heditor** is an open Agent Skill (SKILL.md) that lets AI coding agents edit talking-head footage (classes, lives, podcasts) into vertical 1080×1920 Reels/Shorts/TikToks with motion graphics, word-synced captions, sound design and an emotional soundtrack.
 
-- **Ten named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`.
+- **Eleven named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`, `missao` (open-world game homage).
 - **Creative mode:** the agent analyses the video, researches, invents a world for that specific speech and builds it with retention-focused motion and sound.
 - **Creative mode + reference:** e.g. "creative mode in the style of GTA 6". The agent researches the reference and builds a licence-safe homage.
 - **Pipeline:** word-timed ASR (faster-whisper), frame-accurate cuts, voice chain, HyperFrames (HTML + GSAP) composition, voice-first mix at −14 LUFS, and automatic QA (lint, vision-reviewed previews, tests, pixel safe-margin, loudness/true peak, ASR of the final mix, 40-frame contact sheet).

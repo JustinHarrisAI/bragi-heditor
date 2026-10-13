@@ -49,7 +49,7 @@ Example — "creative mode with GTA 6 references" for a talk about career risk:
 
 ## Idea bank (formats proven or ready to try)
 
-Proven (named styles): cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast.
+Proven (named styles): cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast, missao (born from "creative mode + GTA 6 reference"; use it as the starting point for open-world game references).
 
 Ready to try: breaking-news broadcast with lower thirds and ticker · weather forecast map · sports commentary with replays and telestrator · cooking show recipe cards · heist movie planning board · nature documentary narration · space mission control countdown · courtroom drama with exhibits · horror found-footage · anime opening with speed lines · comic book panels and onomatopoeia · museum exhibit labels · stock-market ticker and candlesticks · fitness app rings and streaks · GPS navigation with turn-by-turn · escape-room puzzles · music video with beat-synced cuts · hacker terminal / CRT · spreadsheet that comes alive · slide deck gone wild · receipt printer · polaroid scrapbook · subway map · retro TV channel surfing · e-commerce checkout flow · dating-app swipes · video-game boss fight · tarot reading cards · detective case file · K-pop lyric video · blueprint/technical drawing · elevator floor indicator · arcade high-score table.
 

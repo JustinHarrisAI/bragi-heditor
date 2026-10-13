@@ -13,6 +13,8 @@
 | Numbers test fails | unspoken digits on screen (dates, labels, "CAM 01", line numbers) | draw decorative digits with CSS `content`/counters, use words or roman numerals, or list them in `plan["allowed_numbers"]` if truly neutral |
 | Caption hidden but still visible | GSAP sets `visibility` on the inner element | hide the outer caption wrapper with `#cap-N{opacity:0 !important}` |
 | Preview shows blank video | camera file not ready or wrong `data-start` | wait for `readyState>=2` (preview does), check `data-media-start`/durations |
+| Render dies with "FFmpeg killed after exceeding ffmpegEncodeTimeout" | heavy composition (gradients, filters) + loaded machine | re-render with `PRODUCER_ENABLE_CHUNKED_ENCODE=true FFMPEG_ENCODE_TIMEOUT_MS=7200000`; limit blur/backdrop-filter |
+| asr-check delta below -0.03 but the voice is clear | the small Whisper model mishears a phrase in both files differently | re-check the flagged window with `HEDITOR_ASR_CHECK_MODEL=medium` (or a windowed medium transcription) before changing the mix |
 | Render very slow or killed | low CPU/RAM, many workers | `heditor render <work> 1`; render cuts one at a time; close other heavy jobs |
 | ASR misses words at block edges | cut inside a word | widen the block radius in prepare.py, prepare again, re-run `heditor words` |
 | Whisper too slow | large model on CPU | `HEDITOR_ASR_MODEL=small`, transcribe windows instead of the full file |

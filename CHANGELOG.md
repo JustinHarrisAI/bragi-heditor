@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 — 2026-10-13
+- New named style `missao`: open-world game homage (sunset neon world, in-world social clip, character intro freeze-frame, mission card, GPS route, stats screen, mission-complete banner, phone-chat CTA), born from "creative mode + GTA 6 reference".
+- Rendering heavy compositions: documented `PRODUCER_ENABLE_CHUNKED_ENCODE=true` and a larger `FFMPEG_ENCODE_TIMEOUT_MS`.
+
 ## 1.0.1 — 2026-10-13
 - macOS: `install.sh` no longer uses associative arrays (`declare -A`), which the stock bash 3.2 does not support.
 - macOS: `install.sh` and `setup.sh` expand optional argument arrays safely under `set -u` (bash 3.2 treated an empty array as unbound).

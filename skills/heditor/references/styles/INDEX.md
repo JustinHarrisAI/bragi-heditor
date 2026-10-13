@@ -14,6 +14,7 @@ All fonts mentioned in the styles are installed by `setup.sh` and copied into ea
 | [`aeroporto`](aeroporto.md) | Aeroporto (control tower) | approval flows, processes, launches, deploys, checklists | tense → release | CRT monitor in the tower console | radio transmission, amber active word |
 | [`chat`](chat.md) | Chat (light messenger) | communication, prompts, customer service, instructions | light | video-call window and PiP | the speaker's messages, highlighter on the active word |
 | [`documentario`](documentario.md) | Documentário | personal stories, careers, decisions, reflective topics | emotional | letterbox band with slow push-in | serif documentary subtitles, underlined active word |
+| [`missao`](missao.md) | Missão (open-world game homage) | life goals, careers, "levelling up" stories, myths vs reality; base for open-world game references | high, cinematic | warm sunset-graded feed inside phone clips and cards, freeze-frame intro | white on saturated magenta active word |
 | [`podcast`](podcast.md) | Podcast (talk show) | opinions, soft skills, debates, energetic speakers | very high | tilted editorial card with hard shadow | giant karaoke, one word at a time |
 
 Not listed? Use creative mode (`../creative-mode.md`) and, if the user likes the result, add the new style (`../adding-styles.md`).
