@@ -24,7 +24,7 @@ Selection rules:
 - A complete, self-contained idea: hook → thesis → explanation/example → conclusion. 30–70 s is the sweet spot.
 - The hook (first 1–3 s) must be a real spoken line. A cold open (strongest line first, then the argument from the start) is allowed when the line appears later in the speech; it is a stylistic choice (Ruptura, creative mode).
 - Remove: repetitions, false starts, long digressions, references to things the viewer cannot see ("as you can see on screen", chat questions), names of third parties, private information. Cut only at clean word boundaries.
-- Keep: the speaker's voice and rhythm, speed 1×. Pauses longer than 0.7 s are shortened automatically to ~0.36 s.
+- Keep: the speaker's voice and rhythm, speed 1×. No dead air: `prepare_cut` trims every block edge to 0.08 s before the first voiced window and 0.12 s after the last one, and shortens internal pauses longer than 0.35 s to ~0.24 s (defaults `lead`, `tail`, `min_pause`, `edge`). A block boundary snaps to the quietest point of its radius, so without the edge trim each junction keeps silence from both sides (0.8–1.3 s gaps that read as uncut pauses).
 - Never: invent speech, reorder words inside a sentence, splice fragments into a sentence that was not said, change the meaning.
 
 ## 4. Prepare
@@ -35,7 +35,7 @@ heditor new <work> <video>
 heditor prepare <work>                      # camera-src.mp4, voice-raw.wav, edl.json
 heditor words <work> "names, jargon"        # words.json + words-reviewed.json
 ```
-Review `words-reviewed.json`: fix spelling, brand names and technical terms (never timings). Profanity can be masked on screen through `rk.load_words(path, censor={"word": "w*rd"})`; audio stays untouched. Check the first/last word of each block in the ASR: if a word is clipped, widen that block boundary and prepare again.
+Review `words-reviewed.json`: fix spelling, brand names and technical terms (never timings). Profanity can be masked on screen through `rk.load_words(path, censor={"word": "w*rd"})`; audio stays untouched. Check the first/last word of each block in the ASR: if a word is clipped, widen that block boundary and prepare again. Then run `heditor gaps <work>`: it lists every silence ≥ 0.2 s left in the assembled voice (junction or internal, with the words around it) and fails when one exceeds 0.45 s. Fix the BLOCKS or the trim parameters until it passes; never leave pause cleanup for after the render.
 
 ## 5. Design
 

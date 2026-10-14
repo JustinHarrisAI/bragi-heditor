@@ -6,8 +6,15 @@ Usage inside a cut's prepare.py:
 
 BLOCKS: list of (key, start, end, end_radius[, start_radius]) in seconds of the source. Boundaries snap to the
 energy valley (10 ms windows) and to whole frames. The silence threshold is measured per recording:
-noise floor (10th percentile of 10 ms RMS) + 12 dB, clamped to [-48, -32] dBFS. Internal pauses longer than
-`min_pause` are shortened, keeping `edge` seconds on each side. Speed is always 1x (never speed up speech).
+noise floor (10th percentile of 10 ms RMS) + 12 dB, clamped to [-48, -32] dBFS. Speed is always 1x (never
+speed up speech).
+
+Dead air is removed in two places, because both read as "the editor forgot to cut the pause":
+- inside a block, pauses longer than `min_pause` are shortened, keeping `edge` seconds on each side;
+- at the edges of every block, silence before the first voiced 10 ms window is trimmed to `lead` seconds and
+  silence after the last voiced window to `tail` seconds. Block junctions therefore leave ~lead + tail of air,
+  never the whole snapping radius on both sides (the v1 failure: 0.8-1.3 s gaps at every junction).
+Pass lead=None / tail=None to keep the old snap-only behaviour. `heditor gaps <work>` lists what is left.
 Outputs: composition/assets/camera-src.mp4, voice-raw.wav and edl.json.
 """
 
@@ -40,7 +47,26 @@ def _quiet(source, t, radius):
     return t - radius + (i + 0.5) / 100, float(r[i])
 
 
-def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.7, edge=0.18, tail_fade=0.04):
+def _voiced_span(quiet, min_run=4):
+    """First/last 10 ms window of speech, ignoring voiced blips shorter than `min_run` windows (clicks)."""
+    first = last = None
+    i = 0
+    while i < len(quiet):
+        if not quiet[i]:
+            j = i
+            while j < len(quiet) and not quiet[j]:
+                j += 1
+            if j - i >= min_run:
+                first = i if first is None else first
+                last = j
+            i = j
+        else:
+            i += 1
+    return first, last
+
+
+def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.35, edge=0.12, lead=0.08, tail=0.12,
+                tail_fade=0.04):
     source, work = Path(source), Path(work)
     assets = work / "composition/assets"
     assets.mkdir(parents=True, exist_ok=True)
@@ -77,11 +103,23 @@ def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.7, edge=0.18, ta
                 i = j
             else:
                 i += 1
-        keeps, pos = [], 0
+        lo, hi = 0, f1 - f0
+        first, last = _voiced_span(quiet)
+        if first is not None and last is not None:
+            if lead is not None:
+                lo = max(0, math.floor((first / 100 - lead) * fps))
+            if tail is not None:
+                hi = min(f1 - f0, math.ceil((last / 100 + tail) * fps))
+        keeps, pos = [], lo
         for r0, r1 in removed:
-            keeps.append((pos, r0))
-            pos = r1
-        keeps.append((pos, f1 - f0))
+            r0, r1 = max(r0, lo), min(r1, hi)
+            if r1 <= pos or r0 >= hi:
+                continue
+            if r0 > pos:
+                keeps.append((pos, r0))
+            pos = max(pos, r1)
+        if hi > pos:
+            keeps.append((pos, hi))
         graph = ""
         for k, (k0, k1) in enumerate(keeps):
             seg = x[k0 * SR // fps: k1 * SR // fps].copy()
@@ -120,6 +158,7 @@ def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.7, edge=0.18, ta
         w.writeframes((v * 32767).astype("<i2").tobytes())
     edl = {"source": str(source), "fps": fps, "crop": crop, "speed": 1.0, "voice_duration": len(v) / SR,
            "noise_floor_dbfs": round(floor, 1), "silence_threshold_dbfs": round(thr, 1), "min_pause_s": min_pause,
+           "pause_edge_s": edge, "lead_s": lead, "tail_s": tail,
            "chunks": chunks, "silence_trims": trims, "removed_seconds": sum(x["removed_s"] for x in trims)}
     (work / "edl.json").write_text(json.dumps(edl, ensure_ascii=False, indent=2))
     return edl

@@ -70,3 +70,10 @@ def test_numbers_only_from_speech():
     allowed = spoken | {str(x) for x in PLAN.get("allowed_numbers", [])}
     numbers = set(re.findall(r"\d+(?:\.\d+)?", text))
     assert numbers <= allowed, numbers - allowed
+
+
+def test_no_dead_air():
+    """Uncut pauses read as sloppy editing: no silence inside the speech may exceed 0.45 s (heditor gaps)."""
+    from gaps import find_gaps
+    long = [g for g in find_gaps(WORK) if g["dur"] > PLAN.get("max_gap_s", 0.45)]
+    assert not long, [(round(g["start"], 2), g["dur"], g["before"], g["after"]) for g in long]

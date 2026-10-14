@@ -29,6 +29,8 @@ case "$cmd" in
            "$PY" "$KIT/asr_window.py" "$@" ;;
   prepare) need_work "${1:-}"; (cd "$1" && "$PY" prepare.py) ;;
   words)   need_work "${1:-}"; "$PY" "$KIT/transcribe_cut.py" "$@" ;;
+  gaps)    # heditor gaps <work_dir> [max_gap_s] [min_report_s] -> dead air left in the assembled voice
+           need_work "${1:-}"; "$PY" "$KIT/gaps.py" "$@" ;;
   produce) # heditor produce <work_dir> <music:ID|track.mp3> <drop_s>
            need_work "${1:-}"; "$PY" "$KIT/produce.py" "$@" ;;
   lint)    need_work "${1:-}"; (cd "$1/composition" && $HF lint) ;;
@@ -54,6 +56,7 @@ heditor - creative vertical video editing for AI agents
   heditor new <work> [video]                             scaffold a cut (prepare.py, build.py, DESIGN.md)
   heditor prepare <work>                                 cut speech + camera from the source (runs prepare.py)
   heditor words <work> [prompt]                          ASR of the assembled cut -> words.json/words-reviewed.json
+  heditor gaps <work> [max_s]                            dead air left in the cut (fails if a pause > 0.45 s)
   heditor produce <work> <music:ID|file> <drop_s>        build composition + voice-first mix (runs build.py)
   heditor lint <work>                                    HyperFrames lint (must be 0 errors)
   heditor preview <work> <t1,t2,...> [sheet.jpg]         frame previews + contact sheet in <work>/qa

@@ -5,12 +5,13 @@ A cut is delivered only when all required gates pass (or a flagged item was insp
 | Gate | Command / file | Pass |
 |---|---|---|
 | Speech integrity | `words-reviewed.json`, `edl.json` | only spoken words, 1× speed, no clipped words at block edges (check ASR at each junction) |
+| Dead air | `heditor gaps <work>` | no silence > 0.45 s inside the speech (junctions included); run right after prepare |
 | Design | `DESIGN.md` | analysis, mode/style, beat sheet, music, CTA, risks written before building |
 | Lint | `heditor lint <work>` | 0 errors (caption-structure warnings are normal) |
 | Mix balance | `qa/balance.json` | music ≤ -21 dB vs voice (median), background p95 ≤ -12 dB, < 5 % windows within 10 dB |
 | Previews | `heditor preview` + vision | no overlaps, clipped text, face coverage, low-contrast active word, placeholder look, text above 270 px |
 | Distinctness (batches) | vision on contact sheets | videos do not look like the same template |
-| Tests | `heditor test <work>` | all pass (captions = words, no overlap, CTA with handle + Follow/Following, events in timeline, balance, no unspoken numbers, no "illustrative"/placeholder tags) |
+| Tests | `heditor test <work>` | all pass (captions = words, no overlap, CTA with handle + Follow/Following, events in timeline, balance, no unspoken numbers, no "illustrative"/placeholder tags, no dead air) |
 | Render | `heditor render` | exit 0 |
 | Final file | `qa/final-verification.json` | no decode errors, -15 ≤ LUFS ≤ -13, true peak ≤ -1.5 dBTP, audio/master correlation ≥ 0.99, top margin ≥ 270 |
 | Final frames | `qa/final-contact-sheet.jpg` + vision | no defects |

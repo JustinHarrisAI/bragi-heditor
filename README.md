@@ -135,7 +135,8 @@ Ou use o CLI diretamente:
 heditor probe aula.mp4 5 60 300                 # quadros para achar quem fala
 heditor transcribe aula.mp4 0 3600 qa/asr.json  # transcrição com tempo por palavra
 heditor new cortes/c01 aula.mp4                 # prepare.py, build.py e DESIGN.md
-heditor prepare cortes/c01                      # corta fala e câmera
+heditor prepare cortes/c01                      # corta fala e câmera, já sem pausas mortas
+heditor gaps cortes/c01                         # confere: nenhuma pausa > 0,45 s na fala montada
 heditor words cortes/c01                        # palavras do corte montado
 heditor produce cortes/c01 music:955 30         # composição + mixagem
 heditor lint cortes/c01 && heditor preview cortes/c01 0.1,2,5,9,14,20 && heditor test cortes/c01
