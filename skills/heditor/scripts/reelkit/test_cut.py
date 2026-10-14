@@ -77,3 +77,16 @@ def test_no_dead_air():
     from gaps import find_gaps
     long = [g for g in find_gaps(WORK) if g["dur"] > PLAN.get("max_gap_s", 0.45)]
     assert not long, [(round(g["start"], 2), g["dur"], g["before"], g["after"]) for g in long]
+
+
+def test_normalized_voice_matches_cut_duration():
+    """A revision must not reuse the old voice-master while captions and camera use a shorter cut."""
+    import wave
+
+    assets = WORK / "composition/assets"
+    durations = {}
+    for name in ("voice-raw.wav", "voice-master.wav"):
+        with wave.open(str(assets / name)) as audio:
+            durations[name] = audio.getnframes() / audio.getframerate()
+    assert abs(durations["voice-raw.wav"] - PLAN["voice_end"]) < 0.01
+    assert abs(durations["voice-master.wav"] - durations["voice-raw.wav"]) < 0.01, durations

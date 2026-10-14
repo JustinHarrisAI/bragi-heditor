@@ -50,6 +50,8 @@ Rewrite `<work>/build.py`. It must expose `WORK` and `build(track, drop_s)` that
 ```bash
 heditor produce <work> music:955 30        # track and drop second inside the track
 ```
+`heditor produce` must regenerate `voice-master.wav` from the current `voice-raw.wav`, including when a revision is cloned from an earlier project. Checking only whether the normalized file exists can mix the old, longer speech into the new camera and captions and truncate the ending. Compare both WAV durations against `plan.voice_end` before rendering; the revision integrity test enforces this. After muxing, also transcribe the final spoken sentence separately if full-length ASR omits it.
+
 Read `balance`: `music_minus_voice_median_db ≤ -21`, `bed_minus_voice_p95_db ≤ -12`, `windows_bed_within_10db_pct < 5`. If not met, lower SFX gains that fall on words or move them into gaps.
 
 ## 8. QA before render

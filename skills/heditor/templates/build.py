@@ -123,10 +123,9 @@ def build(track, drop_s):
     rk.setup_assets(WORK)
     rk.ensure_icons(["message-circle", "check", "pointer"])
     a = WORK / "composition/assets"
-    if not (a / "camera-hd.mp4").exists():
-        rk.prepare_camera(WORK)
-    if not (a / "voice-master.wav").exists():
-        rk.prepare_voice(WORK)
+    # Revisions may already contain derived media from a different cut.
+    rk.prepare_camera(WORK)
+    rk.prepare_voice(WORK)
     words, voice_end = load()
     k = keys(words, voice_end)
     caps = rk.captions(words, voice_end)
