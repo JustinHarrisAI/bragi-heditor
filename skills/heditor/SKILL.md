@@ -68,7 +68,7 @@ Follow `references/workflow.md` step by step. Summary:
 
 ## 3. Non-negotiables
 
-- **No dead air.** Pauses are cut tight at every block junction and inside blocks (`heditor gaps` must pass: no silence > 0.45 s inside the speech). An uncut pause is the first thing a viewer notices.
+- **No dead air.** Inspect pauses inside blocks and across every junction, using the assembled clean voice, not the music mix. Run `heditor gaps` after prepare and check the surrounding words. The default 0.45 s threshold flags candidates for revision; it does not authorize clipping consonants, removing every breath or flattening deliberate rhetorical pauses. Preserve speech at 1× and shorten unwanted dead air with small safety margins. Document any intentional longer pause and verify the exception explicitly before rendering. For a pause-only revision of an approved edit, preserve its visual language and previous version, remap captions, media and SFX to the new timeline, then verify the exported MP4.
 - **Voice first.** Music ≈ 21.5 dB under the voice (median), background ≥ 12 dB under at p95, impacts in the gaps, ducking held across the whole phrase. -14 LUFS, true peak ≤ -1.5 dBTP after AAC.
 - **Readable captions.** Every spoken word, synced; active word with high contrast (black on light yellow, white on saturated dark — never dark-on-mid or dark outline on dark text). Check enlarged crops.
 - **Safe zones.** Nothing important above y = 270 (top 14%; titles with accents start ≥ 300), keep the bottom ~350 px and the right edge (~120 px, y 1000–1700) free of critical info, never cover the face.

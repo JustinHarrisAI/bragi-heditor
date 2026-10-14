@@ -65,8 +65,8 @@ def _voiced_span(quiet, min_run=4):
     return first, last
 
 
-def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.35, edge=0.12, lead=0.08, tail=0.12,
-                tail_fade=0.04):
+def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.35, edge=0.12, tail_fade=0.04,
+                lead=0.08, tail=0.12):
     source, work = Path(source), Path(work)
     assets = work / "composition/assets"
     assets.mkdir(parents=True, exist_ok=True)
