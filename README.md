@@ -78,6 +78,9 @@ Formatos de autoridade (tom sério, o falante como especialista):
 | `cassino-de-precisao` | Cassino noir que vira bancada de precisão na virada; o especialista é o crupiê e a regra é gravada numa placa |
 | `mesa-de-risco` | Terminal de mercado em dia de crash: o recurso é um ativo, replay da ordem, selo de falsa segurança, disjuntor e estratégia em verde |
 | `turno-da-madrugada` | Sala de controle no turno da noite: monitor principal, painel anunciador, linha de processo, time-lapse até o amanhecer e passagem de turno |
+| `arquivo-cofre` | Mesa de leitura de um arquivo à noite: o especialista como registro em passe-partout, gaveta de aço, relógio protocolador e rolo de microfilme que rebobina até o dia bom |
+| `aduana-de-dados` | Posto de fronteira noturno entre o seu computador e a internet: declaração de saída, raio-X, cancela, regulamento grifado e carimbo LEIA OS TERMOS |
+| `laudo-de-sinistro` | Laudo de perícia de um sinistro: o especialista na fotografia técnica, flash pericial, cláusula de cobertura preenchida na fala e caneta que troca PERDA TOTAL por RECUPERÁVEL |
 
 Detalhes de cada um em [`skills/heditor/references/styles/`](skills/heditor/references/styles/).
 
@@ -207,7 +210,7 @@ Issues e PRs são bem-vindos: novos estilos (com a ficha completa em `references
 
 **heditor** is an open Agent Skill (SKILL.md) that lets AI coding agents edit talking-head footage (classes, lives, podcasts) into vertical 1080×1920 Reels/Shorts/TikToks with motion graphics, word-synced captions, sound design and an emotional soundtrack.
 
-- **Twenty-five named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`, `missao` (open-world game homage), `tribunal` (courtroom sketch); paid-ad formats with a "Learn more" CTA: `keynote`, `stories`, `predio-24h`, `bilheteria`, `porta-de-aco`, `manual-de-montagem`, `carrinho`, `entrega`, `auditorio`, `album`; authority formats: `cassino-de-precisao`, `mesa-de-risco`, `turno-da-madrugada`.
+- **Twenty-eight named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`, `missao` (open-world game homage), `tribunal` (courtroom sketch); paid-ad formats with a "Learn more" CTA: `keynote`, `stories`, `predio-24h`, `bilheteria`, `porta-de-aco`, `manual-de-montagem`, `carrinho`, `entrega`, `auditorio`, `album`; authority formats: `cassino-de-precisao`, `mesa-de-risco`, `turno-da-madrugada`, `arquivo-cofre`, `aduana-de-dados`, `laudo-de-sinistro`.
 - **Creative mode:** the agent analyses the video, researches, invents a world for that specific speech and builds it with retention-focused motion and sound.
 - **Creative mode + reference:** e.g. "creative mode in the style of GTA 6". The agent researches the reference and builds a licence-safe homage.
 - **Pipeline:** word-timed ASR (faster-whisper), frame-accurate cuts, voice chain, HyperFrames (HTML + GSAP) composition, voice-first mix at −14 LUFS, and automatic QA (lint, vision-reviewed previews, tests, pixel safe-margin, loudness/true peak, ASR of the final mix, 40-frame contact sheet).

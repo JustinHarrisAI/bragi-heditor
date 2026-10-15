@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.4.0 — 2026-10-15
+- Three new authority styles (serious tone, the speaker as the expert; organic Reels with a comment question and Follow), each with the full recipe:
+  - `arquivo-cofre`: archive reading table at night; the expert as a record in a passe-partout, steel drawer with hanging tabs, time-stamp clock, microfilm reel that rewinds to the good day, captions printed on continuous copier paper (white on cobalt);
+  - `aduana-de-dados`: night border checkpoint between your computer and the internet; exit declaration, X-ray monitor, barrier, regulations underlined item by item, booth-intercom captions (white on stamp red);
+  - `laudo-de-sinistro`: insurance claim forensic report; the expert in the technical photograph with a forensic scale, forensic flash + B&W on every record, coverage clause filled as it is said, pen marks TOTAL LOSS → RECOVERABLE, one-line transcript captions (black on evidence yellow).
+- troubleshooting.md: Reels over 70 s fail `heditor test`, music dips with `silence` sections, numeric layout values among timeline keys, `rk.finder` landing on a later occurrence, strips over a low face, tiny text in decorative SVG, camera black in the CTA, empty caption during a stretched word, one-line captions that overflow, repeated tracks inside a batch.
+- Idea bank: archive, border checkpoint and forensic case-file formats are now named styles.
+- Fix: `prepare_camera` and `styled_camera` rebuild `camera-hd.mp4` and every `camera-<name>.mp4` when they are older than their source. Before, a variant made from a previous `camera-src.mp4` was reused after the EDL changed, so picture and voice drifted apart (seconds) from the first removed sentence on.
+- New `scripts/reelkit/camera_sync_check.py <work>`: compares every camera variant with `camera-src.mp4` frame by frame and fails when any is offset or has a different frame count. Run it before rendering whenever the EDL changed.
+
 ## 1.3.0 — 2026-10-15
 - Fourteen new named styles, each with a full recipe (layout in px, palette, typography, caption contrast, scene grammar, motion, SFX map, music sections, CTA, pitfalls, variations):
   - organic: `tribunal` (courtroom sketch);

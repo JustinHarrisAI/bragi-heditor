@@ -27,5 +27,24 @@
 | Text clipped inside a box but the contact sheet looks fine | reduced sheets hide overflow | check overflow in the DOM (Playwright) and review native frames one by one; very large sheets can time out the vision model |
 | Numbers test fails on an arrow | numeric HTML entities (`&#8627;`) count as digits | use the literal character or an icon |
 | `asr-check` similarity drops on colloquial captions | the small model normalises spoken contractions to the formal word | expected; compare against the clean voice delta, not the absolute value |
+| `heditor test` fails on duration | the Reel is longer than 70 s | plan the speech for ≤ 66 s before cutting (the CTA needs ≥ 4 s); drop context lines, not the hook or the rule |
+| Need a music dip without restarting the track | splitting a section restarts `src` and can land on another part of the file | append a section `{"mode":"silence","start":a,"end":b,"gain_db":host_gain-5}` after the section that plays there: `silence` is not decoded, but its `gain_db` (absolute, not relative) replaces the gain of that window |
+| `test_key_moments_in_speech_order` fails although every beat is in the speech | numeric layout values (sizes, offsets) were stored in `plan["keys"]` and are read as times | keep only times in `keys`; put layout constants in a nested dict (e.g. `K.cfg`) |
+| An animation fires on the wrong word after a re-cut | `rk.finder(token, after=t)` returns the first match after `t`; removing a passage moves the next occurrence earlier | re-validate every key against the transcript after each new prepare; prefer distinctive tokens |
+| An impact strip "over the torso" covers the chin | the face sits low in a webcam tile (centre ≈ 70 % of the height) | measure the face (`qa/face-track.json`) before placing strips; put the strip at the top of the camera, over the background |
+| Vision calls a decorative object broken text or a stray letter | tiny text (< 16 px) or lone glyphs inside a decorative SVG (scales, rulers) | draw decorative objects without inscriptions |
+| The camera window goes black in the CTA | the camera clip ends with the last word | extract the last frame (`ffmpeg -sseof -0.2 … -frames:v 1`) and show it as a still (or freeze it graded) |
+| The caption area is empty for a moment | a stretched word or connective leaves a gap between groups | keep the current group on screen until the next one when the gap is < 0.7 s |
+| A one-line caption overflows its strip | long words at a fixed size | compute the font size per group with the real fonts (PIL `getlength`, variable axes set) and shrink to fit |
+| Two cuts of a batch share the same soundtrack | each agent picked the best-matching track alone | record the music id of every cut in the batch brief and give each cut a different track before producing |
 | mediapipe fails to install | Python version without wheels | use Python 3.10–3.13 (setup picks one) |
 | `npx hyperframes` asks to install or cannot find Chrome | first run | `npx --yes hyperframes@0.8.147 browser ensure` |
+
+## Picture and voice out of sync after changing the cut
+
+**Symptom:** the first seconds are in sync, then the mouth runs seconds ahead of or behind the voice (often from the first sentence removed in a revision). Captions still match the voice.
+
+**Cause:** the EDL changed (`heditor prepare` rewrote `camera-src.mp4` and the voice) but the derived camera variants (`camera-hd.mp4`, `camera-grade.mp4`, `camera-mono.mp4`…) were built from the previous `camera-src.mp4`. Up to 1.3.0 they were only built when missing. A frame-count mismatch between `camera-src.mp4` and the variants is the giveaway.
+
+**Fix:** since 1.4.0 the kit rebuilds variants older than their source. Check with `python scripts/reelkit/camera_sync_check.py <work>` (every variant must report offset 0 and the same frame count), run `heditor produce` again and re-render. On a project made with an older kit, delete the stale `camera-*.mp4` variants (keep `camera-src.mp4`) or `touch composition/assets/camera-src.mp4` before producing.
+

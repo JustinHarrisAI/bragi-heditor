@@ -25,3 +25,7 @@ A cut is delivered only when all required gates pass (or a flagged item was insp
 
 ## Final checklist for the delivery message
 Format/style and why; duration; music (title, artist, licence); what was verified (gates above); flagged items and decisions; what was not verified (nobody listened; colour on other screens); file path/link. Never publish without explicit permission.
+
+## Camera sync
+
+`python $HEDITOR_KIT/camera_sync_check.py <work>` must print OK for every `camera-*.mp4` used by the composition before rendering, especially after any change to the cut. Captions and ASR do not detect a picture that drifted from the voice.

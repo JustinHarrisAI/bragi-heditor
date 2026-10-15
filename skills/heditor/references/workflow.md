@@ -60,6 +60,7 @@ Read `balance`: `music_minus_voice_median_db ≤ -21`, `bed_minus_voice_p95_db �
 heditor lint <work>                                     # 0 errors (warnings about caption structure are normal)
 heditor preview <work> 0.05,0.8,2.5,4,6,8,...          # 18–24 times across the cut, incl. every scene change and the CTA
 heditor test <work>
+python $HEDITOR_KIT/camera_sync_check.py <work>   # every camera variant aligned with camera-src (offset 0, same frame count)
 ```
 Inspect `qa/sheet.jpg` with vision: overlaps, clipped text, text above y=270, face covered, captions colliding with graphics, low-contrast active word, placeholder-looking elements, generic or meaningless decoration. Fix and preview again (name sheets sheet-b, sheet-c…). In batches, also compare sheets across videos.
 

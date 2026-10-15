@@ -174,6 +174,15 @@ def setup_assets(work):
     return a
 
 
+def _stale(out, src):
+    """Derived media must be rebuilt when missing or older than its source (e.g. after a new EDL).
+
+    Reusing a camera variant made from a previous camera-src.mp4 silently desynchronises picture and voice.
+    """
+    out, src = Path(out), Path(src)
+    return not out.exists() or (src.exists() and out.stat().st_mtime < src.stat().st_mtime)
+
+
 def prepare_camera(work, width=960):
     a = Path(work) / "composition/assets"
     src = a / "camera-src.mp4"
@@ -182,7 +191,7 @@ def prepare_camera(work, width=960):
                                    capture_output=True, text=True, check=True).stdout.strip().split(","))
     height = round(width * h / w / 2) * 2
     out = a / "camera-hd.mp4"
-    if not out.exists():
+    if _stale(out, src):
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(src), "-vf",
                         f"scale={width}:{height}:flags=lanczos,unsharp=5:5:0.55:5:5:0,eq=contrast=1.04:saturation=1.06,format=yuv420p",
                         "-c:v", "libx264", "-preset", "medium", "-crf", "16", "-an", str(out)],
@@ -193,7 +202,7 @@ def prepare_camera(work, width=960):
 def styled_camera(work, name, vf):
     a = Path(work) / "composition/assets"
     out = a / f"camera-{name}.mp4"
-    if not out.exists():
+    if _stale(out, a / "camera-hd.mp4"):
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(a / "camera-hd.mp4"), "-vf", vf + ",format=yuv420p",
                         "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-an", str(out)], check=True, timeout=900)
     return out.name

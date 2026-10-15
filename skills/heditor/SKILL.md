@@ -1,10 +1,10 @@
 ---
 name: heditor
-description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920) with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast, missao, tribunal; paid-ad formats keynote, stories, predio-24h, bilheteria, porta-de-aco, manual-de-montagem, carrinho, entrega, auditorio, album; authority formats cassino-de-precisao, mesa-de-risco, turno-da-madrugada), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, voice-first mixing, render and QA.
+description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920) with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast, missao, tribunal; paid-ad formats keynote, stories, predio-24h, bilheteria, porta-de-aco, manual-de-montagem, carrinho, entrega, auditorio, album; authority formats cassino-de-precisao, mesa-de-risco, turno-da-madrugada, arquivo-cofre, aduana-de-dados, laudo-de-sinistro), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, voice-first mixing, render and QA.
 license: MIT
 metadata:
   author: PycodeBR (Felipe Azambuja)
-  version: 1.3.0
+  version: 1.4.0
   homepage: https://github.com/pycodebr/heditor
 ---
 
@@ -64,6 +64,9 @@ Named styles (`heditor styles`): see `references/styles/INDEX.md` for when each 
 | `cassino-de-precisao` | Authority · noir casino that flips into a precision bench at the turn; the expert as the croupier; engraved rule |
 | `mesa-de-risco` | Authority · trading desk on a crash day: the resource is an asset, replay, false-safety seal, circuit breaker, green strategy |
 | `turno-da-madrugada` | Authority · night-shift control room: main monitor, annunciator windows, process line, time-lapse to dawn, shift handover CTA |
+| `arquivo-cofre` | Authority · archive reading table at night: the expert as a record in a passe-partout, steel drawer, time-stamp clock, microfilm reel that rewinds to the good day, RESTORED stamp |
+| `aduana-de-dados` | Authority · night border checkpoint between your computer and the internet: exit declaration, X-ray monitor, barrier, regulations underlined, READ THE TERMS stamp |
+| `laudo-de-sinistro` | Authority · forensic claim report: the expert in the technical photograph, forensic flash, coverage clause filled as said, pen marks TOTAL LOSS → RECOVERABLE |
 
 ## 2. Workflow (all modes)
 
