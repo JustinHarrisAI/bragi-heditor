@@ -49,7 +49,20 @@ OTHER = {
     "licenses/Lucide-LICENSE.txt": "https://raw.githubusercontent.com/lucide-icons/lucide/main/LICENSE",
     "models/blaze_face_short_range.tflite":
         "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
+    # three.js r181 (MIT) for real 3D objects in layered edits; three.module imports ./three.core
+    "js/three.module.min.js": "https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.module.min.js",
+    "js/three.core.min.js": "https://cdn.jsdelivr.net/npm/three@0.181.2/build/three.core.min.js",
+    "licenses/three-LICENSE.txt": "https://raw.githubusercontent.com/mrdoob/three.js/r181/LICENSE",
+    # depthkit (layered edits): person matte and hand landmarks
+    "models/selfie_multiclass_256x256.tflite":
+        "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/"
+        "selfie_multiclass_256x256.tflite",
+    "models/hand_landmarker.task":
+        "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task",
 }
+# Depth Anything V2 Small (Apache-2.0, ~99 MB): only with --depth; otherwise depthkit downloads it on first use.
+DEPTH = {"models/depth_anything_v2_small.onnx":
+         "https://huggingface.co/onnx-community/depth-anything-v2-small/resolve/main/onnx/model.onnx"}
 UA = {"User-Agent": "heditor-setup/1.0 (+https://github.com/pycodebr/heditor)"}
 
 
@@ -102,11 +115,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-audio", action="store_true", help="skip Mixkit music and SFX")
     ap.add_argument("--whisper", default="", help="comma-separated faster-whisper models to pre-download (e.g. small,medium)")
+    ap.add_argument("--depth", action="store_true", help="also pre-download the depth model (~99 MB) used by depthkit")
     args = ap.parse_args()
     ASSETS.mkdir(parents=True, exist_ok=True)
     jobs = [(url, ASSETS / "fonts" / name) for name, url in FONTS.items()]
     jobs += [(GF + d + "/OFL.txt", ASSETS / "licenses" / f"OFL-{d}.txt") for d in FONT_LICENSE_DIRS]
     jobs += [(url, ASSETS / rel) for rel, url in OTHER.items()]
+    if args.depth:
+        jobs += [(url, ASSETS / rel) for rel, url in DEPTH.items()]
     if not args.no_audio:
         for name, items in CATALOG["sfx"].items():
             for it in items:

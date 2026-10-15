@@ -36,6 +36,16 @@ fonts = list((ASSETS / "fonts").glob("*.ttf"))
 check(f"fonts ({len(fonts)})", len(fonts) >= 15, "run setup.sh")
 check("gsap", (ASSETS / "js/gsap.min.js").exists(), "run setup.sh")
 check("face model", (ASSETS / "models/blaze_face_short_range.tflite").exists(), "run setup.sh")
+for mod, attr in [("onnxruntime", None), ("cv2", "ximgproc")]:
+    try:
+        m = importlib.import_module(mod)
+        check(f"python: {mod}" + (f".{attr}" if attr else ""), attr is None or hasattr(m, attr),
+              "pip install opencv-contrib-python (layered edits)", required=False)
+    except Exception as exc:  # noqa: BLE001
+        check(f"python: {mod}", False, f"{exc}; re-run setup.sh (needed only for layered edits)", required=False)
+check("person/hand models", all((ASSETS / f"models/{f}").exists() for f in
+                                 ("selfie_multiclass_256x256.tflite", "hand_landmarker.task")),
+      "run setup.sh (or they download on first use)", required=False)
 catalog = json.loads((SKILL / "assets/catalog.json").read_text())
 n_sfx = sum(len(v) for v in catalog["sfx"].values())
 have_sfx = len(list((ASSETS / "sfx").glob("*"))) if (ASSETS / "sfx").exists() else 0

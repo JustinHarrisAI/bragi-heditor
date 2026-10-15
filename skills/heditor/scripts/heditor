@@ -44,6 +44,8 @@ case "$cmd" in
   finalize) # heditor finalize <work_dir> <final_name.mp4> [auto|t1,t2,...]
            need_work "${1:-}"; "$PY" "$KIT/finalize.py" "$1" "$2" "${3:-auto}" ;;
   asr-check) need_work "${1:-}"; "$PY" "$KIT/asr_check.py" "$1" ;;
+  matte|depth|look|hands|plane) # layered / 2.5D helpers (depthkit); see references/depth-and-3d.md
+           [[ "$cmd" == plane ]] || need_work "${1:-}"; "$PY" "$KIT/layers.py" "$cmd" "$@" ;;
   styles)  ls "$SKILL_DIR/references/styles" | sed 's/\.md$//' | grep -v INDEX ;;
   help|*)  cat <<EOF
 heditor - creative vertical video editing for AI agents
@@ -64,6 +66,13 @@ heditor - creative vertical video editing for AI agents
   heditor render <work> [workers]                        render MP4 with HyperFrames
   heditor finalize <work> <name.mp4>                     mux master audio + verification + 40-frame sheet
   heditor asr-check <work>                               ASR of final mix vs clean voice (masking check)
+
+Layered / 2.5D (depthkit, see references/depth-and-3d.md):
+  heditor matte <work> [multiclass|selfie]               speaker alpha: camera-alpha.webm + matte-person.mp4
+  heditor depth <work> [fps]                             relative depth map: depth.mp4 + depth-still.png
+  heditor look <work> fog|edges|edges-rgb|dots [#hex]     depth fog, contour scan, edge scan, point cloud
+  heditor hands <work> [t0] [t1]                         hand landmarks -> qa/hands-<t0>.json
+  heditor plane <w> <h> x1,y1 x2,y2 x3,y3 x4,y4           CSS matrix3d pinning a w x h element onto 4 points
 EOF
   ;;
 esac

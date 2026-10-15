@@ -82,6 +82,19 @@ Formatos de autoridade (tom sério, o falante como especialista):
 | `aduana-de-dados` | Posto de fronteira noturno entre o seu computador e a internet: declaração de saída, raio-X, cancela, regulamento grifado e carimbo LEIA OS TERMOS |
 | `laudo-de-sinistro` | Laudo de perícia de um sinistro: o especialista na fotografia técnica, flash pericial, cláusula de cobertura preenchida na fala e caneta que troca PERDA TOTAL por RECUPERÁVEL |
 
+Formatos de criador (estudo de técnicas de Reels de tecnologia com alta retenção):
+
+| Estilo | Identidade |
+|---|---|
+| `camadas` | Cada conceito desenhado entre o falante e a parede: palavras gigantes e “?” atrás da cabeça, linhas-guia no cenário, placa de vidro, cards flutuantes e CTA de comentário para DM |
+| `raio-x` | A visão da máquina: HUD de pipeline ao vivo, scan de profundidade, camadas explodidas, nuvem de pontos, rastreamento de rosto e mãos, transcrição que vira prompt e montagem na timeline |
+| `duelo` | Página de comparação A/B: o mesmo take em dois painéis sincronizados editados de formas diferentes, selo VS, checklist do veredito e votação no CTA |
+| `bancada` | Prova na bancada: etiqueta no gancho, chicote para um monitor filmado ou simulado, dedo e punch-ins na tela, inserts do resultado |
+| `manchete` | Manchete no topo: clipe ou post do assunto em cima, faixa sobre a emenda, o falante reagindo embaixo, pico em tela cheia e divisão em faixas |
+| `revista` | Páginas editoriais: palavra-chave condensada com linha em serifa itálica, janela de retrato arredondada, chips por item, páginas de data e respiros em tela cheia |
+
+Efeitos em camadas para qualquer estilo ou modo criativo (`heditor matte|depth|look|hands|plane`): texto atrás da pessoa, legenda pintada na parede, objeto 3D passando entre o falante e o cenário, névoa de profundidade, scan de contorno, nuvem de pontos e objetos que seguem as mãos. Veja [`depth-and-3d.md`](skills/heditor/references/depth-and-3d.md) e [`technique-catalogue.md`](skills/heditor/references/technique-catalogue.md).
+
 Detalhes de cada um em [`skills/heditor/references/styles/`](skills/heditor/references/styles/).
 
 ## Modos
@@ -173,7 +186,7 @@ heditor render cortes/c01 && heditor finalize cortes/c01 c01-1080x1920.mp4 && he
 ## Requisitos
 
 - Linux ou macOS (Windows via WSL2), 4 núcleos e 8 GB de RAM recomendados.
-- Cerca de 1,5 GB em disco (ambiente Python, modelos e biblioteca de áudio).
+- Cerca de 1,6 GB em disco (ambiente Python, modelos e biblioteca de áudio); mais 99 MB se usar o mapa de profundidade.
 - Um vídeo de 60 s leva de 5 a 15 min para renderizar em CPU comum.
 
 ## Estrutura
@@ -185,7 +198,7 @@ skills/heditor/
 │   └── styles/                  # um arquivo por estilo nomeado
 ├── scripts/
 │   ├── setup.sh · doctor.py · fetch_assets.py · heditor (CLI)
-│   └── reelkit/                 # kit Python: corte, legendas, página HyperFrames, mixagem, QA
+│   └── reelkit/                 # kit Python: corte, legendas, página HyperFrames, mixagem, QA; depthkit (recorte, profundidade, mãos, planos)
 ├── templates/                   # prepare.py, build.py, DESIGN.md, brand.example.json
 └── assets/catalog.json          # catálogo de trilhas e efeitos (baixados no setup)
 ```
@@ -193,7 +206,7 @@ skills/heditor/
 ## Licenças e créditos
 
 - Código e documentação: [MIT](LICENSE) © PycodeBR.
-- Renderização: [HyperFrames](https://github.com/heygen-com/hyperframes) (Apache-2.0, HeyGen). Animação: [GSAP](https://gsap.com) (licença standard gratuita). Transcrição: [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (MIT). Rosto: [MediaPipe](https://github.com/google-ai-edge/mediapipe) (Apache-2.0).
+- Renderização: [HyperFrames](https://github.com/heygen-com/hyperframes) (Apache-2.0, HeyGen). Animação: [GSAP](https://gsap.com) (licença standard gratuita). Transcrição: [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (MIT). Rosto, recorte e mãos: [MediaPipe](https://github.com/google-ai-edge/mediapipe) (Apache-2.0). Profundidade: [Depth Anything V2 Small](https://github.com/DepthAnything/Depth-Anything-V2) (Apache-2.0). 3D: [three.js](https://threejs.org) (MIT).
 - Fontes: [Google Fonts](https://github.com/google/fonts) (SIL OFL 1.1). Ícones: [Lucide](https://lucide.dev) (ISC).
 - Trilhas e efeitos: [Mixkit](https://mixkit.co/license/) (Free License). Os arquivos **não** estão neste repositório; o setup baixa cada um do CDN oficial para a sua máquina.
 - Tabela completa em [`references/licenses.md`](skills/heditor/references/licenses.md).
@@ -210,7 +223,8 @@ Issues e PRs são bem-vindos: novos estilos (com a ficha completa em `references
 
 **heditor** is an open Agent Skill (SKILL.md) that lets AI coding agents edit talking-head footage (classes, lives, podcasts) into vertical 1080×1920 Reels/Shorts/TikToks with motion graphics, word-synced captions, sound design and an emotional soundtrack.
 
-- **Twenty-eight named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`, `missao` (open-world game homage), `tribunal` (courtroom sketch); paid-ad formats with a "Learn more" CTA: `keynote`, `stories`, `predio-24h`, `bilheteria`, `porta-de-aco`, `manual-de-montagem`, `carrinho`, `entrega`, `auditorio`, `album`; authority formats: `cassino-de-precisao`, `mesa-de-risco`, `turno-da-madrugada`, `arquivo-cofre`, `aduana-de-dados`, `laudo-de-sinistro`.
+- **Thirty-four named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`, `missao` (open-world game homage), `tribunal` (courtroom sketch); paid-ad formats with a "Learn more" CTA: `keynote`, `stories`, `predio-24h`, `bilheteria`, `porta-de-aco`, `manual-de-montagem`, `carrinho`, `entrega`, `auditorio`, `album`; authority formats: `cassino-de-precisao`, `mesa-de-risco`, `turno-da-madrugada`, `arquivo-cofre`, `aduana-de-dados`, `laudo-de-sinistro`; creator formats: `camadas`, `raio-x`, `duelo`, `bancada`, `manchete`, `revista`.
+- **Layered 2.5D/3D effects (depthkit):** speaker matte, depth map, text behind the speaker, captions painted on the set, three.js objects passing behind the speaker, depth fog, contour scans, point clouds, hand-anchored objects (`heditor matte|depth|look|hands|plane`).
 - **Creative mode:** the agent analyses the video, researches, invents a world for that specific speech and builds it with retention-focused motion and sound.
 - **Creative mode + reference:** e.g. "creative mode in the style of GTA 6". The agent researches the reference and builds a licence-safe homage.
 - **Pipeline:** word-timed ASR (faster-whisper), frame-accurate cuts, voice chain, HyperFrames (HTML + GSAP) composition, voice-first mix at −14 LUFS, and automatic QA (lint, vision-reviewed previews, tests, pixel safe-margin, loudness/true peak, ASR of the final mix, 40-frame contact sheet).

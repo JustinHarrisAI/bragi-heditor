@@ -7,6 +7,11 @@
 | GSAP 3.14.2 (GreenSock/Webflow) | animation timeline | GSAP standard "no charge" licence (https://gsap.com/standard-license) | downloaded from jsDelivr by setup |
 | faster-whisper + CTranslate2 Whisper models | ASR with word timestamps | MIT (models: MIT) | pip + Hugging Face download |
 | MediaPipe + BlazeFace short range | face tracking | Apache-2.0 | pip + Google storage download |
+| MediaPipe selfie multiclass segmenter, selfie segmenter, Hand Landmarker | speaker matte, hand landmarks (depthkit) | Apache-2.0 | downloaded by setup / on first use from Google storage |
+| Depth Anything V2 Small (ONNX export) | relative depth map (depthkit) | Apache-2.0 (the Small model only; Base/Large are non-commercial) | downloaded on first use or by `setup.sh --depth` from Hugging Face |
+| ONNX Runtime | depth inference | MIT | pip |
+| OpenCV (contrib) | guided filter, optical flow, drawing | Apache-2.0 | pip |
+| three.js r181 | 3D objects in layered edits | MIT | downloaded by setup from jsDelivr (with LICENSE) |
 | FFmpeg | cutting, grading, audio, encoding | LGPL/GPL (system build) | system package |
 | Playwright (Python) | deterministic frame previews | Apache-2.0 | pip |
 | NumPy, Pillow, pytest | processing, images, tests | BSD/MIT-CMU/MIT | pip |
@@ -19,7 +24,6 @@ Optional external tools referenced by some styles (not installed by setup; check
 | Tool | Use in styles | Licence |
 |---|---|---|
 | Robust Video Matting (MobileNetV3, ONNX) | presenter cutout as WebM with alpha | GPL-3.0 |
-| MediaPipe selfie / multiclass segmenter | gate that removes furniture from the matte | Apache-2.0 |
 | Apple Vision person segmentation | presenter cutout on macOS | Apple SDK terms (macOS only) |
 | Extra google/fonts families (Bungee, Alfa Slab One, Tilt Neon, Barlow Condensed, IBM Plex Sans Condensed, Pacifico) | style typography | SIL OFL 1.1 (ship the OFL.txt next to the font) |
 

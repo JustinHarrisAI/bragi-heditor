@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.5.0 — 2026-10-15
+- New `depthkit` module (`scripts/reelkit/depthkit.py`) for layered 2.5D/3D edits, every output frame for frame with `camera-hd.mp4` and rebuilt when stale:
+  - `person_matte`: speaker alpha as `camera-alpha.webm` (camera RGB untouched) + `matte-person.mp4`, MediaPipe multiclass segmenter with temporal smoothing and a guided-filter edge, matte sheet and coverage stats for QA;
+  - `depth_map` (Depth Anything V2 Small, ONNX, Apache-2.0) and `depth_look` (any ffmpeg grade on the far parts only, e.g. depth fog);
+  - `edge_look` (room as glowing iso-depth contours or edge lines) and `dots_look` (background as a point cloud with a real point count), the speaker kept in colour;
+  - `plane_matrix3d` / `homography` (pin captions and titles onto walls, desks, screens), `track_points` (Lucas–Kanade), `track_hands` (MediaPipe Hand Landmarker: palm centre and size per hand), `to_stage`, `setup_three` (offline three.js r181).
+- CLI: `heditor matte | depth | look | hands | plane`.
+- Six new named styles from a technique study of high-retention tech-creator Reels: `camadas` (concepts drawn behind the speaker), `raio-x` (the machine's view, stage by stage), `duelo` (A/B comparison page), `bancada` (proof on a filmed screen), `manchete` (headline inset on top), `revista` (editorial spreads with the speaker inset).
+- New references: `depth-and-3d.md` (toolkit, layer stack, 14 layered recipes, QA) and `technique-catalogue.md` (layouts, illustrations, camera moves, caption systems, hooks, CTAs).
+- Setup downloads the person and hand models and three.js; `setup.sh --depth` pre-fetches the depth model (otherwise it downloads on first use). `doctor` checks onnxruntime, `cv2.ximgproc` and the models. Requirements gain `opencv-contrib-python` and `onnxruntime`.
+- New `test_depthkit.py` (homography, CSS matrix3d, cover mapping). `plane_matrix3d` writes 12 significant digits (8 decimals left a 0.15 px error on strong perspectives).
+- troubleshooting.md: layered-shot pitfalls (double edges, semi-transparent hands, accessories kept by the matte, pumping depth, dense point clouds, offline three.js, render time).
+
 ## 1.4.0 — 2026-10-15
 - Three new authority styles (serious tone, the speaker as the expert; organic Reels with a comment question and Follow), each with the full recipe:
   - `arquivo-cofre`: archive reading table at night; the expert as a record in a passe-partout, steel drawer with hanging tabs, time-stamp clock, microfilm reel that rewinds to the good day, captions printed on continuous copier paper (white on cobalt);

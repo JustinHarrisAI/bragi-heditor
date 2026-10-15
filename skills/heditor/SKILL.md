@@ -1,10 +1,10 @@
 ---
 name: heditor
-description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920) with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast, missao, tribunal; paid-ad formats keynote, stories, predio-24h, bilheteria, porta-de-aco, manual-de-montagem, carrinho, entrega, auditorio, album; authority formats cassino-de-precisao, mesa-de-risco, turno-da-madrugada, arquivo-cofre, aduana-de-dados, laudo-de-sinistro), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, voice-first mixing, render and QA.
+description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920) with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast, missao, tribunal; paid-ad formats keynote, stories, predio-24h, bilheteria, porta-de-aco, manual-de-montagem, carrinho, entrega, auditorio, album; authority formats cassino-de-precisao, mesa-de-risco, turno-da-madrugada, arquivo-cofre, aduana-de-dados, laudo-de-sinistro; creator formats camadas, raio-x, duelo, bancada, manchete, revista), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, layered 2.5D/3D effects (text behind the speaker, captions on the set, 3D objects, depth scans, hand-anchored objects), voice-first mixing, render and QA.
 license: MIT
 metadata:
   author: PycodeBR (Felipe Azambuja)
-  version: 1.4.0
+  version: 1.5.0
   homepage: https://github.com/pycodebr/heditor
 ---
 
@@ -67,6 +67,16 @@ Named styles (`heditor styles`): see `references/styles/INDEX.md` for when each 
 | `arquivo-cofre` | Authority · archive reading table at night: the expert as a record in a passe-partout, steel drawer, time-stamp clock, microfilm reel that rewinds to the good day, RESTORED stamp |
 | `aduana-de-dados` | Authority · night border checkpoint between your computer and the internet: exit declaration, X-ray monitor, barrier, regulations underlined, READ THE TERMS stamp |
 | `laudo-de-sinistro` | Authority · forensic claim report: the expert in the technical photograph, forensic flash, coverage clause filled as said, pen marks TOTAL LOSS → RECOVERABLE |
+| `camadas` | Layers · every concept drawn between the speaker and the wall: giant words and "?" behind the head, guide lines on the set, glass slab, floating cards, comment-to-DM CTA |
+| `raio-x` | Layers · the machine's view: live pipeline HUD, depth scan, exploded layers, point cloud, face/hand tracking, transcript becoming the prompt, timeline assembly |
+| `duelo` | Creator · A/B comparison page: the same take in two synchronised panels edited two ways, VS badge, checklist verdict, vote CTA |
+| `bancada` | Creator · proof on the workbench: label sticker hook, whip pan to a filmed/simulated monitor, finger and punch-ins on the screen, result inserts |
+| `manchete` | Creator · headline inset on top: subject clip/post above, banner across the seam, the speaker reacting below, full-bleed peak, band splits |
+| `revista` | Creator · editorial spreads: condensed keyword + italic serif line, rounded portrait window, icon chips per item, date pages, full-frame breathers |
+
+### Layered effects (any mode)
+
+Text and objects *behind* the speaker, captions painted on a wall, 3D objects passing between the speaker and the room, depth fog, contour scans, point clouds and objects that follow the hands come from depthkit: `heditor matte|depth|look|hands|plane <work>` (models download on first use). Read `references/depth-and-3d.md` before using them in any style or in creative mode; layouts, illustrations, hooks and CTAs borrowed from creator Reels are in `references/technique-catalogue.md`.
 
 ## 2. Workflow (all modes)
 
@@ -99,6 +109,8 @@ Follow `references/workflow.md` step by step. Summary:
 - `references/workflow.md` — the full procedure with commands, cut selection and EDL rules.
 - `references/creative-mode.md` — creative mode, reference-directed creative mode, research method, idea bank.
 - `references/kit-api.md` — reelkit functions, page skeleton, GSAP helpers, plan/sound/music formats.
+- `references/depth-and-3d.md` — depthkit: speaker matte, depth map, scans, planes, tracking, three.js, layered recipes and QA.
+- `references/technique-catalogue.md` — creator layouts (A/B page, morphs, insets, bands), illustrations, camera moves, caption systems, hooks and CTAs.
 - `references/sound-design.md` — voice chain, mix targets, SFX vocabulary, music catalog and section design.
 - `references/captions-and-layout.md` — caption systems, contrast rules, safe zones, camera treatments.
 - `references/quality-gates.md` — every gate, how to read false positives, final checklist.

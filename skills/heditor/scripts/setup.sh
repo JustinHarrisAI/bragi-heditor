@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # heditor setup: installs/validates every tool the skill needs and downloads the asset library.
-# Usage: bash setup.sh [--no-audio] [--whisper small,medium] [--yes]
+# Usage: bash setup.sh [--no-audio] [--whisper small,medium] [--depth] [--yes]
 # Safe to re-run (idempotent). Everything lives in $HEDITOR_HOME (default ~/.heditor).
 set -euo pipefail
 
@@ -14,6 +14,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --no-audio) FETCH_ARGS+=(--no-audio); shift ;;
     --whisper) WHISPER="$2"; shift 2 ;;
+    --depth) FETCH_ARGS+=(--depth); shift ;;
     --yes|-y) ASSUME_YES=1; shift ;;
     *) echo "unknown option: $1"; exit 2 ;;
   esac
@@ -73,7 +74,7 @@ npx --yes "hyperframes@$HYPERFRAMES_VERSION" browser ensure >/dev/null
 CHROME_PATH="$(npx --yes "hyperframes@$HYPERFRAMES_VERSION" browser path 2>/dev/null | tail -1)"
 
 # 4) assets -------------------------------------------------------------------
-say "downloading fonts, GSAP, face model, music and SFX (first run takes a few minutes)"
+say "downloading fonts, GSAP, face/person/hand models, music and SFX (first run takes a few minutes)"
 HEDITOR_HOME="$HEDITOR_HOME" "$VENV/bin/python" "$SKILL_DIR/scripts/fetch_assets.py" --whisper "$WHISPER" ${FETCH_ARGS[@]+"${FETCH_ARGS[@]}"} || \
   say "some assets failed; re-run setup to retry (see $HEDITOR_HOME/assets-status.json)"
 

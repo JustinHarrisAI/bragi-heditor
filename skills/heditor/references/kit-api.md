@@ -35,6 +35,9 @@ import reelkit as rk
 ## Face tracking
 `faces = rk.track_faces(work, video="camera-hd.mp4", step=0.2)` (MediaPipe) → `qa/face-track.json`; `rk.jump_segments(work, faces, voice_end)` → segments between EDL cuts with the median face centre (never smoothed across a cut). Use the face centre for zoom origins and to place graphics on the opposite side.
 
+## depthkit (layered / 2.5D / 3D)
+`import depthkit as dk` (same folder as reelkit). `dk.person_matte(work)` → `camera-alpha.webm` + `matte-person.mp4`; `dk.depth_map(work, fps)` → `depth.mp4`; `dk.depth_look(work, name, vf_bg)`, `dk.edge_look(work, name, color, source)`, `dk.dots_look(work, name, color, step)` → `camera-<name>.mp4`; `dk.plane_matrix3d(w, h, quad)` → CSS `matrix3d`; `dk.track_points(work, t0, pts, t1)`; `dk.track_hands(work, t0, t1)`; `dk.to_stage(pt, video_size, box)`; `dk.setup_three(work)` copies three.js for offline 3D. All outputs are frame-for-frame with `camera-hd.mp4` and rebuilt when stale. CLI: `heditor matte|depth|look|hands|plane`. Details and recipes: `depth-and-3d.md`.
+
 ## Plan formats
 - Sound event: `{"time": s, "category": "whoosh", "variant": 0, "gain_db": -14, "rate": 1.0, "length": 0.6, "context": "why"}`. Categories: `rk.sfx_library().keys()`.
 - Music section: `{"start", "end", "mode": "full|radio|lowpass|muffled|vhs|retro|silence", "gain_db", "track", "src" (seconds inside the track), "fade_in", "fade_out"}`. `rk.music_path("music:955")` → local file.

@@ -38,6 +38,13 @@
 | A one-line caption overflows its strip | long words at a fixed size | compute the font size per group with the real fonts (PIL `getlength`, variable axes set) and shrink to fit |
 | Two cuts of a batch share the same soundtrack | each agent picked the best-matching track alone | record the music id of every cut in the batch brief and give each cut a different track before producing |
 | mediapipe fails to install | Python version without wheels | use Python 3.10–3.13 (setup picks one) |
+| Text "behind" the speaker shows on top of the hair, or a double edge appears | the plate and `camera-alpha.webm` have different boxes, `object-fit`, start or media offset, or one of them got a transform | put both videos and the behind layer in the same container; same `data-start`/`data-duration`/`data-media-start`; transform the container, never one video |
+| Speaker's hands turn semi-transparent in layered shots | motion blur on fast gestures confuses the segmenter | keep behind-layer graphics away from gestures on that beat; check `coverage_jumps_s` in `qa/matte-stats.json`; `erode=0` keeps more edge |
+| The matte keeps a mic arm, headset or chair | multiclass "accessories" class | `dk.person_matte(work, keep_classes={1, 2, 3, 4})` or hide it with a dark disc behind the speaker |
+| Depth map levels pump between frames | per-frame normalisation | depthkit uses running percentiles (`ema`); raise `ema` to 0.7 or sample at a lower `fps` |
+| Point cloud swallows the speaker | dots too dense or too bright near the face | `dots_look(step=12-16)`, darker colour, or `edge_look` instead |
+| 3D object missing in the render | three.js loaded from a CDN offline, or rendered with `requestAnimationFrame` | `dk.setup_three(work)` and `import * as THREE from "./assets/three.module.min.js"`; render only on `hf-seek` |
+| Layered compositions render slowly ("BeginFrame did not run", software GL) | alpha video + WebGL on CPU | expected (~11 s per second of video on 4 cores); switch the alpha layer and the 3D canvas on only where used, render with 2–3 workers |
 | `npx hyperframes` asks to install or cannot find Chrome | first run | `npx --yes hyperframes@0.8.147 browser ensure` |
 
 ## Picture and voice out of sync after changing the cut
