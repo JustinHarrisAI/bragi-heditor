@@ -82,6 +82,12 @@ Formatos de autoridade (tom sério, o falante como especialista):
 | `aduana-de-dados` | Posto de fronteira noturno entre o seu computador e a internet: declaração de saída, raio-X, cancela, regulamento grifado e carimbo LEIA OS TERMOS |
 | `laudo-de-sinistro` | Laudo de perícia de um sinistro: o especialista na fotografia técnica, flash pericial, cláusula de cobertura preenchida na fala e caneta que troca PERDA TOTAL por RECUPERÁVEL |
 
+Formato didático (a tela ensina o que o falante diz, desenhada ao vivo na palavra):
+
+| Estilo | Identidade |
+|---|---|
+| `lousa-de-aula` | Aula interativa numa lousa de giz: cada traço nasce na palavra que o dispara, pauta com "?" que vira ✓, setas com o verbo da fala, apagador, quadro de RESUMO com a cadeia completa e "para casa" no CTA |
+
 Formatos de criador (estudo de técnicas de Reels de tecnologia com alta retenção):
 
 | Estilo | Identidade |
@@ -223,7 +229,7 @@ Issues e PRs são bem-vindos: novos estilos (com a ficha completa em `references
 
 **heditor** is an open Agent Skill (SKILL.md) that lets AI coding agents edit talking-head footage (classes, lives, podcasts) into vertical 1080×1920 Reels/Shorts/TikToks with motion graphics, word-synced captions, sound design and an emotional soundtrack.
 
-- **Thirty-four named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`, `missao` (open-world game homage), `tribunal` (courtroom sketch); paid-ad formats with a "Learn more" CTA: `keynote`, `stories`, `predio-24h`, `bilheteria`, `porta-de-aco`, `manual-de-montagem`, `carrinho`, `entrega`, `auditorio`, `album`; authority formats: `cassino-de-precisao`, `mesa-de-risco`, `turno-da-madrugada`, `arquivo-cofre`, `aduana-de-dados`, `laudo-de-sinistro`; creator formats: `camadas`, `raio-x`, `duelo`, `bancada`, `manchete`, `revista`.
+- **Thirty-five named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`, `missao` (open-world game homage), `tribunal` (courtroom sketch); paid-ad formats with a "Learn more" CTA: `keynote`, `stories`, `predio-24h`, `bilheteria`, `porta-de-aco`, `manual-de-montagem`, `carrinho`, `entrega`, `auditorio`, `album`; authority formats: `cassino-de-precisao`, `mesa-de-risco`, `turno-da-madrugada`, `arquivo-cofre`, `aduana-de-dados`, `laudo-de-sinistro`; didactic format: `lousa-de-aula` (interactive chalkboard lesson); creator formats: `camadas`, `raio-x`, `duelo`, `bancada`, `manchete`, `revista`.
 - **Layered 2.5D/3D effects (depthkit):** speaker matte, depth map, text behind the speaker, captions painted on the set, three.js objects passing behind the speaker, depth fog, contour scans, point clouds, hand-anchored objects (`heditor matte|depth|look|hands|plane`).
 - **Creative mode:** the agent analyses the video, researches, invents a world for that specific speech and builds it with retention-focused motion and sound.
 - **Creative mode + reference:** e.g. "creative mode in the style of GTA 6". The agent researches the reference and builds a licence-safe homage.

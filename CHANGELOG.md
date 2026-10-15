@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.6.0 — 2026-10-15
+- New didactic style `lousa-de-aula` (interactive chalkboard lesson): the whole screen is a classroom slate and the explanation is drawn live in chalk, each stroke starting on the word that triggers it (±0.15 s); numbered syllabus whose "?" turns into ✓, arrows labelled with the spoken verb, emphasis circles and double underlines, a felt eraser that wipes by mask, a SUMMARY board that rebuilds the chain, the teacher in a framed picture that shrinks to a corner and grows back, captions written on the board's margin, homework CTA. Full recipe: word-synced keys with `rk.finder`, pure `render(t)` engine, `stroke-dashoffset` drawing, hand jitter and double strokes, SVG chalk filter + grain mask, chalk stick and dust at the tip, handwriting reveal, eraser mask, per-stroke chalk SFX levels, `music:282` with the real drop at 12.45 s.
+- troubleshooting.md: recipe "Drawing synced to speech" (sync keys, stroke offsets, consequence strokes, sync-table gate) and new rows for the cost of SVG filters in the render, small chalk labels, arrow-label agreement and an eraser that does not read as erasing.
+- INDEX: new **didactic** family.
+
 ## 1.5.0 — 2026-10-15
 - New `depthkit` module (`scripts/reelkit/depthkit.py`) for layered 2.5D/3D edits, every output frame for frame with `camera-hd.mp4` and rebuilt when stale:
   - `person_matte`: speaker alpha as `camera-alpha.webm` (camera RGB untouched) + `matte-person.mp4`, MediaPipe multiclass segmenter with temporal smoothing and a guided-filter edge, matte sheet and coverage stats for QA;

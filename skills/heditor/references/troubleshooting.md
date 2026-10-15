@@ -45,6 +45,10 @@
 | Point cloud swallows the speaker | dots too dense or too bright near the face | `dots_look(step=12-16)`, darker colour, or `edge_look` instead |
 | 3D object missing in the render | three.js loaded from a CDN offline, or rendered with `requestAnimationFrame` | `dk.setup_three(work)` and `import * as THREE from "./assets/three.module.min.js"`; render only on `hf-seek` |
 | Layered compositions render slowly ("BeginFrame did not run", software GL) | alpha video + WebGL on CPU | expected (~11 s per second of video on 4 cores); switch the alpha layer and the 3D canvas on only where used, render with 2–3 workers |
+| A drawn diagram renders very slowly or the encode times out | an SVG filter (`feTurbulence` + `feDisplacementMap` + blur) over a large layer is recomputed every frame | one filtered group limited with `filterUnits="userSpaceOnUse"` to the drawing area, no `backdrop-filter`, a static PNG grain mask for the texture; chunked encode if needed; drop the filter and keep the mask + jitter if still too heavy |
+| Hand-drawn labels unreadable on a phone | handwriting below ~36 px with a texture mask on top | ≥ 36 px for labels, a lighter texture on text than on lines; check native crops |
+| An arrow label reads as a grammar error | the label was written from the diagram's point of view ("uses") next to a first-person subject ("US") | label arrows from the subject that acts, in the speech's grammar ("we use", "we pay") |
+| A wipe "does not look like erasing" | the erased band is wider than the eraser, or the motion is a diagonal blur | make the mask stroke width equal to the eraser's length, straight horizontal passes, leave a faint ghost and haze |
 | `npx hyperframes` asks to install or cannot find Chrome | first run | `npx --yes hyperframes@0.8.147 browser ensure` |
 
 ## Picture and voice out of sync after changing the cut
@@ -55,3 +59,12 @@
 
 **Fix:** since 1.4.0 the kit rebuilds variants older than their source. Check with `python scripts/reelkit/camera_sync_check.py <work>` (every variant must report offset 0 and the same frame count), run `heditor produce` again and re-render. On a project made with an older kit, delete the stale `camera-*.mp4` variants (keep `camera-src.mp4`) or `touch composition/assets/camera-src.mp4` before producing.
 
+## Recipe: drawing synced to speech
+
+Use it whenever something is drawn or written on screen as the speaker says it (a chalkboard, a whiteboard, a sketch, a diagram that builds itself). Reference implementation: `styles/lousa-de-aula.md`.
+
+1. **Keys from the reviewed words.** `f = rk.finder(rk.load_words(work / "words-reviewed.json"))`; one key per trigger, `f(token, after=t)` for repeated words. Assert every key is finite and that the keys are in speech order; re-validate them after every new `prepare` (a removed passage moves the next occurrence earlier).
+2. **Offsets.** Main strokes start 0.04–0.06 s before the word (the hand anticipates; captions switch 0.02 s before). A label that completes a shape follows 0.1–0.5 s after it, in the same sentence. Marks that close an item already drawn (✓, complementary label, final underline) are **consequences**: allowed later, but still inside the sentence.
+3. **One timeline driver.** Make the drawing a pure function of time, `render(t)`, called by a single tween (`tl.to(clock,{t:D,duration:D,ease:'none',onUpdate:()=>render(clock.t)},0)`), so seeking any frame gives the same picture. Strokes: `stroke-dasharray: L L+4`, `stroke-dashoffset: L·(1−p)`, opacity 0 until `p > 0`. Text: a `clipPath` rect whose width grows with `p`. Cache the last progress per element and skip unchanged ones.
+4. **Log every action** (what, start, end) while building; use the log for the SFX (one scratch per stroke with `length` = stroke duration) and for the QA table.
+5. **Gate.** Write `qa/sync-table.md` with one row per action: drawn element, trigger word, word time, stroke start, Δ. Every main stroke must be within ±0.15 s; when one is not, move it to a later occurrence of the same word rather than widening the tolerance. Review previews with strokes caught half-drawn.
