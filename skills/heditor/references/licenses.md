@@ -14,4 +14,13 @@
 | Lucide icons | inline SVG icons | ISC | downloaded on demand |
 | Mixkit music and sound effects | soundtrack and SFX | Mixkit Stock Music Free License / Mixkit Sound Effects Free License (https://mixkit.co/license/) | downloaded by setup from Mixkit's CDN to the user's machine; never redistributed in this repository |
 
+Optional external tools referenced by some styles (not installed by setup; check the licence before using them in your project and record it in DESIGN.md):
+
+| Tool | Use in styles | Licence |
+|---|---|---|
+| Robust Video Matting (MobileNetV3, ONNX) | presenter cutout as WebM with alpha | GPL-3.0 |
+| MediaPipe selfie / multiclass segmenter | gate that removes furniture from the matte | Apache-2.0 |
+| Apple Vision person segmentation | presenter cutout on macOS | Apple SDK terms (macOS only) |
+| Extra google/fonts families (Bungee, Alfa Slab One, Tilt Neon, Barlow Condensed, IBM Plex Sans Condensed, Pacifico) | style typography | SIL OFL 1.1 (ship the OFL.txt next to the font) |
+
 Your own videos, logos and any extra music/SFX you add are your responsibility. Do not use third-party logos, trademarks, characters or copyrighted music/footage in homage styles.

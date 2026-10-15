@@ -18,5 +18,14 @@
 | Render very slow or killed | low CPU/RAM, many workers | `heditor render <work> 1`; render cuts one at a time; close other heavy jobs |
 | ASR misses words at block edges | cut inside a word | widen the block radius in prepare.py, prepare again, re-run `heditor words` |
 | Whisper too slow | large model on CPU | `HEDITOR_ASR_MODEL=small`, transcribe windows instead of the full file |
+| A tween lands at the very end of the timeline | a key used in the JS (`K.someword`) is undefined, so GSAP gets `NaN`/`undefined` as the position without any error | validate in build.py that every `K.x` referenced by the JS exists before writing the page |
+| SVG arrowheads visible before the line is drawn | `marker-end` renders even when `stroke-dashoffset` hides the stroke | keep the path at opacity 0 until its stroke starts drawing |
+| A gradient stroke does not paint on a straight line | `linearGradient` with `objectBoundingBox` on a path of zero height | use a solid colour or `gradientUnits="userSpaceOnUse"` |
+| Captions keep timings of an older cut | `heditor words` does not overwrite an existing `words-reviewed.json` | after re-running prepare, regenerate `words-reviewed.json` from the new `words.json` and re-apply spelling fixes |
+| CTA test fails although Follow is on screen | button text was upper-cased in Python | write the exact `brand.json` words in the HTML and upper-case with CSS `text-transform` |
+| Background p95 stuck at exactly −12.0 dB | the mix calibration stops at the threshold when weak-voice windows (pauses, stretched vowels) dominate | add 3–5 dB music dips on those windows with sections that keep `src` continuous |
+| Text clipped inside a box but the contact sheet looks fine | reduced sheets hide overflow | check overflow in the DOM (Playwright) and review native frames one by one; very large sheets can time out the vision model |
+| Numbers test fails on an arrow | numeric HTML entities (`&#8627;`) count as digits | use the literal character or an icon |
+| `asr-check` similarity drops on colloquial captions | the small model normalises spoken contractions to the formal word | expected; compare against the clean voice delta, not the absolute value |
 | mediapipe fails to install | Python version without wheels | use Python 3.10–3.13 (setup picks one) |
 | `npx hyperframes` asks to install or cannot find Chrome | first run | `npx --yes hyperframes@0.8.147 browser ensure` |

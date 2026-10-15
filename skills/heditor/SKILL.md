@@ -1,10 +1,10 @@
 ---
 name: heditor
-description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920) with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast, missao), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, voice-first mixing, render and QA.
+description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920) with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast, missao, tribunal; paid-ad formats keynote, stories, predio-24h, bilheteria, porta-de-aco, manual-de-montagem, carrinho, entrega, auditorio, album; authority formats cassino-de-precisao, mesa-de-risco, turno-da-madrugada), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, voice-first mixing, render and QA.
 license: MIT
 metadata:
   author: PycodeBR (Felipe Azambuja)
-  version: 1.2.0
+  version: 1.3.0
   homepage: https://github.com/pycodebr/heditor
 ---
 
@@ -50,6 +50,20 @@ Named styles (`heditor styles`): see `references/styles/INDEX.md` for when each 
 | `documentario` | Mini-documentary: letterbox, film grain, serif chapter cards, documentary subtitles, rolling credits |
 | `podcast` | Talk show / podcast: saturated set, ON AIR sign, voice-reactive waveform, giant karaoke captions |
 | `missao` | Open-world game homage: sunset neon world, in-world social clip, character intro freeze-frame, mission card, GPS route, stats screen, mission-complete banner, phone-chat CTA |
+| `tribunal` | Courtroom sketch: the speaker as expert witness on the court monitor, typed testimony captions, exhibits and stamps, a verdict, the jury is the viewer |
+| `keynote` | Ad · launch stage: presenter cutout in front of a giant LED screen, slides and stage objects per sentence, deadline close-up, "Learn more" slide |
+| `stories` | Ad · behind the scenes as a sequence of stories: progress bars, tap and cube swipe, hand-made stickers, "Learn more" link sticker |
+| `predio-24h` | Ad · isometric company model with a day/night cycle: floors light per department, server cutaway, 24 h orbit, second tower for the offer |
+| `bilheteria` | Ad · retro box office: numbered tickets, the clerk's arched window, a ticket ruler that gains golden extras, golden ticket, turnstile that lets the viewer in |
+| `porta-de-aco` | Ad · shop front at night: steel shutter descending at each turn, neon signs, "you take" window, closed shutter as the CTA |
+| `manual-de-montagem` | Ad · assembly manual on a blueprint: numbered parts that snap in, same parts in every project, assembly at the turn, kit box |
+| `carrinho` | Ad · forgotten cart in a shopping app: push notification, items fall into the cart, bonuses as gifts, checkout CTA |
+| `entrega` | Ad · order tracking: the timeline jumps to "delivered now", a box opens and items fly into the checklist |
+| `auditorio` | Ad · TV quiz show: each question is a round, A/B answers light green, scoreboard, velvet doors open for the CTA |
+| `album` | Ad · sticker album: every named item becomes a sticker on its word, collection tray, "missing one" CTA slot |
+| `cassino-de-precisao` | Authority · noir casino that flips into a precision bench at the turn; the expert as the croupier; engraved rule |
+| `mesa-de-risco` | Authority · trading desk on a crash day: the resource is an asset, replay, false-safety seal, circuit breaker, green strategy |
+| `turno-da-madrugada` | Authority · night-shift control room: main monitor, annunciator windows, process line, time-lapse to dawn, shift handover CTA |
 
 ## 2. Workflow (all modes)
 

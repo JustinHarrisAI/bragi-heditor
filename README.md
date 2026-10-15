@@ -54,6 +54,30 @@ O padrão de qualidade é alto: **cada vídeo ganha uma edição pensada para el
 | `documentario` | Minidocumentário: faixas de cinema, grão de filme, capítulos em serifa e créditos finais |
 | `podcast` | Talk show: cenário saturado, letreiro NO AR, onda sonora que reage à voz e legenda karaokê gigante |
 | `missao` | Homenagem a jogo de mundo aberto: pôr do sol neon, vídeo vertical num app do "jogo", apresentação do personagem em imagem congelada, cartão de missão, rota no GPS, tela de atributos, MISSÃO CUMPRIDA e CTA no celular. Nasceu do pedido "modo criativo no estilo GTA 6" |
+| `tribunal` | Sketch de tribunal: o especialista depõe por videoconferência, a legenda é o termo datilografado, provas com etiquetas e carimbos, sentença e o júri é você |
+
+Formatos de anúncio (tráfego pago, CTA "Saiba mais"):
+
+| Estilo | Identidade |
+|---|---|
+| `keynote` | Palco de lançamento: apresentador recortado diante de um telão de LED, um slide ou objeto de palco por frase, prazo em close e slide final com o botão |
+| `stories` | Bastidores em sequência de stories: barras de progresso, toque e troca em cubo, stickers feitos à mão e sticker de link |
+| `predio-24h` | Empresa em maquete isométrica com ciclo de dia e noite: andares acendem por área, sala de servidores, volta de 24 h e torre da oferta |
+| `bilheteria` | Bilheteria retrô: bilhetes numerados, guichê em arco, régua de bilhetes que ganha extras dourados, bilhete dourado e catraca que libera a entrada |
+| `porta-de-aco` | Fachada de loja à noite: porta de aço que desce a cada virada, neon, vitrine com o que você leva e porta fechada como CTA |
+| `manual-de-montagem` | Manual de montagem em planta técnica: peças numeradas que encaixam, as mesmas peças em todo projeto e o kit montado na virada |
+| `carrinho` | Carrinho esquecido num app de loja: notificação, itens caindo no carrinho, bônus como presentes e checkout |
+| `entrega` | Rastreio de pedido: a linha do tempo pula para "entregue agora", a caixa abre e os itens voam para o checklist |
+| `auditorio` | Quiz de programa de auditório: cada dúvida é uma rodada, a resposta certa acende, placar e portas de veludo no CTA |
+| `album` | Álbum de figurinhas: cada item citado vira figurinha colada na palavra, bandeja da coleção e "falta uma" no CTA |
+
+Formatos de autoridade (tom sério, o falante como especialista):
+
+| Estilo | Identidade |
+|---|---|
+| `cassino-de-precisao` | Cassino noir que vira bancada de precisão na virada; o especialista é o crupiê e a regra é gravada numa placa |
+| `mesa-de-risco` | Terminal de mercado em dia de crash: o recurso é um ativo, replay da ordem, selo de falsa segurança, disjuntor e estratégia em verde |
+| `turno-da-madrugada` | Sala de controle no turno da noite: monitor principal, painel anunciador, linha de processo, time-lapse até o amanhecer e passagem de turno |
 
 Detalhes de cada um em [`skills/heditor/references/styles/`](skills/heditor/references/styles/).
 
@@ -183,7 +207,7 @@ Issues e PRs são bem-vindos: novos estilos (com a ficha completa em `references
 
 **heditor** is an open Agent Skill (SKILL.md) that lets AI coding agents edit talking-head footage (classes, lives, podcasts) into vertical 1080×1920 Reels/Shorts/TikToks with motion graphics, word-synced captions, sound design and an emotional soundtrack.
 
-- **Eleven named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`, `missao` (open-world game homage).
+- **Twenty-five named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`, `missao` (open-world game homage), `tribunal` (courtroom sketch); paid-ad formats with a "Learn more" CTA: `keynote`, `stories`, `predio-24h`, `bilheteria`, `porta-de-aco`, `manual-de-montagem`, `carrinho`, `entrega`, `auditorio`, `album`; authority formats: `cassino-de-precisao`, `mesa-de-risco`, `turno-da-madrugada`.
 - **Creative mode:** the agent analyses the video, researches, invents a world for that specific speech and builds it with retention-focused motion and sound.
 - **Creative mode + reference:** e.g. "creative mode in the style of GTA 6". The agent researches the reference and builds a licence-safe homage.
 - **Pipeline:** word-timed ASR (faster-whisper), frame-accurate cuts, voice chain, HyperFrames (HTML + GSAP) composition, voice-first mix at −14 LUFS, and automatic QA (lint, vision-reviewed previews, tests, pixel safe-margin, loudness/true peak, ASR of the final mix, 40-frame contact sheet).

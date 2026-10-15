@@ -20,6 +20,7 @@ A cut is delivered only when all required gates pass (or a flagged item was insp
 ## Reading flags
 - **Freezes** (`freezedetect`, 0.3 s) are advisory. They fire on intentional holds (CTA built in steps, final card), planned blackouts and when the camera is small inside a UI and the speaker is still. Extract the flagged frames and confirm with vision; fail only if the picture is really stuck (a video that did not load, a broken scene).
 - **Top margin** by pixels also fires on full-width decorative transitions (stripe wipes, flashes). Check the flagged frames; real text/graphics above 270 px must be fixed.
+- **CTA test on paid ads**: `test_duration_and_cta` expects the brand handle and a Follow/Following card. An ad with a "Learn more" CTA fails it by design; record the expected failure and keep every other test green.
 - **True peak** after AAC: finalize re-limits automatically and records `tp_guard`; LUFS can end ~0.8 dB lower — acceptable.
 
 ## Final checklist for the delivery message
