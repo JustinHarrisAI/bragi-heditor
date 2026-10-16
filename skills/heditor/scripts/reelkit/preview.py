@@ -1,11 +1,14 @@
 """Fast frame previews of a composition (deterministic seek in headless Chromium).
 
 Usage: preview.py <sheet.jpg> <t1,t2,...> <work_dir>   -> PNG frames + a contact sheet in <work>/qa.
+The viewport follows the composition (data-width/data-height of #stage: 1080x1920 Reels, 1920x1080 long form,
+1080x1080, 1080x1350...); the sheet keeps the aspect and stays <= 1400 px wide for vision review.
 Env HEDITOR_CHROME: optional browser executable; default is Playwright's Chromium.
 """
 
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -30,8 +33,16 @@ SEEK = """async (t) => {
 }"""
 
 
+def stage_size(index_html):
+    """Canvas of a composition from its root element (defaults to the 9:16 Reel canvas)."""
+    head = Path(index_html).read_text()[:200000]
+    m = re.search(r'id="stage"[^>]*?data-width="(\d+)"[^>]*?data-height="(\d+)"', head)
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 1920)
+
+
 def main(times, out_name):
     qa = WORK / "qa"
+    width, height = stage_size(WORK / "composition/index.html")
     qa.mkdir(exist_ok=True)
     errors = []
     shots = []
@@ -41,7 +52,7 @@ def main(times, out_name):
             headless=True,
             args=["--no-sandbox", "--allow-file-access-from-files", "--autoplay-policy=no-user-gesture-required"],
         )
-        page = browser.new_page(viewport={"width": 1080, "height": 1920}, device_scale_factor=1)
+        page = browser.new_page(viewport={"width": width, "height": height}, device_scale_factor=1)
         page.on("pageerror", lambda err: errors.append(str(err)))
         page.on("console", lambda m: errors.append("console:" + m.text) if m.type == "error" else None)
         page.goto((WORK / "composition/index.html").as_uri())
@@ -54,7 +65,8 @@ def main(times, out_name):
             shots.append(path)
         browser.close()
     cols = 6
-    w, h = 270, 480
+    w = 270 if height > width else 224
+    h = round(w * height / width)
     rows = (len(shots) + cols - 1) // cols
     sheet = Image.new("RGB", (cols * w, rows * h), "black")
     for i, path in enumerate(shots):

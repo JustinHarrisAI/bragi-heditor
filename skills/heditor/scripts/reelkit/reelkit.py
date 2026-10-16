@@ -52,7 +52,9 @@ def load_audio_16k(path, start=None, duration=None):
 
 
 def load_brand(work=None):
-    """Brand settings: <work>/brand.json overrides HEDITOR_HOME/brand.json overrides defaults."""
+    """Brand settings: <work>/brand.json overrides HEDITOR_HOME/brand.json overrides defaults.
+
+    Long-form CTA words (subscribe, subscribed, watch_next) default to the brand language when absent."""
     brand = json.loads(json.dumps(DEFAULT_BRAND))
     for path in [HOME / "brand.json"] + ([Path(work) / "brand.json"] if work else []):
         if path.exists():
@@ -60,7 +62,16 @@ def load_brand(work=None):
             colors = data.pop("colors", {})
             brand.update(data)
             brand["colors"].update(colors)
+    for key, value in LONG_CTA_WORDS.get(brand.get("lang", "en"), LONG_CTA_WORDS["en"]).items():
+        brand.setdefault(key, value)
     return brand
+
+
+LONG_CTA_WORDS = {
+    "pt": {"subscribe": "Inscrever-se", "subscribed": "Inscrito", "watch_next": "Assista o próximo"},
+    "en": {"subscribe": "Subscribe", "subscribed": "Subscribed", "watch_next": "Watch next"},
+    "es": {"subscribe": "Suscribirse", "subscribed": "Suscrito", "watch_next": "Mira el siguiente"},
+}
 
 
 def load_words(path, censor=None):
@@ -353,7 +364,11 @@ def rig_states(card_w, card_h, hero_y=500, top_scale=0.5, top_y=SAFE_TOP + 10):
 
 
 def page(*, title, duration, card_w, card_h, face_origin, videos, scenes_html, css, js, keys, caps,
-         world_back="", overlays="", caption_mode="text", brand_work=None):
+         world_back="", overlays="", caption_mode="text", brand_work=None, fmt=None):
+    """Reel page skeleton. `fmt` (formats key, default 9:16) only changes the canvas size: the Reel layout
+    (caption band, rig states) is vertical; long-form/horizontal compositions use longkit."""
+    import formats
+    canvas = formats.get(fmt)
     brand = load_brand(brand_work)
     c = brand["colors"]
     conf_colors = [c["accent"], c["accent2"], "#ffffff", "#ff5fa2", c["ok"]]
@@ -367,11 +382,12 @@ def page(*, title, duration, card_w, card_h, face_origin, videos, scenes_html, c
         f'style="width:{card_w}px;height:{card_h}px" muted playsinline></video>'
         for v in videos)
     root = ":root{" + "".join(f"--{k}:{v};" for k, v in c.items()) + "}"
-    extra_css = (root + f"#rig,#rig-aura{{width:{card_w}px;height:{card_h}px}}"
+    size_css = "" if canvas.key == "9:16" else f"html,body,#stage{{width:{canvas.width}px;height:{canvas.height}px}}"
+    extra_css = (root + size_css + f"#rig,#rig-aura{{width:{card_w}px;height:{card_h}px}}"
                  f"#cam-zoom,#cam-breath,#cam-jump{{transform-origin:{face_origin}}}")
     return f"""<!doctype html><html lang="{brand.get('lang', 'pt')}"><head><meta charset="utf-8"><title>{html.escape(title)}</title>
 <script src="assets/gsap.min.js"></script><style>{BASE_CSS}{extra_css}{css}</style></head><body>
-<main id="stage" data-composition-id="main" data-start="0" data-duration="{duration:.4f}" data-width="1080" data-height="1920" data-fps="30">
+<main id="stage" data-composition-id="main" data-start="0" data-duration="{duration:.4f}" data-width="{canvas.width}" data-height="{canvas.height}" data-fps="30">
 <div id="world">
 <div id="bg"></div>{world_back}<div class="glow" id="glow-a"></div><div class="glow" id="glow-b"></div>
 <div class="floor" id="floor-a"></div><div id="horizon"></div>{speed}

@@ -16,6 +16,10 @@ Dead air is removed in two places, because both read as "the editor forgot to cu
   never the whole snapping radius on both sides (the v1 failure: 0.8-1.3 s gaps at every junction).
 Pass lead=None / tail=None to keep the old snap-only behaviour. `heditor gaps <work>` lists what is left.
 Outputs: composition/assets/camera-src.mp4, voice-raw.wav and edl.json.
+
+Format profiles: `fmt` (default "9:16") is recorded in edl.json; crop="fit:<fmt>" (e.g. "fit:9:16", "fit:1:1")
+computes a centred crop of the source that fills that profile's aspect (formats.crop_for). For screen-share
+recordings and long videos use `heditor long` instead (references/long-form.md).
 """
 
 import json
@@ -66,8 +70,15 @@ def _voiced_span(quiet, min_run=4):
 
 
 def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.35, edge=0.12, tail_fade=0.04,
-                lead=0.08, tail=0.12):
+                lead=0.08, tail=0.12, fmt=None):
     source, work = Path(source), Path(work)
+    if crop and str(crop).startswith("fit:"):
+        import formats
+        size = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=width,height",
+                               "-of", "csv=p=0", str(source)], capture_output=True, text=True, check=True).stdout.strip()
+        sw, sh = map(int, size.split(",")[:2])
+        fmt = fmt or crop[4:]
+        crop = formats.crop_for(sw, sh, crop[4:])
     assets = work / "composition/assets"
     assets.mkdir(parents=True, exist_ok=True)
     (work / "clips").mkdir(exist_ok=True)
@@ -156,7 +167,7 @@ def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.35, edge=0.12, t
         w.setsampwidth(2)
         w.setframerate(SR)
         w.writeframes((v * 32767).astype("<i2").tobytes())
-    edl = {"source": str(source), "fps": fps, "crop": crop, "speed": 1.0, "voice_duration": len(v) / SR,
+    edl = {"source": str(source), "format": fmt or "9:16", "fps": fps, "crop": crop, "speed": 1.0, "voice_duration": len(v) / SR,
            "noise_floor_dbfs": round(floor, 1), "silence_threshold_dbfs": round(thr, 1), "min_pause_s": min_pause,
            "pause_edge_s": edge, "lead_s": lead, "tail_s": tail,
            "chunks": chunks, "silence_trims": trims, "removed_seconds": sum(x["removed_s"] for x in trims)}

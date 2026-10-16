@@ -3,7 +3,9 @@
 Usage: finalize.py <work_dir> <final_name.mp4> <t1,t2,...|auto>
 Writes <work>/render/<final_name>, <work>/qa/final-verification.json and qa/final-contact-sheet.jpg.
 Checks: full decode, EBU R128 loudness and true peak (after AAC), audio correlation with master.wav,
-freeze detection (advisory), top safe-margin by pixels, 40-frame contact sheet.
+freeze detection (advisory), top safe-margin by pixels, 40-frame contact sheet. The canvas, the safe top row and
+the sheet cells follow the cut's format profile (plan.json "format", default 9:16). Long-form videos rendered in
+segments use `heditor long finalize` instead.
 """
 
 import hashlib
@@ -20,9 +22,11 @@ WORK, NAME = Path(sys.argv[1]).resolve(), sys.argv[2]
 TIMES = None if sys.argv[3] == "auto" else [float(t) for t in sys.argv[3].split(",")]
 SR = 48000
 sys.path.insert(0, str(Path(__file__).parent))
+import formats as fm  # noqa: E402
 import reelkit as rk  # noqa: E402
 BRAND = rk.load_brand(Path(sys.argv[1]))["name"]
-SAFE_TOP = 270
+FMT = fm.of_work(WORK)
+SAFE_TOP = FMT.safe_top  # 270 for 9:16 Reels
 
 
 def top_margin(video, duration, step=0.5):
@@ -31,9 +35,9 @@ def top_margin(video, duration, step=0.5):
     for t in np.arange(0.05, max(0.1, duration - 0.05), step):
         raw = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{t:.2f}", "-i", str(video), "-frames:v", "1", "-f", "rawvideo",
                               "-pix_fmt", "gray", "-"], capture_output=True).stdout
-        if len(raw) != 1920 * 1080:
+        if len(raw) != FMT.width * FMT.height:
             continue
-        g = np.frombuffer(raw, np.uint8).reshape(1920, 1080)
+        g = np.frombuffer(raw, np.uint8).reshape(FMT.height, FMT.width)
         rows = np.where((g > 150).sum(axis=1) > 8)[0]
         if len(rows):
             worst = min(worst, int(rows.min()))
@@ -114,7 +118,8 @@ def main():
         p = frames_dir / f"f-{t:06.2f}.png"
         run(["ffmpeg", "-v", "error", "-y", "-ss", f"{t}", "-i", str(final), "-frames:v", "1", str(p)])
         shots.append(p)
-    cols, w_, h_ = 6, 270, 480
+    cols = 6
+    w_, h_ = FMT.thumb(width=270 if FMT.vertical else 224)
     sheet = Image.new("RGB", (cols * w_, ((len(shots) + cols - 1) // cols) * h_))
     for i, p in enumerate(shots):
         sheet.paste(Image.open(p).convert("RGB").resize((w_, h_)), ((i % cols) * w_, (i // cols) * h_))
@@ -124,7 +129,7 @@ def main():
         "file": str(final), "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest(), "md5": hashlib.md5(data).hexdigest(),
         "decode_errors": decode.stderr.strip()[:500], "probe": probe, "lufs_i": grab("I:"), "lra": grab("LRA:"),
         "true_peak_dbfs": grab("Peak:"), "audio_master_corr": corr, "samples": n,
-        "expected_duration": plan["duration"], "tp_guard": tp_guard, "freezes": freezes, "top_margin_first_bright_row": top_margin(final, plan["duration"]), "contact_frames": len(times), "balance": json.loads((WORK / "qa/balance.json").read_text()),
+        "expected_duration": plan["duration"], "tp_guard": tp_guard, "freezes": freezes, "top_margin_first_bright_row": top_margin(final, plan["duration"]), "safe_top": SAFE_TOP, "format": FMT.key, "contact_frames": len(times), "balance": json.loads((WORK / "qa/balance.json").read_text()),
     }
     (WORK / "qa/final-verification.json").write_text(json.dumps(result, ensure_ascii=False, indent=2))
     print(json.dumps({k: v for k, v in result.items() if k not in ("probe",)}, ensure_ascii=False, indent=1))

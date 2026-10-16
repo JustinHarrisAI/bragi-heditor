@@ -1,4 +1,9 @@
-"""Integrity tests for any heditor cut. Usage: CUT_WORK=<work_dir> pytest -q test_cut.py"""
+"""Integrity tests for any heditor cut. Usage: CUT_WORK=<work_dir> pytest -q test_cut.py
+
+Reels (plan without "mode") keep the historical rules. Long-form plans ("mode": "long", `heditor long produce`)
+use the same tests with long-form limits: no 180 s cap, the CTA follows plan["cta"]["kind"] (follow or youtube),
+captions may be off (burn: false), the voice starts at plan["voice_offset"] and pauses up to 0.6 s are accepted.
+"""
 
 import json
 import os
@@ -16,9 +21,13 @@ HTML = (WORK / "composition/index.html").read_text()
 _words = WORK / "words-reviewed.json" if (WORK / "words-reviewed.json").exists() else WORK / "words.json"
 SOURCE = json.loads(_words.read_text())
 SOURCE = SOURCE if isinstance(SOURCE, list) else SOURCE["words"]
+LONG = PLAN.get("mode") == "long"
+OFF = float(PLAN.get("voice_offset", 0.0))
 
 
 def test_caption_tokens_match_source_once():
+    if LONG and not PLAN["captions"]:
+        return  # burned captions turned off (subtitles exported as SRT/VTT)
     out = Counter((w["word"].strip(), round(w["start"], 3)) for c in PLAN["captions"] for w in c["words"])
     src = Counter((w["word"].strip(), round(float(w["start"]), 3)) for w in SOURCE)
     assert out == src
@@ -26,6 +35,9 @@ def test_caption_tokens_match_source_once():
 
 def test_captions_ordered_without_overlap():
     caps = PLAN["captions"]
+    if not caps:
+        assert LONG, "a Reel must have captions"
+        return
     for a, b in zip(caps, caps[1:]):
         assert a["start"] < a["end"] <= b["start"] + 1e-6
     assert caps[-1]["end"] <= PLAN["voice_end"] + 1e-6
@@ -37,6 +49,16 @@ MAX_DURATION = float(PLAN.get("max_duration") or os.environ.get("HEDITOR_MAX_DUR
 
 
 def test_duration_and_cta():
+    if LONG:
+        cta = PLAN.get("cta", {})
+        assert abs(PLAN["duration"] - (PLAN["voice_end"] + cta.get("duration", 0))) < 0.01
+        assert PLAN["duration"] - PLAN["voice_end"] >= 4.0
+        assert BRAND["handle"] in HTML, "CTA must show the brand handle"
+        if cta.get("kind") == "youtube":
+            assert BRAND["subscribe"] in HTML and BRAND["subscribed"] in HTML, "YouTube CTA: Subscribe -> Subscribed"
+        else:
+            assert BRAND["follow"] in HTML and BRAND["following"] in HTML, "CTA must show the Follow -> Following state"
+        return
     assert MAX_DURATION <= 180, "Instagram Reels are limited to 180 s"
     assert PLAN["duration"] <= MAX_DURATION, f"{PLAN['duration']:.2f} s > max_duration {MAX_DURATION:.0f} s"
     assert PLAN["duration"] - PLAN["voice_end"] >= 4.0
@@ -51,7 +73,8 @@ def test_sound_events_inside_timeline():
 
 def test_key_moments_in_speech_order():
     k = PLAN["keys"]
-    times = [v for key, v in k.items() if isinstance(v, (int, float)) and key not in ("voice_end", "duration", "max_duration", "seed", "brk")]
+    skip = ("voice_end", "duration", "max_duration", "seed", "brk", "voice_offset", "voice_duration")
+    times = [v for key, v in k.items() if isinstance(v, (int, float)) and key not in skip]
     assert all(0 <= t <= PLAN["voice_end"] for t in times)
 
 
@@ -81,7 +104,7 @@ def test_numbers_only_from_speech():
 def test_no_dead_air():
     """Uncut pauses read as sloppy editing: no silence inside the speech may exceed 0.45 s (heditor gaps)."""
     from gaps import find_gaps
-    long = [g for g in find_gaps(WORK) if g["dur"] > PLAN.get("max_gap_s", 0.45)]
+    long = [g for g in find_gaps(WORK) if g["dur"] > PLAN.get("max_gap_s", 0.6 if LONG else 0.45)]
     assert not long, [(round(g["start"], 2), g["dur"], g["before"], g["after"]) for g in long]
 
 
@@ -94,5 +117,5 @@ def test_normalized_voice_matches_cut_duration():
     for name in ("voice-raw.wav", "voice-master.wav"):
         with wave.open(str(assets / name)) as audio:
             durations[name] = audio.getnframes() / audio.getframerate()
-    assert abs(durations["voice-raw.wav"] - PLAN["voice_end"]) < 0.01
+    assert abs(durations["voice-raw.wav"] - (PLAN["voice_end"] - OFF)) < 0.01
     assert abs(durations["voice-master.wav"] - durations["voice-raw.wav"]) < 0.01, durations
