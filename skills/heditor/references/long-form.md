@@ -63,11 +63,17 @@ Commands assume `. ~/.heditor/env.sh`. `<work>` is one folder per long edit.
    `qa/edl-proposal.md`. Cut kinds:
    - `pause`: silences (10 ms energy below noise floor + 12 dB) longer than `max_pause` (0.55 s) shortened to
      `keep_pause` (0.30 s; `sentence_pause` 0.42 s after a sentence end). Energy decides, never the ASR timing,
-     so a word cannot be cut; if the ASR places a word inside the silence the cut is proposed with `apply: false`.
+     so a word cannot be cut; ASR timings that spill into a silence are ignored, and only a word with no voiced
+     audio outside the cut (a soft word below the threshold or a hallucination) leaves the cut with `apply: false`.
    - `repeat`: an n-gram (1-4 words) immediately repeated ("a gente a gente") → the first copy goes. Emphatic
      doubles ("muito muito") without hesitation are kept.
-   - `false_start`: an abandoned fragment followed by a pause and a restart with the same first word(s).
-   - `filler`: isolated "ãh/hum/uh/eh…" with a pause on one side.
+   - `false_start`: an abandoned fragment followed by a pause and a restart with the same first words (applied
+     when ≥ 2 words match or the ASR marks the fragment as cut off; a single repeated content word, as in
+     "aplicativos, mobile, aplicativos para celular", is an elaboration and is kept).
+   - `filler`: isolated "ãh/hum/uh/eh…" with a pause on one side (per language: "um" is an English filler,
+     never a Portuguese one).
+   - `edge`: the silence at the range edges and around manual exclusions is trimmed to 0.12 s before the next
+     word and 0.18 s after the last one.
    Word-level cuts start and end at the quietest 10 ms window of the word gaps; gaps shorter than 35 ms
    (coarticulated speech) are proposed with `apply: false` and low confidence. **Review before applying**: flip
    `apply`, and add whole passages to remove (chat questions with names, private data, off-topic, technical
@@ -274,8 +280,9 @@ peak after AAC.
 ### Measured cost
 
 Reference run (shared 4-CPU / 7 GB VPS with another production running, 2 render workers): a 4 min 24 s
-16:9 edit (7913 frames, 7 segments, documentario pack, 5 set pieces) rendered in 33 min of render time, about
-**0.25 s per frame ≈ 7.5 min per minute of video** (the CTA-only segment: 0.12 s/frame). ASR with `small` ran at
+16:9 edit (7913 frames, 7 segments, documentario pack, 5 set pieces) rendered in 31-33 min of render time,
+about **0.24-0.25 s per frame ≈ 7-7.5 min per minute of video** (the CTA-only segment: 0.12-0.15 s/frame); an
+unchanged re-render is skipped in about a second. ASR with `small` ran at
 0.6-1.1× real time on 3 threads; `apply` cut 4.7 min of source in 2 min; `produce` took 40-75 s (6 min on the
 first run: graded camera and segment media). Plan ~8 h of render per hour of 1080p video on such a machine, or
 render overnight in segments; `heditor long estimate` uses your own measurements.
