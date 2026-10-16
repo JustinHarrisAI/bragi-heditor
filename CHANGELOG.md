@@ -1,22 +1,38 @@
 # Changelog
 
-## Unreleased
-- Long-form set pieces keep the speaker visible: checklists dim only the screen (world-level dim under the camera) and the full-screen concept map uses an opaque background instead of leaving a dark ghost of the camera.
+## 2.0.0 — 2026-10-16
+
+Long-form and multi-format editing, style packs for every named style, Reels up to 180 s and a new narrated-documentary style. Existing 9:16 projects build and render as before.
+
+### Long-form mode
 - **Long-form mode** (classes, lives, YouTube videos; minutes to hours) — `heditor new --long` and `heditor long transcribe | edl | apply | chapters | layouts | produce | preview | render | finalize | qa | subs | sync | estimate | styles`, documented in `references/long-form.md`:
   - chunked, resumable ASR with boundaries in silences and a progress/ETA log;
   - reviewable EDL proposal (`edl-proposal.json` + `qa/edl-proposal.md`): dead pauses shortened by energy (never by ASR timing), immediate repetitions, false starts and per-language fillers removed at the quietest point of word gaps, low-confidence cuts left for review, manual `exclude` ranges with their surrounding silence trimmed; `apply` assembles screen, camera and voice in single passes on the source frame grid (frame counts checked) and remaps the words without a second ASR (spelling fixes carried by source time; `--words-only`);
   - layouts for screen share + camera (`pip`, `screen` with zoom, `speaker`, `side`) switched per passage, with suggestions from screen activity; chapters (suggestion, YouTube rules, cards, current-chapter tag, description timestamps); burned captions fitted with the real fonts and SRT/VTT export; lower thirds; intro card; closing CTA `follow` (Follow → Following) or `youtube` (Subscribe → Subscribed + "Watch next" slots);
-  - style packs (`stylepacks.py`) for all 35 named styles (palette, typography, captions with tested active-word contrast, frame, overlays, transition, chapter card, lower third, camera grade, SFX, music) with vertical → horizontal adaptation rules; creative set pieces (`title`, `concept_map`, `checklist`, `callout`, `custom`) and an automatic retention plan at the cadence of each kind (aula, live, youtube);
+  - style packs (`stylepacks.py`) for all 36 named styles (palette, typography, captions with tested active-word contrast, frame, overlays, transition, chapter card, lower third, camera grade, SFX, music) with vertical → horizontal adaptation rules; creative set pieces (`title`, `concept_map`, `checklist`, `callout`, `custom`) and an automatic retention plan at the cadence of each kind (aula, live, youtube);
   - segmented, resumable render: one HyperFrames composition per segment (chapter-aware, ≤ 60 s, frame-exact) that plays the global timeline from its start, skipped when unchanged, render log with seconds per frame and ETA, optional per-segment heavy-job lock (`HEDITOR_LOCK`); concat without re-encoding and one continuous master audio muxed at the end;
   - memory-bounded voice-first mixer for long timelines (`longmix.py`, same balance targets, loudness from `long.json`);
   - long-form QA report (`longqa.py`): duration/canvas, decode, loudness (−14 LUFS default), audio/master correlation, camera/screen/voice sync against the source, sampled-window ASR, chapters, segment seams (black or duplicated frames), contact sheets ≤ 1400 px.
-- **Format profiles** (`scripts/reelkit/formats.py`, `heditor formats`): 9:16 (unchanged Reel numbers), 16:9, 16:9 4K, 1:1, 4:5 with canvas, safe area, caption zone, lower third and camera layouts. Used by `preview` (viewport from the composition), `finalize` (safe top row and sheet aspect per profile), `prepare_cut` (`crop="fit:<fmt>"`, `format` in `edl.json`), `rk.page(fmt=...)` and `heditor test`. Existing 9:16 projects behave as before.
-- `camera_sync_check.py --source` (also `heditor long sync`): camera, screen and voice compared with the original recording through the EDL; module docstring and messages in English.
 - `heditor test` understands long-form plans (`mode: "long"`): CTA by `cta.kind`, intro offset, optional captions, pauses up to 0.6 s, no 180 s cap.
+- `camera_sync_check.py --source` (also `heditor long sync`): camera, screen and voice compared with the original recording through the EDL; module docstring and messages in English.
 - `rk.load_brand` fills `subscribe`, `subscribed` and `watch_next` from the brand language when absent.
+
+### Format profiles and style packs
+- **Format profiles** (`scripts/reelkit/formats.py`, `heditor formats`): 9:16 (unchanged Reel numbers), 16:9, 16:9 4K, 1:1, 4:5 with canvas, safe area, caption zone, lower third and camera layouts. Used by `preview` (viewport from the composition), `finalize` (safe top row and sheet aspect per profile), `prepare_cut` (`crop="fit:<fmt>"`, `format` in `edl.json`), `rk.page(fmt=...)` and `heditor test`. Existing 9:16 projects behave as before.
+- **Style packs** for the 36 named styles: `stylepacks.py` (`sp.get`, `sp.css_vars`, `heditor long styles`), the vertical → horizontal adaptation table in `references/long-form.md`, and `adding-styles.md` now asks every new style for its pack (`test_formats.py` fails when a style file has no pack).
+
+### Longer Reels
+- `heditor test` accepts longer Reels (narrated documentaries, stories of ~90 s): `plan["max_duration"]` (or `HEDITOR_MAX_DURATION`) raises the default 70 s limit up to 180 s, the Instagram Reels maximum.
+
+### New style: `documentario-narrado` (alias atlas)
+- Large-scale narrated documentary: the speaker's voice is the narration and a living night globe is the spine (Natural Earth, public domain, orthographic canvas with a virtual camera flight, lights that switch on with acceleration and land on the spoken number, great-circle routes fired on each repetition of the verb, world-scale payoff); generated period paintings in one constant style with 2.5D parallax; dated cards with a music-only hard silence → low impact → reveal → amber flash; the narrator as a film-graded testimony plate, a gold medallion on the map or voice-over; documentary notes with verified, sourced facts; a music tree in sections (era radio, filtered, full with the lift on the climax word, synthesized drone, silences, one trailer hit); "next chapter" loop back to the first globe shot. Full recipe, render cost and production pitfalls in `references/styles/documentario-narrado.md`; row in INDEX, SKILL, README, creative-mode, the style pack and the long-form table.
+- depthkit: `dk.still_layers(src, out_dir)` splits a still (a generated painting, a photo) into a background and a soft RGBA front layer for 2.5D parallax; `dk.front_alpha` is the tested pure helper.
+- troubleshooting.md: generated images in another aspect ratio, pseudo-text in generated paintings, animated `letterSpacing` lint error, vision timeouts on large sheets, music-only dramatic silences, documentary fact notes and the numbers test, canvas worlds that slow the render. quality-gates.md: a gate for unspoken facts on screen; cards listed among expected freeze flags.
+
+### Fixes and tooling
+- Long-form set pieces keep the speaker visible: checklists dim only the screen (world-level dim under the camera) and the full-screen concept map uses an opaque background instead of leaving a dark ghost of the camera.
 - The `heditor` CLI exports `HEDITOR_KIT`/`HEDITOR_SKILL` pointing at its own checkout, so a second checkout never imports another checkout's kit through `env.sh`.
-- New tests: `test_formats.py` (profiles, layouts, style packs) and `test_longform.py` (EDL, chapters, captions, segments, page windows, concatenation, audio/video assembly); CI runs them.
-- `heditor test` accepts long-form cuts: `plan["max_duration"]` (or `HEDITOR_MAX_DURATION`) raises the default 70 s limit up to 180 s, the Instagram Reels maximum.
+- New tests: `test_formats.py` (profiles, layouts, style packs) and `test_longform.py` (EDL, chapters, captions, segments, page windows, concatenation, audio/video assembly); CI runs them; `test_depthkit.py` gains a test for `front_alpha`.
 
 ## 1.6.1 — 2026-10-15
 - `lousa-de-aula` approved after its first production and marked as a reusable style for technical explanations.

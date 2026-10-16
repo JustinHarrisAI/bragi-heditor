@@ -49,3 +49,13 @@ def test_to_stage_cover_fit():
 
 def test_hex():
     assert dk._hex("#b46cff") == (180, 108, 255)
+
+
+def test_front_alpha_keeps_near_planes_softly():
+    depth = np.tile(np.linspace(0.0, 10.0, 101, dtype=np.float32), (4, 1))   # far (left) → near (right)
+    a = dk.front_alpha(depth, cut=0.5, soft=0.2, blur=0)
+    assert a.shape == depth.shape and a.min() == 0.0 and a.max() == 1.0
+    assert a[0, 10] == 0.0 and a[0, 95] == 1.0                              # far stays out, near is kept
+    row = a[0]
+    ramp = row[(row > 0) & (row < 1)]
+    assert len(ramp) >= 10 and np.all(np.diff(row) >= -1e-6)               # a soft monotonic ramp, no hard cut

@@ -162,6 +162,7 @@ fonts, card kind, transition) designed for that video, plus custom set pieces.
 | `chat` | organic | Inter, `#111111` on `#ffe066` | app / tag / slide | Light theme around the screen share; one bubble per sentence; pinned-message chapter cards; bot replies as set pieces. |
 | `cinema` | organic | Anton, `#f5c66b` text | slate / bar / slide | Gold-bordered camera card survives as PiP/side; one world change per chapter (card in a shifted palette); object-with-action set pieces only on the hook, central concepts and turns. |
 | `documentario` | organic | Fraunces, `#f6efe1` text, underlined | serif / plate / fade | Made for long form: letterbox in speaker layout, intro and cards; serif chapter cards; serif subtitles with an underlined active word; archive grain; rolling credits as the close. |
+| `documentario-narrado` | organic | Inter, `#0b0906` on `#f2cf60` | serif / plate / flash | Long-form history documentaries: the night globe bridges the chapters (camera flight, lights and routes on the words), dated cards after a music-only silence → impact → amber flash, film-graded testimony plate on key lines, medallion over the map, voice-over over generated paintings in parallax; next-chapter loop at the close. |
 | `game` | organic | VT323, `#0b0b23` on `#ffd84d` | hud / hud / wipe | Chapters are STAGES, concepts unlock skills/items, CONTINUE? closing card; dialog-box captions as a bottom box; pixel camera only inside set pieces. |
 | `ide` | organic | JetBrains Mono, `#ffffff` on `#264f78` | terminal / terminal / cut | Best fit for programming classes: the real screen share is the editor, circular webcam bubble, code-comment captions, chapters as file tabs; set pieces: terminal run, diff, test going green. |
 | `impacto` | organic | Geist, `#edc580` text | slate / plate / slide | Board of argument cards becomes a side-layout column; coordinated bursts (type + sound + punch-in) on 2-3 lines per chapter. |
@@ -204,6 +205,9 @@ Notes on the most used packs:
   piece + punch-in callout on the key line.
 - **documentario**: the most natural long form; use `music_bed` sparingly (filtered piano under reflective
   stretches), letterbox only in speaker layout and cards so screen content is never hidden.
+- **documentario-narrado**: chapters are dated cards; keep the globe and the paintings in `custom` set pieces at
+  the chapter openings and the turns, the body in speaker/side layout with the film-graded plate; one hard
+  music silence per card, not per sentence; recipe in `styles/documentario-narrado.md`.
 - **lousa-de-aula**: the slate frames the screen share; concept maps are drawn on the trigger words (±0.15 s,
   recipe in `troubleshooting.md`); a `checklist` SUMMARY closes each chapter.
 - **ide**: circular camera, code-comment captions; chapters open like files; callouts zoom into the code.

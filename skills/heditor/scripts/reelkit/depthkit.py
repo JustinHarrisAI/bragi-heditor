@@ -9,6 +9,7 @@ objects that pass between the speaker and the wall, and labels pinned to things 
     dk.depth_map(work)                       # depth.mp4 (near = white) + depth-still.png
     dk.plane_matrix3d(900, 300, quad)        # CSS matrix3d that pins a 900x300 element onto 4 points
     dk.track_points(work, 2.0, [(410, 620)]) # follows points in the camera video (labels pinned to objects)
+    dk.still_layers("gen/scene.png", assets)  # background + soft front layer of a still for 2.5D parallax
 
 Models (downloaded by setup / fetch_assets, or on first use):
 - MediaPipe selfie multiclass segmenter 256x256 (Apache-2.0) for the person matte;
@@ -253,6 +254,54 @@ def depth_look(work, name, vf_bg, vf_depth="", video="camera-hd.mp4", depth="dep
                     "-map", "[v]", "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-an", str(dst)],
                    check=True, timeout=1800)
     return dst.name
+
+
+# ---------------------------------------------------------------- stills (2.5D parallax)
+
+def front_alpha(depth, cut=0.52, soft=0.2, blur=6.0):
+    """Soft alpha of the near planes of a relative depth map (any range; near = high).
+    The depth is normalised by its 2nd/98th percentiles, `cut` is where the front starts, `soft` the width of
+    the ramp and `blur` (sigma in px, 0 = none) softens the edge so the front never looks cut out."""
+    d = np.asarray(depth, np.float32)
+    lo, hi = np.percentile(d, [2, 98])
+    g = np.clip((d - lo) / max(float(hi - lo), 1e-6), 0, 1)
+    a = np.clip((g - cut) / max(soft, 1e-6), 0, 1)
+    if blur:
+        import cv2
+        a = cv2.GaussianBlur(a, (0, 0), blur)
+    return a
+
+
+def still_layers(src, out_dir, cut=0.52, soft=0.2, blur=6.0, size=518, quality=88):
+    """Background + soft front layer of a still image for 2.5D parallax (Ken Burns with the front moving more).
+    Writes <out_dir>/<stem>.jpg (background), <stem>-front.webp (RGBA, near planes only) and <stem>-depth.png
+    (relative depth, near = white). Depth Anything V2 Small, CPU. Skips the work when the outputs are newer."""
+    import cv2
+    import onnxruntime as ort
+    from PIL import Image
+
+    src, out_dir = Path(src), Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    back, front, dpng = out_dir / f"{src.stem}.jpg", out_dir / f"{src.stem}-front.webp", out_dir / f"{src.stem}-depth.png"
+    if not _stale(front, src) and not _stale(back, src):
+        return back.name, front.name
+    im = Image.open(src).convert("RGB")
+    im.save(back, quality=90)
+    rgb = np.asarray(im)
+    h, w = rgb.shape[:2]
+    sess = ort.InferenceSession(str(_model(*DEPTH_MODEL)), providers=["CPUExecutionProvider"])
+    sh = round(size * h / w / 14) * 14 if h > w else size
+    sw = size if h > w else round(size * w / h / 14) * 14
+    mean, std = np.array([0.485, 0.456, 0.406], np.float32), np.array([0.229, 0.224, 0.225], np.float32)
+    x = cv2.resize(rgb, (sw, sh), interpolation=cv2.INTER_AREA).astype(np.float32) / 255
+    x = ((x - mean) / std).transpose(2, 0, 1)[None]
+    d = sess.run(None, {sess.get_inputs()[0].name: x})[0][0]
+    d = cv2.resize(d, (w, h), interpolation=cv2.INTER_CUBIC)
+    lo, hi = np.percentile(d, [2, 98])
+    cv2.imwrite(str(dpng), (np.clip((d - lo) / max(float(hi - lo), 1e-6), 0, 1) * 255).astype(np.uint8))
+    a = front_alpha(d, cut, soft, blur)
+    Image.fromarray(np.dstack([rgb, (a * 255).astype(np.uint8)]), "RGBA").save(front, quality=quality, method=5)
+    return back.name, front.name
 
 
 # ---------------------------------------------------------------- planes and tracking

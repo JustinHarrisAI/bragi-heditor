@@ -223,6 +223,37 @@ STYLES = {
                       "speaker. Screen shares enter as archive footage (grain, slight vignette). Rolling credits as "
                       "the closing card.",
     },
+    "documentario-narrado": {
+        "name": "Documentário narrado (atlas)", "family": "organic",
+        "palette": {"bg": "#041117", "bg2": "#0c3039", "surface": "#08303b", "text": "#f3ead7", "muted": "#cfc4ad",
+                    "accent": "#f2cf60", "accent2": "#ca995c", "alert": "#952e2f", "ok": "#76ba65"},
+        "fonts": {"display": "DM Serif Display", "caption": "Inter", "body": "Inter", "serif": "DM Serif Display"},
+        "captions": {"weight": 600, "box": None, "stroke": None, "fg": "#f3ead7", "active_fg": "#0b0906",
+                     "active_bg": "#f2cf60", "scale": 1.05},
+        "frame": {"border": "3px solid #ca995c", "camera_radius": 0, "screen_radius": 4,
+                  "shadow": "0 0 0 1px rgba(0,0,0,.6), 0 24px 60px rgba(0,0,0,.7)",
+                  "world": "radial-gradient(ellipse 85% 75% at 50% 45%,#0a2129 0%,#041117 62%,#020709 100%)"},
+        "overlay": {"grain": 0.1, "letterbox": False, "vignette": 0.35},
+        "transition": {"kind": "flash", "dur": 0.45, "ease": "power2.out"},
+        "chapter_card": "serif", "lower_third": "plate",
+        "camera_grade": "eq=saturation=0.80:contrast=1.08:brightness=0.01,"
+                        "colorbalance=rs=.05:gs=.01:bs=-.06:rm=.04:bm=-.05,noise=alls=7:allf=t",
+        "sfx": {"chapter": "bass_impact", "callout": "swipe", "lower_third": "page_turn", "set_piece": "sub_drop",
+                "transition": "ocean_wave_whoosh", "intro": "bass_impact"},
+        "font_note": "Cinzel 700 (years, chapter cards), Cormorant Garamond Italic 600 (card titles, questions) and "
+                     "Barlow Condensed 600/800 (captions, map labels, fact notes), all OFL, for full fidelity",
+        "music": {"ids": [31, 955, 686], "mood": "cinematic documentary in sections, hard silences before the cards",
+                  "bed": True},
+        "long_notes": "The reference language is a long-form narrated history documentary, so it fits naturally. "
+                      "A night globe (Natural Earth) is the bridge between chapters: fly the virtual camera to the "
+                      "chapter's region, lights and routes on the spoken words. Chapter cards are dated (year or "
+                      "roman numeral + italic title) after a 0.3-0.5 s music-only silence, with a low impact and an "
+                      "amber flash out. The speaker has three states: film-graded testimony plate (speaker/side "
+                      "layout) on key lines, a gold-ringed medallion over the map, voice-over over generated period "
+                      "paintings in 2.5D parallax. Fast opening, then 6-9 s per shot, slower on grave chapters; "
+                      "verified fact notes with a source; the close loops back to the first globe shot with "
+                      "\"next chapter\".",
+    },
     "podcast": {
         "name": "Podcast (talk show)", "family": "organic",
         "palette": {"bg": "#2a0838", "bg2": "#7a2ff0", "surface": "#ff5b35", "text": "#ffffff", "accent": "#ffe14d",
