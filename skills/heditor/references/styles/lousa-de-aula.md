@@ -9,6 +9,8 @@ reference: produced by the PycodeBR team with heditor, Oct 2026
 
 The whole screen is a **classroom chalkboard**, and the board teaches while the speaker talks. A dark green slate with old eraser marks, an oak frame, a chalk tray with white, yellow, blue and pink sticks and a felt eraser, a dark classroom wall above with soft ceiling light. The speaker is the **teacher in a framed picture pinned to the board**: large in the hook, small in a corner while the board works, larger again for the closing. **Every stroke is drawn live, starting on the word that triggers it** (±0.15 s): the lesson title is already written in frame 0, a numbered syllabus of the questions is written as they are asked and each "?" turns into a ✓ when the item is explained, boxes, icons and arrows labelled with the spoken verb appear piece by piece, emphasis circles and double underlines land on the keywords, a chalk stick travels along the tip of every stroke and drops dust, the **eraser** wipes the diagram before the recap, and a **SUMMARY** board rebuilds the whole chain in one sentence. The core metaphor: **the speaker is giving a real lesson, and the board is the teacher's hand**.
 
+**Status:** approved by the channel owner after its first production (Oct 2026) as a reusable style for technical explanations. Reuse the language as-is and redesign the drawings for each new explanation.
+
 ## When to use / when not to
 
 Use it when the speech:
