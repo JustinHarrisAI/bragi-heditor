@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+- `heditor test` accepts long-form cuts: `plan["max_duration"]` (or `HEDITOR_MAX_DURATION`) raises the default 70 s limit up to 180 s, the Instagram Reels maximum.
+
 ## 1.6.1 — 2026-10-15
 - `lousa-de-aula` approved after its first production and marked as a reusable style for technical explanations.
 

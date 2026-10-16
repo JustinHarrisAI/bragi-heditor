@@ -31,8 +31,14 @@ def test_captions_ordered_without_overlap():
     assert caps[-1]["end"] <= PLAN["voice_end"] + 1e-6
 
 
+# Short Reels stay within 70 s by default. A long-form cut (e.g. a narrated documentary of ~90 s) declares
+# "max_duration" in plan.json (or HEDITOR_MAX_DURATION); Instagram Reels accept up to 180 s.
+MAX_DURATION = float(PLAN.get("max_duration") or os.environ.get("HEDITOR_MAX_DURATION") or 70)
+
+
 def test_duration_and_cta():
-    assert PLAN["duration"] <= 70
+    assert MAX_DURATION <= 180, "Instagram Reels are limited to 180 s"
+    assert PLAN["duration"] <= MAX_DURATION, f"{PLAN['duration']:.2f} s > max_duration {MAX_DURATION:.0f} s"
     assert PLAN["duration"] - PLAN["voice_end"] >= 4.0
     assert BRAND["handle"] in HTML, "CTA must show the brand handle"
     assert BRAND["follow"] in HTML and BRAND["following"] in HTML, "CTA must show the Follow -> Following state"
@@ -45,7 +51,7 @@ def test_sound_events_inside_timeline():
 
 def test_key_moments_in_speech_order():
     k = PLAN["keys"]
-    times = [v for key, v in k.items() if isinstance(v, (int, float)) and key not in ("voice_end", "duration", "seed", "brk")]
+    times = [v for key, v in k.items() if isinstance(v, (int, float)) and key not in ("voice_end", "duration", "max_duration", "seed", "brk")]
     assert all(0 <= t <= PLAN["voice_end"] for t in times)
 
 
