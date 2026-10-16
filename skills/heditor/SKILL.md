@@ -1,6 +1,6 @@
 ---
 name: heditor
-description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920) with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast, missao, tribunal; paid-ad formats keynote, stories, predio-24h, bilheteria, porta-de-aco, manual-de-montagem, carrinho, entrega, auditorio, album; authority formats cassino-de-precisao, mesa-de-risco, turno-da-madrugada, arquivo-cofre, aduana-de-dados, laudo-de-sinistro; didactic format lousa-de-aula; creator formats camadas, raio-x, duelo, bancada, manchete, revista), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, layered 2.5D/3D effects (text behind the speaker, captions on the set, 3D objects, depth scans, hand-anchored objects), voice-first mixing, render and QA.
+description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920), or a long-form video (vídeo longo, aula, live, video for YouTube, minutes to hours) in 16:9, 1:1, 4:5 or 9:16 with pauses removed, chapters, captions/SRT, lower thirds, intro/end cards and a segmented render — with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, podcast, missao, tribunal; paid-ad formats keynote, stories, predio-24h, bilheteria, porta-de-aco, manual-de-montagem, carrinho, entrega, auditorio, album; authority formats cassino-de-precisao, mesa-de-risco, turno-da-madrugada, arquivo-cofre, aduana-de-dados, laudo-de-sinistro; didactic format lousa-de-aula; creator formats camadas, raio-x, duelo, bancada, manchete, revista), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, layered 2.5D/3D effects (text behind the speaker, captions on the set, 3D objects, depth scans, hand-anchored objects), voice-first mixing, render and QA.
 license: MIT
 metadata:
   author: PycodeBR (Felipe Azambuja)
@@ -8,7 +8,7 @@ metadata:
   homepage: https://github.com/pycodebr/heditor
 ---
 
-# heditor — creative vertical video editing
+# heditor — creative video editing (Reels and long form)
 
 heditor turns a recording of someone speaking into a short vertical video that holds attention second by second: a strong opening, a visual world built for what is being said, captions synced word by word, sound effects tied to every action, music with an emotional arc and a call to action. Compositions are HTML + GSAP rendered to MP4 by [HyperFrames](https://github.com/heygen-com/hyperframes). Everything runs locally.
 
@@ -34,6 +34,7 @@ bash <skill_dir>/scripts/setup.sh          # installs ffmpeg/node/python deps if
 | "creative mode", "modo criativo", "surprise me" | Creative mode | `references/creative-mode.md` |
 | "creative mode with/using X" (GTA 6, Wes Anderson, anime, news broadcast…) | Creative mode + reference | `references/creative-mode.md` (§ Reference direction) |
 | Nothing specified | Ask once which mode; if the user wants you to decide, use creative mode | |
+| "vídeo longo", "aula", "live", "YouTube", "16:9", "editar a aula inteira", chapters, SRT | Long-form mode (any style or creative) | `references/long-form.md` |
 
 Named styles (`heditor styles`): see `references/styles/INDEX.md` for when each fits.
 
@@ -75,6 +76,17 @@ Named styles (`heditor styles`): see `references/styles/INDEX.md` for when each 
 | `manchete` | Creator · headline inset on top: subject clip/post above, banner across the seam, the speaker reacting below, full-bleed peak, band splits |
 | `revista` | Creator · editorial spreads: condensed keyword + italic serif line, rounded portrait window, icon chips per item, date pages, full-frame breathers |
 
+### Long-form mode (classes, lives, YouTube; any format)
+
+For minutes to hours of video in 16:9 (also 16:9 4K, 1:1, 4:5, 9:16), follow `references/long-form.md`:
+`heditor new --long <work> <video> --format 16:9 --style <slug|creative> --kind aula|live|youtube` →
+`heditor long transcribe` (chunked, resumable ASR) → `long edl` (proposed cuts of dead pauses, false starts,
+repetitions and fillers, reviewed before applying) → `long apply` → `long chapters` → `long layouts` (screen +
+camera layouts: pip, screen with zoom, speaker, side) → `long produce` (style pack, set pieces, captions, lower
+thirds, intro/CTA, mix) → `long preview` → `heditor test` → `long render` (segmented, resumable) → `long finalize`
+(one continuous master audio, SRT/VTT, YouTube chapters, QA report). Every named style is available as a *style
+pack* (`heditor long styles`); creative mode lives in set pieces at key moments. Format profiles: `heditor formats`.
+
 ### Layered effects (any mode)
 
 Text and objects *behind* the speaker, captions painted on a wall, 3D objects passing between the speaker and the room, depth fog, contour scans, point clouds and objects that follow the hands come from depthkit: `heditor matte|depth|look|hands|plane <work>` (models download on first use). Read `references/depth-and-3d.md` before using them in any style or in creative mode; layouts, illustrations, hooks and CTAs borrowed from creator Reels are in `references/technique-catalogue.md`.
@@ -99,7 +111,7 @@ Follow `references/workflow.md` step by step. Summary:
 - **No dead air.** Inspect pauses inside blocks and across every junction, using the assembled clean voice, not the music mix. Run `heditor gaps` after prepare and check the surrounding words. The default 0.45 s threshold flags candidates for revision; it does not authorize clipping consonants, removing every breath or flattening deliberate rhetorical pauses. Preserve speech at 1× and shorten unwanted dead air with small safety margins. Document any intentional longer pause and verify the exception explicitly before rendering. For a pause-only revision of an approved edit, preserve its visual language and previous version, remap captions, media and SFX to the new timeline, then verify the exported MP4.
 - **Voice first.** Music ≈ 21.5 dB under the voice (median), background ≥ 12 dB under at p95, impacts in the gaps, ducking held across the whole phrase. -14 LUFS, true peak ≤ -1.5 dBTP after AAC.
 - **Readable captions.** Every spoken word, synced; active word with high contrast (black on light yellow, white on saturated dark — never dark-on-mid or dark outline on dark text). Check enlarged crops.
-- **Safe zones.** Nothing important above y = 270 (top 14%; titles with accents start ≥ 300), keep the bottom ~350 px and the right edge (~120 px, y 1000–1700) free of critical info, never cover the face.
+- **Safe zones.** (9:16; every format profile has its own safe area, see `long-form.md`.) Nothing important above y = 270 (top 14%; titles with accents start ≥ 300), keep the bottom ~350 px and the right edge (~120 px, y 1000–1700) free of critical info, never cover the face.
 - **Truth.** Numbers, names and claims exactly as spoken; no invented stats, testimonials, promises or private data; no third-party logos or copyrighted assets (homage through type, colour, motion, sound).
 - **Licences.** Fonts OFL (google/fonts), icons Lucide, music/SFX from the catalog (Mixkit Free License) or user-provided licensed files. Record provenance in DESIGN.md.
 - **Different every time.** In a batch, give each video its own format (layout, camera treatment, captions, palette, transitions, music, CTA). Ask vision to compare contact sheets: "do these look like the same template?" If yes, change more.
@@ -108,6 +120,7 @@ Follow `references/workflow.md` step by step. Summary:
 ## 4. References
 
 - `references/workflow.md` — the full procedure with commands, cut selection and EDL rules.
+- `references/long-form.md` — long-form mode: format profiles, layouts, EDL proposal, chapters, style packs for all styles, creative set pieces and cadence, segmented render, QA.
 - `references/creative-mode.md` — creative mode, reference-directed creative mode, research method, idea bank.
 - `references/kit-api.md` — reelkit functions, page skeleton, GSAP helpers, plan/sound/music formats.
 - `references/depth-and-3d.md` — depthkit: speaker matte, depth map, scans, planes, tracking, three.js, layered recipes and QA.

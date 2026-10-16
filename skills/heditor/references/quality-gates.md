@@ -13,7 +13,7 @@ A cut is delivered only when all required gates pass (or a flagged item was insp
 | Distinctness (batches) | vision on contact sheets | videos do not look like the same template |
 | Tests | `heditor test <work>` | all pass (captions = words, no overlap, CTA with handle + Follow/Following, events in timeline, balance, no unspoken numbers, no "illustrative"/placeholder tags, no dead air) |
 | Render | `heditor render` | exit 0 |
-| Final file | `qa/final-verification.json` | no decode errors, -15 ≤ LUFS ≤ -13, true peak ≤ -1.5 dBTP, audio/master correlation ≥ 0.99, top margin ≥ 270 |
+| Final file | `qa/final-verification.json` | no decode errors, -15 ≤ LUFS ≤ -13, true peak ≤ -1.5 dBTP, audio/master correlation ≥ 0.99, top margin ≥ the profile's `safe_top` (270 in 9:16) |
 | Final frames | `qa/final-contact-sheet.jpg` + vision | no defects |
 | Masking | `heditor asr-check <work>` | master similarity ≥ 0.90 and ≥ (clean voice − 0.03) |
 
@@ -26,6 +26,16 @@ A cut is delivered only when all required gates pass (or a flagged item was insp
 ## Final checklist for the delivery message
 Format/style and why; duration; music (title, artist, licence); what was verified (gates above); flagged items and decisions; what was not verified (nobody listened; colour on other screens); file path/link. Never publish without explicit permission.
 
+## Long-form gates
+
+Long-form videos (`heditor long finalize` / `heditor long qa`) have their own report, `qa/long-report.{json,md}`:
+duration and canvas, full decode, loudness (default −14 LUFS ±1 LU, true peak ≤ −1 dBTP, from `long.json`
+`loudness`), audio/master correlation, camera/screen/voice sync against the source through the EDL, sampled-window
+ASR (mean ≥ 0.85), chapter rules (first 0:00, ≥ 3, ≥ 10 s, each on a word), segment seams (frame counts, no black or
+duplicated frame at a boundary, `qa/seams.jpg`) and contact sheets `qa/long-sheet-NN.jpg` (≤ 1400 px) for vision.
+`heditor test <work>` runs the Reel integrity tests in long-form mode (no 180 s cap, CTA by `cta.kind`, pauses up to
+0.6 s, captions optional). Details in `long-form.md`.
+
 ## Camera sync
 
-`python $HEDITOR_KIT/camera_sync_check.py <work>` must print OK for every `camera-*.mp4` used by the composition before rendering, especially after any change to the cut. Captions and ASR do not detect a picture that drifted from the voice.
+`python $HEDITOR_KIT/camera_sync_check.py <work>` must print OK for every `camera-*.mp4` used by the composition before rendering, especially after any change to the cut. Captions and ASR do not detect a picture that drifted from the voice. `--source` (and `heditor long sync <work>`) goes further: it compares the assembled camera, screen and voice with the original recording at the source times the EDL maps to (picture offset ≤ 1 frame, voice lag ≤ 10 ms), so picture and voice are proven in sync with each other.

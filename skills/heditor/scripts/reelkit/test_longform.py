@@ -202,6 +202,7 @@ def test_seam_flags():
     assert "black_frame" in lf.seam_flags(luma, [0, 1, 1, 90, 90, 1], 3)
     assert "duplicate_frame" in lf.seam_flags([100] * 6, [0, 2.0, 2.0, 0.0, 2.0, 2.0], 3)
     assert lf.seam_flags([100] * 6, [0, 0.0, 0.0, 0.0, 0.0, 0.0], 3) == []  # static slide: not a duplicate
+    assert "dark_after_seam" in lf.seam_flags([37, 37, 37, 37, 1, 0], [0, 0, 0.2, 0.3, 36, 1], 3)
 
 
 def test_segment_page_window():

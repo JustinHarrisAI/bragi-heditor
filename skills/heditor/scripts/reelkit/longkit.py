@@ -203,9 +203,12 @@ class Timeline:
         self.sounds.append(dict({"time": round(max(0.0, t), 3), "category": category, "variant": 0,
                                  "gain_db": gain_db, "context": context}, **kw))
 
-    def window(self, start, end):
-        ev = [e for e in self.events if e[0] < end and (not e[3] or e[1] > start)]
-        el = [e for e in self.elements if not e[3] or (e[0] < end and e[1] > start)]
+    def window(self, start, end, margin=2.0):
+        """Events/elements a segment [start, end) needs. Events are absolute GSAP calls whose first tween may start
+        a little before the time they were registered at (anticipation), so a margin is kept on both sides; extra
+        future events are harmless (they never change earlier frames)."""
+        ev = [e for e in self.events if e[0] < end + margin and (not e[3] or e[1] > start - margin)]
+        el = [e for e in self.elements if not e[3] or (e[0] < end + margin and e[1] > start - margin)]
         return ev, el
 
 
@@ -636,7 +639,9 @@ def _cta(T, kind, t, duration, fmt, pack, brand, words_l):
                 f'<span class="b2">{check}{html.escape(brand["following"])}</span></div></div>')
     T.el(t, duration, f'<div id="outro" class="card full">{body}</div><div id="finger">{pointer}</div>')
     bx, by = fmt.width / 2 + 60 * u, fmt.height / 2 + 40 * u
-    T.js(t, f"S('#outro',{{visibility:'visible'}},{t:.4f});FT('#outro',{{opacity:0}},{{opacity:1,duration:.45}},{t + 0.05:.4f});"
+    # The end card fades in over the last 0.45 s of speech so it covers the screen/camera boxes before their clips
+    # end (a clip that ended leaves an empty black box for the length of its fade-out).
+    T.js(t - 0.5, f"S('#outro',{{visibility:'visible'}},{t - 0.45:.4f});FT('#outro',{{opacity:0}},{{opacity:1,duration:.45}},{t - 0.45:.4f});"
             f"FT('#outro .handle',{{y:30,opacity:0}},{{y:0,opacity:1,duration:.4}},{t + 0.3:.4f});"
             f"FT('#cbtn',{{scale:.6,opacity:0}},{{scale:1,opacity:1,duration:.45,ease:'back.out(2)'}},{t + 0.55:.4f});"
             f"S('#finger',{{left:{bx + 260 * u:.0f},top:{by + 260 * u:.0f}}},{t:.4f});"
@@ -713,7 +718,8 @@ def _set_piece(T, i, p, off, fmt, pack, words, keys, scr_size=None):
             L = math.hypot(x2 - x1, y2 - y1)
             svg.append(f'<path id="{sid}-e{e_i}" d="M{x1:.1f},{y1:.1f} L{x2:.1f},{y2:.1f}" stroke="var(--accent)" stroke-width="{max(3, round(5 * u))}" '
                        f'fill="none" stroke-linecap="round" marker-end="url(#{sid}-arr)" style="stroke-dasharray:{L:.1f} {L + 4:.1f};stroke-dashoffset:{L:.1f};opacity:0"/>')
-            te = off + e["t"] - 0.05
+            # an arrow never lands on empty space: it finishes drawing when its target node appears
+            te = off + max(e["t"], b["t"] - 0.45, a["t"]) - 0.05
             js.append(f"S('#{sid}-e{e_i}',{{opacity:1}},{te:.4f});FT('#{sid}-e{e_i}',{{strokeDashoffset:{L:.1f}}},{{strokeDashoffset:0,duration:.5,ease:'power2.inOut'}},{te:.4f});")
             if e.get("label"):
                 mx, my = (x1 + x2) / 2, (y1 + y2) / 2

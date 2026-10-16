@@ -2,9 +2,13 @@
 
 Commands assume `. ~/.heditor/env.sh`. `<work>` is one folder per cut (e.g. `cuts/benchmark-v1`).
 
+This is the Reels workflow (30-70 s, 9:16). For a whole class, live or YouTube video (minutes to hours, 16:9 or
+any other format profile) use the long-form workflow in `long-form.md` (`heditor new --long`, `heditor long ...`).
+Both share the same rules: speech at 1×, cuts only at word boundaries, voice-first mix, readable captions, truth.
+
 ## 1. Intake
 
-Collect (ask only what you cannot infer): source video path or URL, target platform (Reels/Shorts/TikTok, all 1080×1920), target length (default 30–70 s), mode/style, CTA (default: comment question tied to the topic + follow the brand handle), language of the speech, anything that must not appear (names, private data). Confirm `~/.heditor/brand.json` is filled.
+Collect (ask only what you cannot infer): source video path or URL, target platform (Reels/Shorts/TikTok, all 1080×1920; a long video for YouTube/a course → `long-form.md`; another canvas → `heditor formats`), target length (default 30–70 s), mode/style, CTA (default: comment question tied to the topic + follow the brand handle), language of the speech, anything that must not appear (names, private data). Confirm `~/.heditor/brand.json` is filled.
 
 ## 2. Probe
 
@@ -61,6 +65,7 @@ heditor lint <work>                                     # 0 errors (warnings abo
 heditor preview <work> 0.05,0.8,2.5,4,6,8,...          # 18–24 times across the cut, incl. every scene change and the CTA
 heditor test <work>
 python $HEDITOR_KIT/camera_sync_check.py <work>   # every camera variant aligned with camera-src (offset 0, same frame count)
+python $HEDITOR_KIT/camera_sync_check.py <work> --source   # camera-src and voice vs the original recording through edl.json
 ```
 Inspect `qa/sheet.jpg` with vision: overlaps, clipped text, text above y=270, face covered, captions colliding with graphics, low-contrast active word, placeholder-looking elements, generic or meaningless decoration. Fix and preview again (name sheets sheet-b, sheet-c…). In batches, also compare sheets across videos.
 

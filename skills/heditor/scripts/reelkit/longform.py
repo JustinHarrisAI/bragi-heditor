@@ -688,6 +688,9 @@ def seam_flags(luma, diffs, idx, dark=16.0):
             if luma[j] < dark and luma[j - 1] > dark * 2 and luma[min(len(luma) - 1, j + 1)] > dark * 2:
                 flags.append("black_frame")
                 break
+        else:
+            if luma[idx - 1] > dark * 2 and min(luma[idx:idx + 2]) < dark / 2:
+                flags.append("dark_after_seam")  # inspect qa/seams.jpg: intended cut to black or an empty box
     if 0 < idx < len(diffs):
         around = [d for k, d in enumerate(diffs) if k != idx and abs(k - idx) <= 3]
         if diffs[idx] < 0.05 and around and np.median(around) > 0.5:

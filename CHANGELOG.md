@@ -1,6 +1,20 @@
 # Changelog
 
 ## Unreleased
+- **Long-form mode** (classes, lives, YouTube videos; minutes to hours) — `heditor new --long` and `heditor long transcribe | edl | apply | chapters | layouts | produce | preview | render | finalize | qa | subs | sync | estimate | styles`, documented in `references/long-form.md`:
+  - chunked, resumable ASR with boundaries in silences and a progress/ETA log;
+  - reviewable EDL proposal (`edl-proposal.json` + `qa/edl-proposal.md`): dead pauses shortened by energy (never by ASR timing), immediate repetitions, false starts and per-language fillers removed at the quietest point of word gaps, low-confidence cuts left for review, manual `exclude` ranges with their surrounding silence trimmed; `apply` assembles screen, camera and voice in single passes on the source frame grid (frame counts checked) and remaps the words without a second ASR (spelling fixes carried by source time; `--words-only`);
+  - layouts for screen share + camera (`pip`, `screen` with zoom, `speaker`, `side`) switched per passage, with suggestions from screen activity; chapters (suggestion, YouTube rules, cards, current-chapter tag, description timestamps); burned captions fitted with the real fonts and SRT/VTT export; lower thirds; intro card; closing CTA `follow` (Follow → Following) or `youtube` (Subscribe → Subscribed + "Watch next" slots);
+  - style packs (`stylepacks.py`) for all 35 named styles (palette, typography, captions with tested active-word contrast, frame, overlays, transition, chapter card, lower third, camera grade, SFX, music) with vertical → horizontal adaptation rules; creative set pieces (`title`, `concept_map`, `checklist`, `callout`, `custom`) and an automatic retention plan at the cadence of each kind (aula, live, youtube);
+  - segmented, resumable render: one HyperFrames composition per segment (chapter-aware, ≤ 60 s, frame-exact) that plays the global timeline from its start, skipped when unchanged, render log with seconds per frame and ETA, optional per-segment heavy-job lock (`HEDITOR_LOCK`); concat without re-encoding and one continuous master audio muxed at the end;
+  - memory-bounded voice-first mixer for long timelines (`longmix.py`, same balance targets, loudness from `long.json`);
+  - long-form QA report (`longqa.py`): duration/canvas, decode, loudness (−14 LUFS default), audio/master correlation, camera/screen/voice sync against the source, sampled-window ASR, chapters, segment seams (black or duplicated frames), contact sheets ≤ 1400 px.
+- **Format profiles** (`scripts/reelkit/formats.py`, `heditor formats`): 9:16 (unchanged Reel numbers), 16:9, 16:9 4K, 1:1, 4:5 with canvas, safe area, caption zone, lower third and camera layouts. Used by `preview` (viewport from the composition), `finalize` (safe top row and sheet aspect per profile), `prepare_cut` (`crop="fit:<fmt>"`, `format` in `edl.json`), `rk.page(fmt=...)` and `heditor test`. Existing 9:16 projects behave as before.
+- `camera_sync_check.py --source` (also `heditor long sync`): camera, screen and voice compared with the original recording through the EDL; module docstring and messages in English.
+- `heditor test` understands long-form plans (`mode: "long"`): CTA by `cta.kind`, intro offset, optional captions, pauses up to 0.6 s, no 180 s cap.
+- `rk.load_brand` fills `subscribe`, `subscribed` and `watch_next` from the brand language when absent.
+- The `heditor` CLI exports `HEDITOR_KIT`/`HEDITOR_SKILL` pointing at its own checkout, so a second checkout never imports another checkout's kit through `env.sh`.
+- New tests: `test_formats.py` (profiles, layouts, style packs) and `test_longform.py` (EDL, chapters, captions, segments, page windows, concatenation, audio/video assembly); CI runs them.
 - `heditor test` accepts long-form cuts: `plan["max_duration"]` (or `HEDITOR_MAX_DURATION`) raises the default 70 s limit up to 180 s, the Instagram Reels maximum.
 
 ## 1.6.1 — 2026-10-15

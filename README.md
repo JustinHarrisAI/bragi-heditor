@@ -2,8 +2,8 @@
 
 # 🎬 heditor
 
-**Skill de edição criativa de vídeos verticais para agentes de IA.**
-Transforma uma gravação de alguém falando (aula, live, podcast, talking head) em um Reel/Short/TikTok 1080×1920 com motion graphics, legendas sincronizadas, efeitos sonoros e trilha emocional, em estilos nomeados, em **modo criativo** ou em **modo criativo com referência** ("no estilo GTA 6").
+**Skill de edição criativa de vídeos para agentes de IA: Reels verticais e vídeos longos.**
+Transforma uma gravação de alguém falando (aula, live, podcast, talking head) em um Reel/Short/TikTok 1080×1920 com motion graphics, legendas sincronizadas, efeitos sonoros e trilha emocional, ou em um **vídeo longo** (aula inteira, live, vídeo para o YouTube) em 16:9, 1:1, 4:5 ou 9:16, em estilos nomeados, em **modo criativo** ou em **modo criativo com referência** ("no estilo GTA 6").
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-SKILL.md-blue)](skills/heditor/SKILL.md)
@@ -103,6 +103,25 @@ Efeitos em camadas para qualquer estilo ou modo criativo (`heditor matte|depth|l
 
 Detalhes de cada um em [`skills/heditor/references/styles/`](skills/heditor/references/styles/).
 
+## Modo de vídeo longo (aulas, lives, YouTube)
+
+Para editar minutos ou horas de gravação, em qualquer formato (`heditor formats`: 16:9 1920×1080, 16:9 4K opcional, 1:1, 4:5 e 9:16):
+
+```text
+Edite esta aula inteira para o YouTube em 16:9 no estilo lousa-de-aula, com capítulos e legendas.
+Faça a live de ontem em 16:9 no modo criativo, tirando as pausas, e me dê também prévias em 4:5.
+```
+
+- **Transcrição em blocos com retomada:** horas de áudio em pedaços de 5 min com fronteiras no silêncio; se cair, continua de onde parou.
+- **EDL proposta e revisável:** remove pausas mortas, falsos começos, repetições ("a gente a gente") e hesitações sem cortar palavras (o corte sempre cai no vale de energia entre palavras); você revisa `qa/edl-proposal.md` antes de aplicar e pode excluir trechos inteiros (perguntas do chat com nomes, dados privados).
+- **Layouts para tela + câmera:** câmera em PiP, foco na tela com zoom numa região, falante em tela cheia e lado a lado, alternados por trecho (há sugestão automática pela atividade da tela).
+- **Capítulos** com cartões, tag do capítulo atual e timestamps prontos para a descrição do YouTube; **legendas** queimadas (opcional) e exportação **SRT/VTT**; **lower thirds**; **cartão de abertura** e **encerramento** com Seguir → Seguindo ou Inscrever-se → Inscrito + "Assista o próximo".
+- **Os 35 estilos como style packs** (paleta, tipografia, legenda, transições, cartões, lower third, grade da câmera, som) com regras de adaptação vertical → horizontal; **modo criativo** com set pieces (tipografia gigante da fala, mapa de conceitos desenhado nas palavras, checklist, zoom com destaque, HTML próprio) nos momentos-chave e dispositivos de retenção na cadência de cada tipo (aula, live, YouTube).
+- **Render segmentado e retomável:** cada trecho é uma composição própria, segmentos prontos são pulados, os vídeos são concatenados sem recompressão e um único master de áudio contínuo é aplicado no fim (sem emendas de áudio). Estimativa de tempo e log de progresso.
+- **QA do longo:** duração, decodificação, loudness (−14 LUFS padrão, configurável), sincronia câmera × tela × voz contra a gravação original, ASR por amostragem, capítulos, emendas entre segmentos (sem quadro preto ou repetido) e folhas de quadros.
+
+Guia completo em [`long-form.md`](skills/heditor/references/long-form.md).
+
 ## Modos
 
 - **Estilo fixo:** "edite no estilo `aeroporto`". O agente aplica a linguagem do estilo, mas reconstrói as cenas a partir da fala do novo vídeo.
@@ -174,7 +193,20 @@ Modo criativo com referência de telejornal para este vídeo sobre a notícia da
 Faça três cortes deste vídeo, cada um com um formato diferente.
 ```
 
-Ou use o CLI diretamente:
+Vídeo longo pelo CLI:
+
+```bash
+heditor new --long aulas/a03 aula-03.mp4 --format 16:9 --style lousa-de-aula --kind aula --range 600,2400
+heditor long transcribe aulas/a03              # ASR em blocos, retomável
+heditor long edl aulas/a03                     # proposta de cortes -> revise qa/edl-proposal.md
+heditor long apply aulas/a03                   # tela, câmera e voz montadas, palavras remapeadas
+heditor long chapters aulas/a03 --suggest      # escreva chapters.json com os títulos
+heditor long produce aulas/a03 music:282       # composição, segmentos e mixagem
+heditor long preview aulas/a03 5,60,300 && heditor test aulas/a03
+heditor long render aulas/a03 2 && heditor long finalize aulas/a03 a03-1920x1080.mp4
+```
+
+Ou use o CLI diretamente para Reels:
 
 ```bash
 . ~/.heditor/env.sh
@@ -193,7 +225,7 @@ heditor render cortes/c01 && heditor finalize cortes/c01 c01-1080x1920.mp4 && he
 
 - Linux ou macOS (Windows via WSL2), 4 núcleos e 8 GB de RAM recomendados.
 - Cerca de 1,6 GB em disco (ambiente Python, modelos e biblioteca de áudio); mais 99 MB se usar o mapa de profundidade.
-- Um vídeo de 60 s leva de 5 a 15 min para renderizar em CPU comum.
+- Um vídeo de 60 s leva de 5 a 15 min para renderizar em CPU comum. No modo longo, medimos cerca de 7,5 min de render por minuto de vídeo 1080p (2 workers, VPS de 4 núcleos compartilhada); o render é segmentado e retomável e `heditor long estimate` mede na sua máquina.
 
 ## Estrutura
 
@@ -204,8 +236,9 @@ skills/heditor/
 │   └── styles/                  # um arquivo por estilo nomeado
 ├── scripts/
 │   ├── setup.sh · doctor.py · fetch_assets.py · heditor (CLI)
-│   └── reelkit/                 # kit Python: corte, legendas, página HyperFrames, mixagem, QA; depthkit (recorte, profundidade, mãos, planos)
-├── templates/                   # prepare.py, build.py, DESIGN.md, brand.example.json
+│   └── reelkit/                 # kit Python: corte, legendas, página HyperFrames, mixagem, QA; depthkit (recorte, profundidade, mãos, planos);
+│                                #   formats (perfis de formato), stylepacks, longform/longkit/longmix/longqa/long_cli (modo longo)
+├── templates/                   # prepare.py, build.py, DESIGN.md, brand.example.json; long/ (long.json, build.py, DESIGN.md, chapters.json)
 └── assets/catalog.json          # catálogo de trilhas e efeitos (baixados no setup)
 ```
 
@@ -227,12 +260,13 @@ Issues e PRs são bem-vindos: novos estilos (com a ficha completa em `references
 
 ## English
 
-**heditor** is an open Agent Skill (SKILL.md) that lets AI coding agents edit talking-head footage (classes, lives, podcasts) into vertical 1080×1920 Reels/Shorts/TikToks with motion graphics, word-synced captions, sound design and an emotional soundtrack.
+**heditor** is an open Agent Skill (SKILL.md) that lets AI coding agents edit talking-head footage (classes, lives, podcasts) into vertical 1080×1920 Reels/Shorts/TikToks with motion graphics, word-synced captions, sound design and an emotional soundtrack, or into long-form videos (whole classes, lives, YouTube videos) in 16:9, 1:1, 4:5 or 9:16.
 
 - **Thirty-five named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `podcast`, `missao` (open-world game homage), `tribunal` (courtroom sketch); paid-ad formats with a "Learn more" CTA: `keynote`, `stories`, `predio-24h`, `bilheteria`, `porta-de-aco`, `manual-de-montagem`, `carrinho`, `entrega`, `auditorio`, `album`; authority formats: `cassino-de-precisao`, `mesa-de-risco`, `turno-da-madrugada`, `arquivo-cofre`, `aduana-de-dados`, `laudo-de-sinistro`; didactic format: `lousa-de-aula` (interactive chalkboard lesson); creator formats: `camadas`, `raio-x`, `duelo`, `bancada`, `manchete`, `revista`.
 - **Layered 2.5D/3D effects (depthkit):** speaker matte, depth map, text behind the speaker, captions painted on the set, three.js objects passing behind the speaker, depth fog, contour scans, point clouds, hand-anchored objects (`heditor matte|depth|look|hands|plane`).
 - **Creative mode:** the agent analyses the video, researches, invents a world for that specific speech and builds it with retention-focused motion and sound.
 - **Creative mode + reference:** e.g. "creative mode in the style of GTA 6". The agent researches the reference and builds a licence-safe homage.
+- **Long-form mode:** `heditor new --long` + `heditor long ...`: chunked resumable ASR, a reviewable EDL proposal that removes dead pauses, false starts, repetitions and fillers without cutting words, screen + camera layouts (PiP, screen zoom, speaker, side by side), chapters (cards + YouTube timestamps), burned captions and SRT/VTT, lower thirds, intro and end cards (Follow or YouTube Subscribe), every named style as a *style pack*, creative set pieces at key moments with a retention cadence per kind (class, live, YouTube), a segmented resumable render with one continuous master audio, and a long-form QA report (loudness, sync against the source, sampled ASR, chapters, segment seams). See [`long-form.md`](skills/heditor/references/long-form.md).
 - **Pipeline:** word-timed ASR (faster-whisper), frame-accurate cuts, voice chain, HyperFrames (HTML + GSAP) composition, voice-first mix at −14 LUFS, and automatic QA (lint, vision-reviewed previews, tests, pixel safe-margin, loudness/true peak, ASR of the final mix, 40-frame contact sheet).
 
 **Install:** `curl -fsSL https://raw.githubusercontent.com/pycodebr/heditor/main/install.sh | bash`, or `npx skills add pycodebr/heditor -g` followed by `bash <skill>/scripts/setup.sh`. Then edit `~/.heditor/brand.json` and ask your agent: *"edit this video in creative mode"*.

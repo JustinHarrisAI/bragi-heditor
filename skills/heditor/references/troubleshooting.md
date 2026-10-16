@@ -50,6 +50,13 @@
 | An arrow label reads as a grammar error | the label was written from the diagram's point of view ("uses") next to a first-person subject ("US") | label arrows from the subject that acts, in the speech's grammar ("we use", "we pay") |
 | A wipe "does not look like erasing" | the erased band is wider than the eraser, or the motion is a diagonal blur | make the mask stroke width equal to the eraser's length, straight horizontal passes, leave a faint ghost and haze |
 | `npx hyperframes` asks to install or cannot find Chrome | first run | `npx --yes hyperframes@0.8.147 browser ensure` |
+| Long form: words disappear from the captions after `long apply` although they are in the audio | ASR word timings spill into a removed pause (short words like "O", "a", "e") | fixed since the long-form mode: only word-level cuts and exclusions drop words (`lf.word_drop_ranges`); re-map with `heditor long apply <work> --words-only` |
+| Long form: `heditor gaps` reports > 0.6 s at an exclusion or at the start | manual `exclude` ranges and the range edges keep the silence around them | `heditor long edl` adds `edge` cuts (lead 0.12 s / tail 0.18 s); re-run `edl --force` after changing `exclude`, then `apply` |
+| Long form: "um" removed as a filler in Portuguese | English filler list | fillers are per language (`asr.lang`); "um" is never a filler in `pt` |
+| Long form: render fails with "asset(s) do not match their authored media element type" | a segment got a sub-frame slice of video at the end of the voice | fixed: segments with < 2 frames of voice get no video element; produce again |
+| Long form: a segment renders but looks different from the preview | stale segment folder or an edited `index.html` | never edit `segments/`: change `build.py`/JSON and `heditor long produce`; segment pages are regenerated and re-rendered by hash |
+| Long form: the screen share is unreadable in 9:16/1:1 | a 16:9 screen in a narrow canvas | use `screen` layout with `zoom` on the region being discussed, or `callout` set pieces; keep 16:9 as the master |
+| Long form: render very slow | 4K, heavy SVG filters, many workers on a shared machine | render 1080p, keep heavy graphics inside set pieces, ≤ 2 workers; segments resume after a failure |
 
 ## Picture and voice out of sync after changing the cut
 

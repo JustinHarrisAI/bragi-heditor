@@ -55,6 +55,13 @@ Layered effects available to any world (`depth-and-3d.md`): title behind the spe
 
 Ready to try: breaking-news broadcast with lower thirds and ticker · weather forecast map · sports commentary with replays and telestrator · cooking show recipe cards · heist movie planning board · nature documentary narration · space mission control countdown · horror found-footage · anime opening with speed lines · comic book panels and onomatopoeia · museum exhibit labels · fitness app rings and streaks · GPS navigation with turn-by-turn · escape-room puzzles · music video with beat-synced cuts · hacker terminal / CRT · spreadsheet that comes alive · slide deck gone wild · receipt printer · polaroid scrapbook · subway map · retro TV channel surfing · dating-app swipes · video-game boss fight · tarot reading cards · K-pop lyric video · elevator floor indicator · arcade high-score table.
 
+## Creative mode in long form
+
+In a long video (class, live, YouTube) the same process designs the *frame, cards and set pieces*, not every
+second: `"style": "creative"` + `style_overrides` in `long.json` (palette, fonts, card kind, transition) and the
+set pieces (`title`, `concept_map`, `checklist`, `callout`, `custom`) at the hook, central concepts, turns and
+chapter closes, with retention devices at the cadence of the kind. See `long-form.md` (Creative mode in long form).
+
 ## Escalation ladder (when an edit feels safe, climb)
 
 1. Change the camera's role (from card to character inside the world).

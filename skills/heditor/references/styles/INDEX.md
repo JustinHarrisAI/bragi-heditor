@@ -47,4 +47,6 @@ Styles marked **ad** are paid-traffic formats with a "Learn more" CTA and the ad
 | [`manchete`](manchete.md) | Manchete (headline inset on top) · **creator** | reacting to news, a viral clip, a post or a result (needs subject material) | hot take | anchor-like speaker below a permanent top inset; full-bleed peak; band splits | lowercase outline captions over the chest |
 | [`revista`](revista.md) | Revista (editorial slides with the speaker inset) · **creator** | structured explanations, modules, steps, calendars | clear, editorial | full frame ↔ rounded portrait window on charcoal spreads | accent-word captions, keyword in lime |
 
+Every style is also a **style pack** for long-form and multi-format edits (16:9, 1:1, 4:5…): palette, typography, captions, frame, transitions, chapter card, lower third, camera grade and sound, with the vertical → horizontal adaptation of each style in `../long-form.md` (`heditor long styles`).
+
 Not listed? Use creative mode (`../creative-mode.md`) and, if the user likes the result, add the new style (`../adding-styles.md`).

@@ -1,5 +1,13 @@
 # Captions, layout and camera
 
+## Other canvases
+
+The numbers below are for 9:16 Reels. Every format profile (`heditor formats`: 16:9, 16:9 4K, 1:1, 4:5) has its own
+safe area, caption zone and screen/camera layouts (`pip`, `screen` with zoom, `speaker`, `side`) in
+`scripts/reelkit/formats.py`; `long-form.md` documents them. In 16:9 captions are subtitles (≤ 2 lines × 42
+characters at ~50 px, y 880-1020), not kinetic words; the active-word contrast rule below applies to every canvas
+(style packs are tested for ≥ 4.5:1).
+
 ## Safe zones (1080×1920)
 - Top 0–270 px (14 %): no text, face, logo or key graphic (platform UI). Anton/condensed titles with accents rise above their line box: start titles at ≥ 300 px and verify with the pixel check (first row with luma > 150 on > 8 px must be ≥ 270).
 - Bottom ~350 px (y > 1570): only atmosphere; the platform caption/buttons live there.

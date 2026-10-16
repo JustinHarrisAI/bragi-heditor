@@ -107,7 +107,7 @@ def frame_at(video, t, w, h):
 
 
 def contact_sheets(video, duration, fmt, out_dir, per_sheet=24, max_frames=96, max_width=1400):
-    n = int(min(max_frames, max(per_sheet, duration // 8)))
+    n = int(min(max_frames, max(per_sheet, round(duration / 8 / per_sheet) * per_sheet)))  # full sheets only
     times = [round(0.05 + i * (duration - 0.15) / (n - 1), 2) for i in range(n)]
     cols = 6
     cw = min(224 if not fmt.vertical else 150, max_width // cols)
