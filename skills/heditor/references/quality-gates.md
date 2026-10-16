@@ -40,3 +40,7 @@ duplicated frame at a boundary, `qa/seams.jpg`) and contact sheets `qa/long-shee
 ## Camera sync
 
 `python $HEDITOR_KIT/camera_sync_check.py <work>` must print OK for every `camera-*.mp4` used by the composition before rendering, especially after any change to the cut. Captions and ASR do not detect a picture that drifted from the voice. `--source` (and `heditor long sync <work>`) goes further: it compares the assembled camera, screen and voice with the original recording at the source times the EDL maps to (picture offset ≤ 1 frame, voice lag ≤ 10 ms), so picture and voice are proven in sync with each other.
+
+## Leftover elements
+
+Preview a few frames long after every short-lived element (labels, chips, notes shorter than ~0.6 s) and in the CTA: anything still visible there that belongs to an earlier beat is a timeline bug (overlapping in/out tweens), not a design choice.

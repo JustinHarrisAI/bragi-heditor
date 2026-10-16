@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2.0.0 — 2026-10-16
+- Quality gate and troubleshooting row for short labels that stay on screen (overlapping fade-in/fade-out tweens), found in the narrated documentary production.
 
 Long-form and multi-format editing, style packs for every named style, Reels up to 180 s and a new narrated-documentary style. Existing 9:16 projects build and render as before.
 
