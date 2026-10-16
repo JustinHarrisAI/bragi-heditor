@@ -8,6 +8,7 @@
     heditor long layouts <work>                                        suggested layout switches -> layouts.suggested.json
     heditor long produce <work> [music:ID|file]                        build.py -> plan, composition, segments, mix
     heditor long preview <work> <t1,t2,..> [sheet.jpg] [--format 4:5]  frame previews (any profile) + contact sheet
+    heditor long lint <work>                                           HyperFrames lint of the page and every segment
     heditor long render <work> [workers]                               segmented, resumable render with ETA log
     heditor long finalize <work> <name.mp4>                            concat + one continuous master audio + QA
     heditor long qa <work> [name.mp4]                                  QA report only (qa/long-report.{json,md})
@@ -515,6 +516,22 @@ def _history(work):
     return [h for h in json.loads(p.read_text()).values() if h.get("seconds")]
 
 
+def cmd_lint(argv):
+    """HyperFrames lint of the whole-timeline page and of every segment page (0 errors required)."""
+    pos, _ = _args(argv)
+    work = Path(pos[0]).resolve()
+    hf = shlex.split(os.environ.get("HEDITOR_HYPERFRAMES", "npx --yes hyperframes@0.8.147"))
+    dirs = [work / "composition"] + sorted((work / "segments").glob("seg-*"))
+    bad = 0
+    for d in dirs:
+        res = subprocess.run(hf + ["lint"], cwd=d, capture_output=True, text=True)
+        tail = [ln for ln in (res.stdout + res.stderr).splitlines() if "error(s)" in ln]
+        line = tail[-1].strip() if tail else (res.stdout + res.stderr).strip()[-200:]
+        print(f"{d.relative_to(work)}: {line}")
+        bad += res.returncode != 0 or not tail or not line.lstrip("◇ ").startswith("0 error")
+    sys.exit(1 if bad else 0)
+
+
 def cmd_estimate(argv):
     pos, opt = _args(argv)
     work = Path(pos[0])
@@ -658,7 +675,7 @@ def main(argv):
         return 0
     fn = {"new": cmd_new, "transcribe": cmd_transcribe, "edl": cmd_edl, "apply": cmd_apply, "chapters": cmd_chapters,
           "layouts": cmd_layouts, "subs": cmd_subs, "produce": cmd_produce, "preview": cmd_preview, "render": cmd_render,
-          "finalize": cmd_finalize, "qa": cmd_qa, "sync": cmd_sync, "estimate": cmd_estimate}.get(cmd)
+          "finalize": cmd_finalize, "qa": cmd_qa, "sync": cmd_sync, "estimate": cmd_estimate, "lint": cmd_lint}.get(cmd)
     if not fn:
         print(f"unknown command {cmd!r}\n{__doc__}")
         return 2

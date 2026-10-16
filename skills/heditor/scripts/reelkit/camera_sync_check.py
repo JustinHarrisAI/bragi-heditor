@@ -111,11 +111,12 @@ def sync_against_source(work, samples=10):
             if not len(ref) or not len(win):
                 continue
             scores = np.array([float(np.mean(ref[0] * f)) for f in win])
-            order = np.argsort(scores)[::-1]
-            if len(order) > 1 and scores[order[0]] - scores[order[1]] < 2e-3:
+            best = int(np.argmax(scores))
+            near = np.where(scores >= scores[best] - 2e-3)[0]
+            if near.max() - near.min() > 2:  # a still picture matches many frames: no evidence either way
                 amb += 1
                 continue
-            offs.append(int(order[0]) - 12)
+            offs.append(best - 12)
         good = [o for o in offs if abs(o) <= 1]
         ok = len(good) >= int(0.8 * len(offs))
         res[name] = {"offsets_frames": offs, "ambiguous": amb, "ok": bool(ok)}

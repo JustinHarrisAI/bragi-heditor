@@ -80,7 +80,7 @@ heditor - creative video editing for AI agents (vertical Reels and long-form vid
 Formats and long form (classes, lives, YouTube; see references/long-form.md):
   heditor formats                                        format profiles (9:16, 16:9, 16:9-4k, 1:1, 4:5)
   heditor new --long <work> <video> [--format 16:9] [--style X] [--kind aula|live|youtube] [--range a,b]
-  heditor long transcribe|edl|apply|chapters|layouts|produce|preview|render|finalize|qa|subs|sync|estimate|styles <work> ...
+  heditor long transcribe|edl|apply|chapters|layouts|produce|lint|preview|render|finalize|qa|subs|sync|estimate|styles <work> ...
                                                          run `heditor long help` for every subcommand
 
 Layered / 2.5D (depthkit, see references/depth-and-3d.md):
