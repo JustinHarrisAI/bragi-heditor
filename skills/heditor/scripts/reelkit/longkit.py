@@ -244,6 +244,7 @@ html,body{{width:{W}px;height:{H}px;overflow:hidden;background:var(--bg);color:v
 #cards{{position:absolute;inset:0;z-index:30;pointer-events:none}}
 .card{{position:absolute;opacity:0;visibility:hidden}}
 .dim{{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;z-index:29}}
+.dimw{{z-index:3}}
 #grain{{position:absolute;left:-256px;top:-256px;width:{W + 512}px;height:{H + 512}px;background:url('assets/grain.png');opacity:{ov['grain']};z-index:40;pointer-events:none;mix-blend-mode:overlay}}
 #vig{{position:absolute;inset:0;z-index:39;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,{ov['vignette']}))}}
 #scan{{position:absolute;inset:0;z-index:38;pointer-events:none;opacity:{.35 if ov.get('scanlines') else 0};background:repeating-linear-gradient(0deg,rgba(0,0,0,.35) 0 2px,transparent 2px 5px)}}
@@ -737,7 +738,7 @@ def _set_piece(T, i, p, off, fmt, pack, words, keys, scr_size=None):
                      f'<svg width="{fmt.width}" height="{fmt.height}" style="position:absolute;left:0;top:0"><defs><marker id="{sid}-arr" viewBox="0 0 10 10" refX="8" refY="5" '
                      f'markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker></defs>{"".join(svg)}</svg>{"".join(divs)}</div>')
         T.js(t0, "".join(js), t1=t1)
-        _css_once(T, "map", f".sp-map{{z-index:28}}.sp-map .sp-bg{{position:absolute;inset:0;background:color-mix(in srgb,var(--bg) 96%,transparent)}}"
+        _css_once(T, "map", f".sp-map{{z-index:28}}.sp-map .sp-bg{{position:absolute;inset:0;background:var(--bg)}}"
                             f".sp-node{{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 {round(14 * u)}px;"
                             f"font:700 {round(34 * u)}px var(--font-body);color:var(--text);background:var(--surface);border:{max(2, round(3 * u))}px solid var(--accent2);"
                             f"border-radius:{round(16 * u)}px;opacity:0;box-shadow:0 12px 30px rgba(0,0,0,.4);line-height:1.1}}"
@@ -749,12 +750,12 @@ def _set_piece(T, i, p, off, fmt, pack, words, keys, scr_size=None):
         items = "".join(f'<li id="{sid}-i{j}"><span class="bx"></span>{html.escape(it["text"])}</li>' for j, it in enumerate(p["items"]))
         T.el(t0, t1, f'<div id="{sid}" class="card sp-list" style="left:{area.x + area.w * .06:.0f}px;top:{area.y + area.h * .1:.0f}px;width:{area.w * (.52 if not fmt.vertical else .88):.0f}px">'
                      f'<div class="hd">{html.escape(p.get("heading", ""))}</div><ul>{items}</ul></div>')
-        js = [f"FT('#dim',{{opacity:0}},{{opacity:1,duration:.3}},{t0:.4f});enter('#{sid}',{t0:.4f},{_j(pack['transition']['kind'])},.5);"]
+        js = [f"FT('#dimw',{{opacity:0}},{{opacity:1,duration:.3}},{t0:.4f});enter('#{sid}',{t0:.4f},{_j(pack['transition']['kind'])},.5);"]
         for j, it in enumerate(p["items"]):
             ti = off + it["t"] - 0.05
             js.append(f"FT('#{sid}-i{j}',{{opacity:.42}},{{opacity:1,duration:.25}},{ti:.4f});S('#{sid}-i{j} .bx',{{backgroundColor:'var(--accent)'}},{ti:.4f});")
             T.sfx(ti, "pop", -22, f"check {j}")
-        js.append(f"leave('#{sid}',{t1:.4f},'fade',.4);TO('#dim',{{opacity:0,duration:.4}},{t1:.4f});")
+        js.append(f"leave('#{sid}',{t1:.4f},'fade',.4);TO('#dimw',{{opacity:0,duration:.4}},{t1:.4f});")
         T.js(t0, "".join(js), t1=t1)
         _css_once(T, "list", f".sp-list{{z-index:31;background:color-mix(in srgb,var(--bg) 92%,transparent);border:2px solid var(--accent);border-radius:{round(18 * u)}px;padding:{round(34 * u)}px {round(44 * u)}px}}"
                              f".sp-list .hd{{font-family:var(--font-display);font-size:{round(56 * u)}px;color:var(--accent);margin-bottom:{round(16 * u)}px}}"
@@ -839,7 +840,7 @@ def write_page(T, c, start, end, media=None):
     return f"""<!doctype html><html lang="{brand.get('lang', 'pt')}"><head><meta charset="utf-8"><title>{html.escape(brand['name'])} long-form</title>
 <script src="assets/gsap.min.js"></script><style>{css}</style></head><body>
 <main id="stage" data-composition-id="main" data-start="0" data-duration="{dur:.4f}" data-width="{fmt.width}" data-height="{fmt.height}" data-fps="30">
-<div id="world">{vids}<div id="fx">{world_extra}</div></div>
+<div id="world">{vids}<div id="dimw" class="dim dimw"></div><div id="fx">{world_extra}</div></div>
 <div id="caps">{caps_html}</div>
 <div id="dim" class="dim"></div>
 <div id="cards">{cards}</div>

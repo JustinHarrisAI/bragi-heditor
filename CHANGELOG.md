@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Long-form set pieces keep the speaker visible: checklists dim only the screen (world-level dim under the camera) and the full-screen concept map uses an opaque background instead of leaving a dark ghost of the camera.
 - **Long-form mode** (classes, lives, YouTube videos; minutes to hours) — `heditor new --long` and `heditor long transcribe | edl | apply | chapters | layouts | produce | preview | render | finalize | qa | subs | sync | estimate | styles`, documented in `references/long-form.md`:
   - chunked, resumable ASR with boundaries in silences and a progress/ETA log;
   - reviewable EDL proposal (`edl-proposal.json` + `qa/edl-proposal.md`): dead pauses shortened by energy (never by ASR timing), immediate repetitions, false starts and per-language fillers removed at the quietest point of word gaps, low-confidence cuts left for review, manual `exclude` ranges with their surrounding silence trimmed; `apply` assembles screen, camera and voice in single passes on the source frame grid (frame counts checked) and remaps the words without a second ASR (spelling fixes carried by source time; `--words-only`);
