@@ -61,6 +61,10 @@ def test_duration_and_cta():
         return
     assert MAX_DURATION <= 180, "Instagram Reels are limited to 180 s"
     assert PLAN["duration"] <= MAX_DURATION, f"{PLAN['duration']:.2f} s > max_duration {MAX_DURATION:.0f} s"
+    if PLAN.get("end_card") is False:
+        # Styles without an end card (e.g. `nativo`): the video ends with the speech, no CTA screen.
+        assert 0 <= PLAN["duration"] - PLAN["voice_end"] <= 1.0
+        return
     assert PLAN["duration"] - PLAN["voice_end"] >= 4.0
     assert BRAND["handle"] in HTML, "CTA must show the brand handle"
     assert BRAND["follow"] in HTML and BRAND["following"] in HTML, "CTA must show the Follow -> Following state"

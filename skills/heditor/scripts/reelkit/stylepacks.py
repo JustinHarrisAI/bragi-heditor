@@ -70,6 +70,11 @@ FAMILY = {
                "long_notes": "Layered moments (text behind the speaker, depth scans) need a full-frame camera with a "
                              "good matte: use them only in speaker-layout set pieces, never over a screen share."},
     "creator": {"transition": {"kind": "cut", "dur": 0.25}, "chapter_card": "editorial", "lower_third": "tag"},
+    # Clean native edit: cuts and animated captions only (no SFX, no music bed, no set pieces).
+    "native": {"transition": {"kind": "cut", "dur": 0.0}, "chapter_card": "editorial", "lower_third": "tag",
+               "overlay": {"grain": 0.0, "vignette": 0.0},
+               "sfx": {"chapter": None, "callout": None, "lower_third": None, "set_piece": None, "transition": None,
+                       "cta_tap": None, "cta_done": None, "intro": None}},
 }
 
 # One entry per named style. Only what differs from BASE + FAMILY is written.
@@ -469,6 +474,20 @@ STYLES = {
         "long_notes": "The natural style for classes. The slate is the world around the screen share (framed in "
                       "oak like a projected slide); chapters are syllabus items whose '?' turns into ✓; concept-map "
                       "set pieces are drawn live on the trigger words (±0.15 s); a SUMMARY board closes each chapter.",
+    },
+    "nativo": {
+        "name": "Nativo (clean native edit)", "family": "native",
+        "palette": {"bg": "#000000", "bg2": "#0a0a0a", "surface": "#000000", "text": "#ffffff", "muted": "#c9c9c9",
+                    "accent": "#ffd84d", "accent2": "#ffffff"},
+        "fonts": {"display": "Inter", "body": "Inter", "caption": "Inter"},
+        "captions": {"weight": 900, "case": "none", "fg": "#ffffff", "active_fg": "#000000", "active_bg": "#ffd84d",
+                     "box": None, "stroke": "10px #000000", "scale": 1.1},
+        "frame": {"border": "none", "camera_radius": 0, "screen_radius": 0, "shadow": "none", "world": "#000000"},
+        "music": {"ids": [], "mood": "none (voice only unless the user asks for a soft bed)", "bed": False},
+        "long_notes": "Cuts and animated captions only: pauses, false starts and repetitions removed (long edl), "
+                      "camera or screen full frame with a hard cut between layouts, word-by-word captions. No set "
+                      "pieces, callouts, lower thirds, SFX or music unless the user asks; chapters go to the "
+                      "description (YouTube timestamps), not on screen.",
     },
     "camadas": {
         "name": "Camadas (concept layers)", "family": "layers",

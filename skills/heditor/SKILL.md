@@ -1,10 +1,10 @@
 ---
 name: heditor
-description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920), or a long-form video (vídeo longo, aula, live, video for YouTube, minutes to hours) in 16:9, 1:1, 4:5 or 9:16 with pauses removed, chapters, captions/SRT, lower thirds, intro/end cards and a segmented render — with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, documentario-narrado, podcast, missao, tribunal; paid-ad formats keynote, stories, predio-24h, bilheteria, porta-de-aco, manual-de-montagem, carrinho, entrega, auditorio, album; authority formats cassino-de-precisao, mesa-de-risco, turno-da-madrugada, arquivo-cofre, aduana-de-dados, laudo-de-sinistro; didactic format lousa-de-aula; creator formats camadas, raio-x, duelo, bancada, manchete, revista), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, layered 2.5D/3D effects (text behind the speaker, captions on the set, 3D objects, depth scans, hand-anchored objects), voice-first mixing, render and QA.
+description: Use when the user wants to edit a talking-head, class, live or podcast video into a vertical Reel/Short/TikTok (1080x1920), or a long-form video (vídeo longo, aula, live, video for YouTube, minutes to hours) in 16:9, 1:1, 4:5 or 9:16 with pauses removed, chapters, captions/SRT, lower thirds, intro/end cards and a segmented render — with motion graphics, captions, sound design and music — in a named style (cinema, ruptura, impacto, game, thriller, ide, aeroporto, chat, documentario, documentario-narrado, podcast, missao, tribunal; paid-ad formats keynote, stories, predio-24h, bilheteria, porta-de-aco, manual-de-montagem, carrinho, entrega, auditorio, album; authority formats cassino-de-precisao, mesa-de-risco, turno-da-madrugada, arquivo-cofre, aduana-de-dados, laudo-de-sinistro; didactic format lousa-de-aula; native format nativo (clean edit: cuts + animated captions only); creator formats camadas, raio-x, duelo, bancada, manchete, revista), in "creative mode" (maximum originality, built for that specific video) or "creative mode + reference" (e.g. "in the style of GTA 6"). Covers setup of all tools, cut selection from transcripts, HyperFrames compositions, layered 2.5D/3D effects (text behind the speaker, captions on the set, 3D objects, depth scans, hand-anchored objects), voice-first mixing, render and QA.
 license: MIT
 metadata:
   author: PycodeBR (Felipe Azambuja)
-  version: 2.0.0
+  version: 2.1.0
   homepage: https://github.com/pycodebr/heditor
 ---
 
@@ -31,6 +31,7 @@ bash <skill_dir>/scripts/setup.sh          # installs ffmpeg/node/python deps if
 | User says | Mode | Read |
 |---|---|---|
 | "edit in style X", "igual ao estilo X" | Fixed style | `references/styles/<slug>.md` |
+| "nativo", "edição simples/limpa", "só corta e legenda" | Style `nativo` (the one exception to "different every time": the edit stays invisible) | `references/styles/nativo.md` |
 | "creative mode", "modo criativo", "surprise me" | Creative mode | `references/creative-mode.md` |
 | "creative mode with/using X" (GTA 6, Wes Anderson, anime, news broadcast…) | Creative mode + reference | `references/creative-mode.md` (§ Reference direction) |
 | Nothing specified | Ask once which mode; if the user wants you to decide, use creative mode | |
@@ -70,6 +71,7 @@ Named styles (`heditor styles`): see `references/styles/INDEX.md` for when each 
 | `aduana-de-dados` | Authority · night border checkpoint between your computer and the internet: exit declaration, X-ray monitor, barrier, regulations underlined, READ THE TERMS stamp |
 | `laudo-de-sinistro` | Authority · forensic claim report: the expert in the technical photograph, forensic flash, coverage clause filled as said, pen marks TOTAL LOSS → RECOVERABLE |
 | `lousa-de-aula` | Didactic · interactive chalkboard lesson: every stroke drawn live on its word, syllabus whose "?" turns into ✓, arrows labelled with the spoken verb, eraser, SUMMARY chain, homework CTA |
+| `nativo` | Native · clean edit: only cuts at clean word boundaries, jump cuts that alternate the framing, and animated word-by-word captions; no music, SFX, graphics or end card. Reference build: `heditor new <work> <video> --style nativo`, `heditor produce <work> none 0` |
 | `camadas` | Layers · every concept drawn between the speaker and the wall: giant words and "?" behind the head, guide lines on the set, glass slab, floating cards, comment-to-DM CTA |
 | `raio-x` | Layers · the machine's view: live pipeline HUD, depth scan, exploded layers, point cloud, face/hand tracking, transcript becoming the prompt, timeline assembly |
 | `duelo` | Creator · A/B comparison page: the same take in two synchronised panels edited two ways, VS badge, checklist verdict, vote CTA |

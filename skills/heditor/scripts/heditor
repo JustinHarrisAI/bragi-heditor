@@ -17,15 +17,22 @@ need_work() { [[ -n "${1:-}" ]] || { echo "usage: heditor $cmd <work_dir> ..."; 
 case "$cmd" in
   setup)   bash "$SKILL_DIR/scripts/setup.sh" "$@" ;;
   doctor)  "$PY" "$SKILL_DIR/scripts/doctor.py" ;;
-  new)     # heditor new <work_dir> <source_video>   |   heditor new --long <work> <video> [--format 16:9] [--style X]
+  new)     # heditor new <work_dir> <source_video> [--style nativo]   |   heditor new --long <work> <video> [--format 16:9] [--style X]
            if [[ " $* " == *" --long "* ]]; then
              args=(); for a in "$@"; do [[ "$a" == "--long" ]] || args+=("$a"); done
              exec "$PY" "$KIT/long_cli.py" new "${args[@]}"
            fi
+           STYLE=""; pos=()
+           while [[ $# -gt 0 ]]; do case "$1" in --style) STYLE="${2:-}"; shift 2 ;; *) pos+=("$1"); shift ;; esac; done
+           set -- "${pos[@]}"
            need_work "${1:-}"; W="$(mkdir -p "$1" && cd "$1" && pwd)"; SRC="${2:-}"
            mkdir -p "$W/qa" "$W/composition"
            [[ -e "$W/composition/package.json" ]] || cp "$SKILL_DIR/templates/composition-package.json" "$W/composition/package.json"
-           for f in prepare.py build.py DESIGN.md; do [[ -e "$W/$f" ]] || cp "$SKILL_DIR/templates/$f" "$W/$f"; done
+           # A style with a reference implementation (templates/styles/<slug>/) seeds build.py/DESIGN.md from it.
+           for f in prepare.py build.py DESIGN.md; do
+             src="$SKILL_DIR/templates/$f"; [[ -n "$STYLE" && -e "$SKILL_DIR/templates/styles/$STYLE/$f" ]] && src="$SKILL_DIR/templates/styles/$STYLE/$f"
+             [[ -e "$W/$f" ]] || cp "$src" "$W/$f"
+           done
            [[ -n "$SRC" ]] && sed -i.bak "s#^SOURCE = .*#SOURCE = \"$(readlink -f "$SRC")\"#" "$W/prepare.py" && rm -f "$W/prepare.py.bak"
            echo "created $W (edit prepare.py BLOCKS, then: heditor prepare $W)" ;;
   probe)   # heditor probe <source_video> [seconds...]  -> frames to locate the speaker/camera
@@ -65,7 +72,7 @@ heditor - creative video editing for AI agents (vertical Reels and long-form vid
   heditor styles                                         list the named styles
   heditor probe <video> [t...]                           frames to locate the speaker/camera
   heditor transcribe <video> <start> <dur> <out.json>    word-timed ASR of a window (use 0 and full length for all)
-  heditor new <work> [video]                             scaffold a cut (prepare.py, build.py, DESIGN.md)
+  heditor new <work> [video] [--style nativo]            scaffold a cut (prepare.py, build.py, DESIGN.md)
   heditor prepare <work>                                 cut speech + camera from the source (runs prepare.py)
   heditor words <work> [prompt]                          ASR of the assembled cut -> words.json/words-reviewed.json
   heditor gaps <work> [max_s]                            dead air left in the cut (fails if a pause > 0.45 s)

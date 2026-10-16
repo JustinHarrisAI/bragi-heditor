@@ -89,6 +89,12 @@ Formato didático (a tela ensina o que o falante diz, desenhada ao vivo na palav
 |---|---|
 | `lousa-de-aula` | Aula interativa numa lousa de giz: cada traço nasce na palavra que o dispara, pauta com "?" que vira ✓, setas com o verbo da fala, apagador, quadro de RESUMO com a cadeia completa e "para casa" no CTA |
 
+Formato nativo (edição simples e limpa):
+
+| Estilo | Identidade |
+|---|---|
+| `nativo` | Só o essencial: cortes nas fronteiras das palavras, jump cuts que alternam o enquadramento e legenda animada palavra a palavra; sem música, efeitos, grafismos nem tela final. Build de referência: `heditor new <work> <vídeo> --style nativo` e `heditor produce <work> none 0` |
+
 Formatos de criador (estudo de técnicas de Reels de tecnologia com alta retenção):
 
 | Estilo | Identidade |
@@ -117,7 +123,7 @@ Faça a live de ontem em 16:9 no modo criativo, tirando as pausas, e me dê tamb
 - **EDL proposta e revisável:** remove pausas mortas, falsos começos, repetições ("a gente a gente") e hesitações sem cortar palavras (o corte sempre cai no vale de energia entre palavras); você revisa `qa/edl-proposal.md` antes de aplicar e pode excluir trechos inteiros (perguntas do chat com nomes, dados privados).
 - **Layouts para tela + câmera:** câmera em PiP, foco na tela com zoom numa região, falante em tela cheia e lado a lado, alternados por trecho (há sugestão automática pela atividade da tela).
 - **Capítulos** com cartões, tag do capítulo atual e timestamps prontos para a descrição do YouTube; **legendas** queimadas (opcional) e exportação **SRT/VTT**; **lower thirds**; **cartão de abertura** e **encerramento** com Seguir → Seguindo ou Inscrever-se → Inscrito + "Assista o próximo".
-- **Os 36 estilos como style packs** (paleta, tipografia, legenda, transições, cartões, lower third, grade da câmera, som) com regras de adaptação vertical → horizontal; **modo criativo** com set pieces (tipografia gigante da fala, mapa de conceitos desenhado nas palavras, checklist, zoom com destaque, HTML próprio) nos momentos-chave e dispositivos de retenção na cadência de cada tipo (aula, live, YouTube).
+- **Os 37 estilos como style packs** (paleta, tipografia, legenda, transições, cartões, lower third, grade da câmera, som) com regras de adaptação vertical → horizontal; **modo criativo** com set pieces (tipografia gigante da fala, mapa de conceitos desenhado nas palavras, checklist, zoom com destaque, HTML próprio) nos momentos-chave e dispositivos de retenção na cadência de cada tipo (aula, live, YouTube).
 - **Render segmentado e retomável:** cada trecho é uma composição própria, segmentos prontos são pulados, os vídeos são concatenados sem recompressão e um único master de áudio contínuo é aplicado no fim (sem emendas de áudio). Estimativa de tempo e log de progresso.
 - **QA do longo:** duração, decodificação, loudness (−14 LUFS padrão, configurável), sincronia câmera × tela × voz contra a gravação original, ASR por amostragem, capítulos, emendas entre segmentos (sem quadro preto ou repetido) e folhas de quadros.
 
@@ -263,7 +269,7 @@ Issues e PRs são bem-vindos: novos estilos (com a ficha completa em `references
 
 **heditor** is an open Agent Skill (SKILL.md) that lets AI coding agents edit talking-head footage (classes, lives, podcasts) into vertical 1080×1920 Reels/Shorts/TikToks with motion graphics, word-synced captions, sound design and an emotional soundtrack, or into long-form videos (whole classes, lives, YouTube videos) in 16:9, 1:1, 4:5 or 9:16.
 
-- **Thirty-six named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `documentario-narrado` (large-scale narrated documentary on a living globe), `podcast`, `missao` (open-world game homage), `tribunal` (courtroom sketch); paid-ad formats with a "Learn more" CTA: `keynote`, `stories`, `predio-24h`, `bilheteria`, `porta-de-aco`, `manual-de-montagem`, `carrinho`, `entrega`, `auditorio`, `album`; authority formats: `cassino-de-precisao`, `mesa-de-risco`, `turno-da-madrugada`, `arquivo-cofre`, `aduana-de-dados`, `laudo-de-sinistro`; didactic format: `lousa-de-aula` (interactive chalkboard lesson); creator formats: `camadas`, `raio-x`, `duelo`, `bancada`, `manchete`, `revista`.
+- **Thirty-seven named styles:** `cinema`, `ruptura`, `impacto`, `game`, `thriller`, `ide`, `aeroporto` (control tower), `chat`, `documentario`, `documentario-narrado` (large-scale narrated documentary on a living globe), `podcast`, `missao` (open-world game homage), `tribunal` (courtroom sketch); paid-ad formats with a "Learn more" CTA: `keynote`, `stories`, `predio-24h`, `bilheteria`, `porta-de-aco`, `manual-de-montagem`, `carrinho`, `entrega`, `auditorio`, `album`; authority formats: `cassino-de-precisao`, `mesa-de-risco`, `turno-da-madrugada`, `arquivo-cofre`, `aduana-de-dados`, `laudo-de-sinistro`; didactic format: `lousa-de-aula` (interactive chalkboard lesson); native format: `nativo` (clean edit: cuts + animated captions only); creator formats: `camadas`, `raio-x`, `duelo`, `bancada`, `manchete`, `revista`.
 - **Layered 2.5D/3D effects (depthkit):** speaker matte, depth map, text behind the speaker, captions painted on the set, three.js objects passing behind the speaker, depth fog, contour scans, point clouds, hand-anchored objects (`heditor matte|depth|look|hands|plane`).
 - **Creative mode:** the agent analyses the video, researches, invents a world for that specific speech and builds it with retention-focused motion and sound.
 - **Creative mode + reference:** e.g. "creative mode in the style of GTA 6". The agent researches the reference and builds a licence-safe homage.

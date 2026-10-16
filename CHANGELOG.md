@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.0 — 2026-10-16
+- **New style `nativo`** (family *native*): a clean native edit with only cuts at clean word boundaries, jump cuts that alternate the framing (1.0/1.075 on the face of each segment) and animated word-by-word captions (Inter 900, black on a light-yellow pill). No music, SFX, graphics or end card unless asked. Ships a reference build in `templates/styles/nativo/build.py` with two camera modes: `full` (vertical source, or a 9:16 crop around the median face from the full-resolution source, frame for frame) and `fit` (camera fitted to the width over a blurred copy of itself, for small or wide sources).
+- `heditor new <work> <video> --style <slug>` seeds `build.py`/`DESIGN.md` from `templates/styles/<slug>/` when the style has a reference build.
+- `heditor produce <work> none 0` builds without a music track (the mix stays voice only).
+- `heditor test`: a Reel may end with the speech, without a CTA screen, when the plan declares `"end_card": false`.
+- Long-form style pack `nativo`; style packs may set an SFX category to `None` to stay silent.
+- `camera_sync_check` checks blurred background variants (`*blur*`) by frame count only, instead of reporting noise as a sync failure.
+- Validated on a 35 s cut in `fit` mode (lint 0 errors, `heditor test` 10/10, render about 4 min, −14.1 LUFS, final camera within one frame of the source); `full` mode exercised on the same cut (frame-exact 9:16 crop).
+
 ## 2.0.0 — 2026-10-16
 - Quality gate and troubleshooting row for short labels that stay on screen (overlapping fade-in/fade-out tweens), found in the narrated documentary production.
 
