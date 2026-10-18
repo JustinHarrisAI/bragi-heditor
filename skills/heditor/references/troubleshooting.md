@@ -4,6 +4,7 @@
 |---|---|---|
 | Active caption word hard to read | dark text with dark outline on a mid-tone pill | `pill` mode (black on #ffd84d, outline = pill colour) or white on saturated dark; check enlarged crops |
 | Accents of titles inside the top margin | Anton glyph ascenders exceed the line box | start titles at ≥ 300 px; confirm with the pixel check |
+| `heditor prepare` or `produce` killed (SIGKILL) on a phone recording | 4K HEVC source: the multi-branch `trim` graph holds 4K frames, and face tracking decoded 5 fps of full-size RGB frames into memory | make a 1080×1920 proxy first (`ffmpeg -i in.MOV -vf scale=1080:1920:flags=lanczos,format=yuv420p -c:v libx264 -crf 14 -c:a pcm_s16le out.mov`, autorotation is applied on decode) and point `SOURCE` to it; face tracking now runs on a ≤ 640 px copy (2.1.1) |
 | Video looks like the previous ones | same skeleton (camera card + boxed panels + pill + PiP finale) reused | creative mode: pick a different world; change camera role, captions system, palette, transitions, CTA |
 | Music or SFX cover the voice | short-release ducking, loud impacts on words | keep the kit's held ducking; move impacts into gaps; lower SFX on words to ≤ -20 dB |
 | True peak > 0 dBTP in the MP4 although WAV was -2 dB | AAC overshoot from bright transients (beeps, clicks, shutters) | finalize re-limits automatically (`tp_guard`); avoid stacking many bright SFX |

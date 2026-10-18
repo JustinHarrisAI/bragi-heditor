@@ -4,7 +4,7 @@ description: Use when the user wants to edit a talking-head, class, live or podc
 license: MIT
 metadata:
   author: PycodeBR (Felipe Azambuja)
-  version: 2.1.0
+  version: 2.1.1
   homepage: https://github.com/pycodebr/heditor
 ---
 

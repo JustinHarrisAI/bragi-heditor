@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.1 — 2026-10-18
+- `track_faces` detects on a copy downscaled to at most 640 px wide (positions are fractions, so results are unchanged). Decoding 5 fps of full-HD RGB frames for a 78 s cut used ~2.4 GB and was killed by the OOM killer on a 8 GB VPS.
+- Troubleshooting: 4K HEVC phone recordings (e.g. iPhone `.MOV`) can also exhaust memory in `heditor prepare`; make a 1080×1920 proxy and use it as `SOURCE`.
+- Validated on a 78 s first-person phone recording in the `nativo` style (`full` mode, no face in frame).
+
 ## 2.1.0 — 2026-10-16
 - **New style `nativo`** (family *native*): a clean native edit with only cuts at clean word boundaries, jump cuts that alternate the framing (1.0/1.075 on the face of each segment) and animated word-by-word captions (Inter 900, black on a light-yellow pill). No music, SFX, graphics or end card unless asked. Ships a reference build in `templates/styles/nativo/build.py` with two camera modes: `full` (vertical source, or a 9:16 crop around the median face from the full-resolution source, frame for frame) and `fit` (camera fitted to the width over a blurred copy of itself, for small or wide sources).
 - `heditor new <work> <video> --style <slug>` seeds `build.py`/`DESIGN.md` from `templates/styles/<slug>/` when the style has a reference build.

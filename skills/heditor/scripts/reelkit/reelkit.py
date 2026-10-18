@@ -493,8 +493,12 @@ def track_faces(work, video="camera-hd.mp4", step=0.2):
     w, h = map(int, subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries",
                                     "stream=width,height", "-of", "csv=p=0", str(path)],
                                    capture_output=True, text=True, check=True).stdout.strip().split(","))
-    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-vf", f"fps={1 / step}", "-f", "rawvideo",
-                          "-pix_fmt", "rgb24", "-"], capture_output=True, check=True).stdout
+    # Detect on a downscaled copy: positions are fractions, and 5 fps of full-HD RGB frames
+    # (~6 MB each) exhausts the memory of a small VPS on cuts longer than ~40 s.
+    if w > 640:
+        w, h = 640, max(2, round(h * 640 / w / 2) * 2)
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", str(path), "-vf", f"fps={1 / step},scale={w}:{h}",
+                          "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], capture_output=True, check=True).stdout
     frames = np.frombuffer(raw, np.uint8).reshape(-1, h, w, 3)
     det = vision.FaceDetector.create_from_options(vision.FaceDetectorOptions(
         base_options=BaseOptions(model_asset_path=str(MODELS / "blaze_face_short_range.tflite")),
