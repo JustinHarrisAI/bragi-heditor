@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.0 — 2026-10-19
+- New reference `references/pre-production.md`: recording plan and edit plan from written scripts, before anything is recorded. Covers exporting a shared Google Doc, measuring the scripts by code (edited duration and the position of the first brand/campaign mention), inventorying the set from photos and previous contact sheets with vision, checking existing screen recordings before reusing them, fact-checking cited studies (including later "out of date" notices), recording rules that save editing (two setups, gestures tied to words, locked tripod for mattes and screen projection, narrated demos with a clap and a visible timer), a teleprompter generated and verified from the source, a speech-structure → style table for batches and a quote audit for the plan.
+- `SKILL.md`: pre-production row in the mode table and in the references list.
+
 ## 2.1.2 — 2026-10-18
 - `finalize` no longer muxes with `-shortest`: with `-c:v copy` it dropped the last video packets (2350 of 2354 frames on a 78 s cut) and the contact sheet then failed on a frame past the end. The mux is trimmed to the render's duration instead.
 

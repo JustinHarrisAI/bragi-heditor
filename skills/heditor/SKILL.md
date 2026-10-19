@@ -4,7 +4,7 @@ description: Use when the user wants to edit a talking-head, class, live or podc
 license: MIT
 metadata:
   author: PycodeBR (Felipe Azambuja)
-  version: 2.1.2
+  version: 2.2.0
   homepage: https://github.com/pycodebr/heditor
 ---
 
@@ -36,6 +36,7 @@ bash <skill_dir>/scripts/setup.sh          # installs ffmpeg/node/python deps if
 | "creative mode with/using X" (GTA 6, Wes Anderson, anime, news broadcast…) | Creative mode + reference | `references/creative-mode.md` (§ Reference direction) |
 | Nothing specified | Ask once which mode; if the user wants you to decide, use creative mode | |
 | "vídeo longo", "aula", "live", "YouTube", "16:9", "editar a aula inteira", chapters, SRT | Long-form mode (any style or creative) | `references/long-form.md` |
+| "plano de gravação", "analise os roteiros", "pré-produção", plan before recording | Pre-production: recording plan, teleprompter and edit plan; nothing is edited yet | `references/pre-production.md` |
 
 Named styles (`heditor styles`): see `references/styles/INDEX.md` for when each fits.
 
@@ -123,6 +124,7 @@ Follow `references/workflow.md` step by step. Summary:
 ## 4. References
 
 - `references/workflow.md` — the full procedure with commands, cut selection and EDL rules.
+- `references/pre-production.md` — before recording: measure the scripts, inventory the set, reuse existing screen recordings, fact-check cited studies, recording plan (setups, gestures on words, screens, inserts), teleprompter generated from the source and a per-video style map for a batch.
 - `references/long-form.md` — long-form mode: format profiles, layouts, EDL proposal, chapters, style packs for all styles, creative set pieces and cadence, segmented render, QA.
 - `references/creative-mode.md` — creative mode, reference-directed creative mode, research method, idea bank.
 - `references/kit-api.md` — reelkit functions, page skeleton, GSAP helpers, plan/sound/music formats.

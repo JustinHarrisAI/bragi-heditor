@@ -134,6 +134,7 @@ Guia completo em [`long-form.md`](skills/heditor/references/long-form.md).
 - **Estilo fixo:** "edite no estilo `aeroporto`". O agente aplica a linguagem do estilo, mas reconstrói as cenas a partir da fala do novo vídeo.
 - **Modo criativo:** "modo criativo". O agente estuda o vídeo, gera de 6 a 8 conceitos de formato, pesquisa referências, escolhe o mais surpreendente que sirva à fala e constrói tudo sob medida, com mudanças na tela a cada 1,5–2 s e efeitos sonoros em cada ação. Veja [`creative-mode.md`](skills/heditor/references/creative-mode.md).
 - **Modo criativo + referência:** "modo criativo no estilo GTA 6", "abertura de anime", "telejornal", "documentário de natureza". O agente pesquisa a paleta, a tipografia, o HUD, os movimentos e os sons da referência e cria uma homenagem com equivalentes licenciados, sem logos, marcas, personagens ou músicas protegidas.
+- **Pré-produção:** "analise estes roteiros e monte o plano de gravação e de edição". Antes de gravar, o agente mede os roteiros, faz o inventário do cenário pelas fotos, confere as gravações de tela que já existem e os estudos citados, monta os setups com gestos amarrados às palavras, gera o teleprompter a partir do documento e escolhe um estilo diferente para cada vídeo do lote. Veja [`pre-production.md`](skills/heditor/references/pre-production.md).
 
 Gostou de um resultado do modo criativo? Peça para salvar como estilo nomeado. A skill documenta como fazer isso em [`adding-styles.md`](skills/heditor/references/adding-styles.md).
 
