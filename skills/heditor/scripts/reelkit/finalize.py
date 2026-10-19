@@ -83,9 +83,13 @@ def main():
     final = WORK / "render" / NAME
     plan = json.loads((WORK / "plan.json").read_text())
     tp_guard = guard_true_peak()
+    # No `-shortest`: with `-c:v copy` it cuts the video at a packet boundary before the audio ends (2350 of
+    # 2354 frames on a 78 s cut) and the contact sheet then asks for frames past the end. Trim to the render.
+    vdur = run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "format=duration",
+                "-of", "csv=p=0", str(render)]).stdout.strip()
     run(["ffmpeg", "-v", "error", "-y", "-i", str(render), "-i", str(WORK / "composition/assets/master.wav"),
          "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-b:a", "256k", "-ar", "48000",
-         "-movflags", "+faststart", "-metadata", f"artist={BRAND}", "-shortest", str(final)], timeout=300)
+         "-movflags", "+faststart", "-metadata", f"artist={BRAND}", "-t", vdur, str(final)], timeout=300)
     decode = subprocess.run(["ffmpeg", "-v", "error", "-i", str(final), "-f", "null", "-"], capture_output=True, text=True)
     probe = json.loads(run(["ffprobe", "-v", "error", "-show_entries",
                             "format=duration,size:stream=codec_name,width,height,r_frame_rate,nb_frames,sample_rate,channels,pix_fmt",

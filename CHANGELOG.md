@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.2 — 2026-10-18
+- `finalize` no longer muxes with `-shortest`: with `-c:v copy` it dropped the last video packets (2350 of 2354 frames on a 78 s cut) and the contact sheet then failed on a frame past the end. The mux is trimmed to the render's duration instead.
+
 ## 2.1.1 — 2026-10-18
 - `track_faces` detects on a copy downscaled to at most 640 px wide (positions are fractions, so results are unchanged). Decoding 5 fps of full-HD RGB frames for a 78 s cut used ~2.4 GB and was killed by the OOM killer on a 8 GB VPS.
 - Troubleshooting: 4K HEVC phone recordings (e.g. iPhone `.MOV`) can also exhaust memory in `heditor prepare`; make a 1080×1920 proxy and use it as `SOURCE`.
