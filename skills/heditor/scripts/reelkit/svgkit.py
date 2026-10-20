@@ -138,6 +138,57 @@ def inline(src, cls="", mode="static", out_dir=None):
     return svg.replace("<svg", f'<svg class="{cls}"', 1) if cls else svg
 
 
+def _num(el, name, default=0.0):
+    v = el.get(name)
+    return float(v) if v not in (None, "", "auto") else default
+
+
+def single_path(svg_text):
+    """All drawable shapes of an SVG merged into one path `d` (rect with rx, circle, ellipse, line, polyline,
+    polygon converted). MorphSVGPlugin morphs one path into one path, so icon → icon morphs need this. Transforms
+    on elements are not applied (Lucide and SVGO output have none)."""
+    import xml.etree.ElementTree as ET
+    root = ET.fromstring(re.sub(r"<\?xml[^>]*>|<!DOCTYPE[^>]*>", "", svg_text).strip())
+    parts = []
+    for el in root.iter():
+        tag = el.tag.split("}")[-1]
+        if tag == "path" and el.get("d"):
+            d = (el.get("d") or "").strip()
+            # a path's first moveto is absolute even when written "m"; once concatenated it would become
+            # relative to the previous sub-path, so rewrite "m x y rest" as "M x y l rest"
+            m = re.match(r"m\s*(-?(?:\d*\.\d+|\d+)(?:e-?\d+)?)[\s,]*(-?(?:\d*\.\d+|\d+)(?:e-?\d+)?)(.*)", d, re.S)
+            if m:
+                rest = m.group(3)
+                d = f"M{m.group(1)} {m.group(2)}" + (("l" + rest.lstrip(" ,")) if re.match(r"[\s,]*[-\d.]", rest)
+                                                     else rest)
+            parts.append(d)
+        elif tag == "rect":
+            x, y, w, h = _num(el, "x"), _num(el, "y"), _num(el, "width"), _num(el, "height")
+            rx = _num(el, "rx") if el.get("rx") else None
+            ry = _num(el, "ry") if el.get("ry") else None
+            rx = min(rx if rx is not None else (ry or 0), w / 2)
+            ry = min(ry if ry is not None else rx, h / 2)
+            if rx or ry:
+                parts.append(f"M{x + rx} {y}H{x + w - rx}A{rx} {ry} 0 0 1 {x + w} {y + ry}V{y + h - ry}"
+                             f"A{rx} {ry} 0 0 1 {x + w - rx} {y + h}H{x + rx}A{rx} {ry} 0 0 1 {x} {y + h - ry}"
+                             f"V{y + ry}A{rx} {ry} 0 0 1 {x + rx} {y}Z")
+            else:
+                parts.append(f"M{x} {y}H{x + w}V{y + h}H{x}Z")
+        elif tag in ("circle", "ellipse"):
+            cx, cy = _num(el, "cx"), _num(el, "cy")
+            rx = _num(el, "r") if tag == "circle" else _num(el, "rx")
+            ry = _num(el, "r") if tag == "circle" else _num(el, "ry")
+            parts.append(f"M{cx - rx} {cy}A{rx} {ry} 0 1 0 {cx + rx} {cy}A{rx} {ry} 0 1 0 {cx - rx} {cy}Z")
+        elif tag == "line":
+            parts.append(f"M{_num(el, 'x1')} {_num(el, 'y1')}L{_num(el, 'x2')} {_num(el, 'y2')}")
+        elif tag in ("polyline", "polygon"):
+            pts = re.findall(r"-?[\d.]+(?:e-?\d+)?", el.get("points", ""))
+            xy = [f"{pts[i]} {pts[i + 1]}" for i in range(0, len(pts) - 1, 2)]
+            if xy:
+                parts.append("M" + "L".join(xy) + ("Z" if tag == "polygon" else ""))
+    return " ".join(parts)
+
+
 def main(argv):
     if not argv or argv[0] in ("-h", "--help"):
         print(__doc__)

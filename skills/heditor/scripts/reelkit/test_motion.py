@@ -115,3 +115,55 @@ def test_physics_player_interpolates_and_hides_before_spawn(tmp_path):
     out = subprocess.run(["node", "--input-type=module", "-e", js], capture_output=True, text=True, check=True)
     res = json.loads(out.stdout.strip().splitlines()[-1])
     assert res == {"hiddenBefore": True, "visibleAt": True, "exact": True, "between": True}
+
+
+def test_single_path_merges_shapes_and_fixes_relative_moveto():
+    svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/>'
+           '<circle cx="12" cy="12" r="3"/><line x1="8" y1="21" x2="16" y2="21"/>'
+           '<path d="m4 17 6-6-6-6"/><polyline points="1 2 3 4 5 6"/></svg>')
+    d = sk.single_path(svg)
+    assert d.count("M") == 5 and "A2.0 2.0" in d and "A3.0 3.0" in d
+    assert "M4 17l6-6-6-6" in d                     # first relative moveto made absolute, the rest kept relative
+    assert "m4" not in d
+
+
+@pytest.mark.skipif(not (HAVE_SVGO and HAVE_CHROME), reason="Chrome missing (run setup.sh)")
+def test_single_path_looks_identical_to_the_icon(tmp_path):
+    rk.ensure_icons(["laptop"])
+    src = (rk.ICON_SRC / "laptop.svg").read_text().replace("currentColor", "black")
+    one = ('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" '
+           'stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+           f'<path d="{sk.single_path(src)}"/></svg>')
+    (tmp_path / "a.svg").write_text(src)
+    (tmp_path / "b.svg").write_text(one)
+    sk.render(tmp_path / "a.svg", tmp_path / "a.png")
+    sk.render(tmp_path / "b.svg", tmp_path / "b.png")
+    assert sk.compare(tmp_path / "a.png", tmp_path / "b.png")["changed_px"] < 0.001
+
+
+def test_caption_pill_colours_default_unchanged():
+    caps = [{"id": "c0", "start": 0, "end": 1, "text": "a b",
+             "words": [{"shown": "a", "start": 0}, {"shown": "b", "start": 0.5}]}]
+    assert 'backgroundColor:"#ffd84d"' in rk.captions_js(caps, mode="pill")
+    js = rk.captions_js(caps, mode="pill", pill=("#03100b", "#7dffb0"))
+    assert 'color:"#03100b",backgroundColor:"#7dffb0"' in js and "rgba(125,255,176,0)" in js
+
+
+@pytest.mark.skipif(not HAVE_RAPIER, reason="rapier missing (run setup.sh)")
+def test_locks_unlock_and_land_on(tmp_path):
+    sc = pk.scene(duration=4.0, substeps=8)
+    sc["bodies"] = [
+        {"id": "up", "shape": "roundbox", "size": [1, 0.4, 0.6], "pos": [-1, 5, 0], "rot": [0, 0, 0],
+         "angvel": [0, 0, 3], "spawn": 0.2, "lock": "rotation"},
+        {"id": "col", "shape": "roundbox", "size": [1, 0.4, 0.6], "pos": [1.5, 5, 0], "vel": [2, 0, 0],
+         "spawn": 0.2, "lock": "vertical"},
+    ]
+    sc["impulses"] = [pk.blast(t=2.5, center=(0, 0, 0), radius=4, strength=6, lift=0.5, unlock=True)]
+    stats, err = pk.land_on(tmp_path, sc, {"up": 1.5, "col": 1.0}, "locks")
+    assert all(abs(e) <= 1 / 30 + 1e-6 for e in err.values()), err
+    bk = json.loads((tmp_path / "qa/physics-locks.json").read_text())
+    up, col = bk["tracks"]["up"], bk["tracks"]["col"]
+    f_before = int(2.4 * 30)
+    assert abs(up[f_before * 7 + 6]) > 0.9999            # rotation locked until the blast: still upright
+    assert all(abs(col[f * 7] - 1.5) < 1e-6 for f in range(bk["frames"]))   # vertical lock: x never moves
+    assert max(abs(up[f * 7 + 6]) for f in range(f_before, bk["frames"])) <= 1.0

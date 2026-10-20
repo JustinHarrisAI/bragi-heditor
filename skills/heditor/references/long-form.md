@@ -172,6 +172,8 @@ fonts, card kind, transition) designed for that video, plus custom set pieces.
 | `trailer` | organic | Geist, `#03090e` on `#ffffff` | serif / plate / flash | Chapters open as black cards with a wide-tracked sans spelled letter by letter after ~1 s of near-silence and a hit; the speaker full frame in the cool-steel grade with letterbox; words on the wall behind the speaker at key moments; keep the big beats (silence, black, climax) for 3–5 moments. |
 | `thriller` | organic | Inter, `#ff3d57` text | terminal / terminal / glitch | REC/timecode on the camera window; blackout + reboot as the set piece of the failure-to-recovery turn; liquid distortion only in short set pieces. |
 | `tribunal` | organic | IBM Plex Mono, `#000000` on `#ffd84d` | record / record / page | Chapters as exhibits; the speaker as expert witness in side layout; the verdict is the set piece of the conclusion. |
+| `gravidade` | organic | Anton, `#000000` on `#ffd84d` | slate / plate / flash | Physics set pieces (physkit, baked) at the key beats: problems fall into a heap on their words, the turn lands as a heavy block, the answer stacks as a straight tower; clean pip/side layout in between (render cost ~1 s/frame inside the room). |
+| `circuito` | didactic | JetBrains Mono, `#03100b` on `#7dffb0` | terminal / terminal / wipe | The screen share becomes the main chip; chapter cards are new boards; concept maps are components drawn on their words (DrawSVG), copper traces on the verbs, pulses (MotionPath) for data that travels, LEDs and flags for the verdict per part. |
 | `lousa-de-aula` | didactic | Caveat, `#1d2f27` on `#f4dc72` | board / chalk / chalk | Natural for classes: slate world framing the screen (oak border), syllabus chapters whose ? turns into a check, concept maps drawn on trigger words, a SUMMARY checklist per chapter. |
 | `nativo` | native | Inter, `#000000` on `#ffd84d` | editorial / tag / cut | Cuts and animated captions only: EDL removes pauses, false starts and repetitions; camera or screen full frame with hard cuts between layouts; no set pieces, callouts, lower thirds, SFX or music unless asked; chapters only in the description. |
 | `aduana-de-dados` | authority | Bebas Neue, `#ffffff` on `#a50e24` | record / record / fade | Chapters as declarations; X-ray set piece on what leaves the machine. |
@@ -212,6 +214,11 @@ Notes on the most used packs:
   music silence per card, not per sentence; recipe in `styles/documentario-narrado.md`.
 - **lousa-de-aula**: the slate frames the screen share; concept maps are drawn on the trigger words (±0.15 s,
   recipe in `troubleshooting.md`); a `checklist` SUMMARY closes each chapter.
+- **circuito**: reuse the Reel board engine (`templates/styles/circuito/build.py`, `board()`) inside a `custom`
+  set piece per chapter; the chip frames the screen share; keep the plugins list (`SplitText`, `DrawSVG`,
+  `MorphSVG`, `MotionPath`) in the segment pages.
+- **gravidade**: one physics room per chapter at most, baked per segment (`physkit.bake` with the segment's
+  duration); the rest of the chapter in pip/side layout.
 - **ide**: circular camera, code-comment captions; chapters open like files; callouts zoom into the code.
 - **podcast**: speaker layout most of the time for lives; segment colours per chapter; ON AIR card as intro.
 - **game**: VT323 captions at 1.5× scale need short lines; STAGE cards; CONTINUE? as the closing card.

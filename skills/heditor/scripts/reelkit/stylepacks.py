@@ -512,6 +512,46 @@ STYLES = {
                       "pieces, callouts, lower thirds, SFX or music unless the user asks; chapters go to the "
                       "description (YouTube timestamps), not on screen.",
     },
+    "gravidade": {
+        "name": "Gravidade (the speech has weight)", "family": "organic",
+        "palette": {"bg": "#020308", "bg2": "#0a0e18", "surface": "#161c2c", "text": "#f4f8fb", "muted": "#9fb3c4",
+                    "accent": "#f5c66b", "accent2": "#7dffb0", "alert": "#ff6b6b", "ok": "#7dffb0"},
+        "fonts": {"display": "Anton", "caption": "Anton"},
+        "captions": {"weight": 400, "case": "upper", "box": None, "stroke": "6px #020308", "active_fg": "#000000",
+                     "active_bg": "#ffd84d", "scale": 1.05},
+        "frame": {"border": "3px solid #2a3654", "camera_radius": 24,
+                  "world": "radial-gradient(ellipse 80% 60% at 50% 70%,#0a0e18 0%,#020308 75%)"},
+        "transition": {"kind": "flash", "dur": 0.35, "ease": "power3.out"},
+        "chapter_card": "slate", "lower_third": "plate",
+        "sfx": {"chapter": "stamp", "callout": "lock_click", "set_piece": "trailer_hit", "transition": "whoosh"},
+        "music": {"ids": [680, 677, 369], "mood": "restless percussion, silence before the impact"},
+        "long_notes": "Physics set pieces (physkit, baked): problems fall into a heap on their words, the turn lands "
+                      "as a heavy block that throws the heap, the answer stacks as a straight tower. Keep the room "
+                      "to the key beats of each chapter (render cost ~1 s/frame) and a clean pip/side layout in "
+                      "between; chapter cards as a block landing with the chapter name.",
+    },
+    "circuito": {
+        "name": "Circuito (circuit board)", "family": "didactic",
+        "palette": {"bg": "#020a07", "bg2": "#08261c", "surface": "#0a110e", "text": "#e6f1ea", "muted": "#8fb7a5",
+                    "accent": "#d9a441", "accent2": "#7dffb0", "alert": "#ff5c6c", "ok": "#7dffb0"},
+        "fonts": {"display": "JetBrains Mono", "body": "JetBrains Mono", "mono": "JetBrains Mono",
+                  "caption": "JetBrains Mono"},
+        "captions": {"weight": 800, "case": "upper", "box": None, "stroke": "6px #03100b", "fg": "#ffffff",
+                     "active_fg": "#03100b", "active_bg": "#7dffb0", "scale": 0.9},
+        "frame": {"border": "3px solid #3b6a57", "camera_radius": 10, "screen_radius": 8,
+                  "shadow": "0 0 24px rgba(125,255,176,.18)",
+                  "world": "radial-gradient(ellipse 85% 60% at 50% 48%,#08261c 0%,#051710 55%,#020a07 100%)"},
+        "overlay": {"grain": 0.03, "vignette": 0.3},
+        "transition": {"kind": "wipe", "dur": 0.5, "ease": "power2.inOut"},
+        "chapter_card": "terminal", "lower_third": "terminal",
+        "sfx": {"chapter": "power_up", "callout": "data_beep", "lower_third": "scan", "set_piece": "magic_transition",
+                "transition": "swipe", "cta_tap": "click", "cta_done": "success_chime", "intro": "power_up"},
+        "music": {"ids": [167, 568, 623], "mood": "mechanical electronic, drop on the thesis title"},
+        "long_notes": "The screen share becomes the main chip (green-outlined, pins around it); chapter cards are "
+                      "new boards with the chapter name in silkscreen; concept-map set pieces are components drawn "
+                      "on their words (DrawSVG), copper traces on the verbs and pulses (MotionPath) for data that "
+                      "travels; LEDs and flags give the verdict per part.",
+    },
     "camadas": {
         "name": "Camadas (concept layers)", "family": "layers",
         "palette": {"bg": "#07060c", "bg2": "#14101f", "accent": "#ff7a59", "accent2": "#b9a6ff", "ok": "#6ef0ff"},

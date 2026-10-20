@@ -343,14 +343,16 @@ if(K.segments){K.segments.forEach((sg,i)=>{const o=sg.x+'% '+sg.y+'%';
 """
 
 
-def captions_js(caps, gold="#f5c66b", mode="text"):
+def captions_js(caps, gold="#f5c66b", mode="text", pill=("#000000", "#ffd84d")):
     """mode="text": active word in gold; mode="pill": active word as pure black text on a light-yellow pill.
 
     Dark text with a dark outline on a mid-tone pill reads poorly on phones; in pill mode the outline takes
     the pill colour so the black letters stay crisp."""
     if mode == "pill":
-        on = '{opacity:1,color:"#000000",backgroundColor:"#ffd84d",webkitTextStrokeColor:"#ffd84d",scale:1.06}'
-        off = '{color:"#ffffff",backgroundColor:"rgba(255,216,77,0)",webkitTextStrokeColor:"#050a14",scale:1}'
+        fg, bg = pill
+        r, g, b = (int(bg.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
+        on = f'{{opacity:1,color:"{fg}",backgroundColor:"{bg}",webkitTextStrokeColor:"{bg}",scale:1.06}}'
+        off = f'{{color:"#ffffff",backgroundColor:"rgba({r},{g},{b},0)",webkitTextStrokeColor:"#050a14",scale:1}}'
     else:
         on = f'{{opacity:1,color:"{gold}",scale:1.08}}'
         off = '{color:"#ffffff",scale:1}'
@@ -401,10 +403,12 @@ def rig_states(card_w, card_h, hero_y=500, top_scale=0.5, top_y=SAFE_TOP + 10):
 
 
 def page(*, title, duration, card_w, card_h, face_origin, videos, scenes_html, css, js, keys, caps,
-         world_back="", overlays="", caption_mode="text", brand_work=None, fmt=None, plugins=()):
+         world_back="", overlays="", caption_mode="text", brand_work=None, fmt=None, plugins=(),
+         caption_pill=("#000000", "#ffd84d")):
     """Reel page skeleton. `fmt` (formats key, default 9:16) only changes the canvas size: the Reel layout
     (caption band, rig states) is vertical; long-form/horizontal compositions use longkit.
-    `plugins`: GSAP plugins to load offline and register, e.g. ("SplitText", "DrawSVG", "MorphSVG")."""
+    `plugins`: GSAP plugins to load offline and register, e.g. ("SplitText", "DrawSVG", "MorphSVG").
+    `caption_pill`: (text, pill) colours of the active word in pill mode (hex, keep >= 4.5:1)."""
     import formats
     canvas = formats.get(fmt)
     brand = load_brand(brand_work)
@@ -440,7 +444,7 @@ def page(*, title, duration, card_w, card_h, face_origin, videos, scenes_html, c
 <audio id="master" class="clip" data-start="0" data-duration="{duration:.4f}" data-track-index="100" src="assets/master.wav" data-volume="1"></audio>
 </main>
 <script>window.K={json.dumps(keys, ensure_ascii=False)};window.captionData={json.dumps(caps, ensure_ascii=False)};</script>
-<script>{BASE_JS}{js}{captions_js(caps, mode=caption_mode)}window.__timelines=window.__timelines||{{}};window.__timelines.main=tl;</script>
+<script>{BASE_JS}{js}{captions_js(caps, mode=caption_mode, pill=caption_pill)}window.__timelines=window.__timelines||{{}};window.__timelines.main=tl;</script>
 </body></html>"""
 
 

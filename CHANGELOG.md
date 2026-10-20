@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.5.0 — 2026-10-20
+- **Two new named styles built on the motion tools, each with a runnable reference build** driven by a
+  `beats.json` written from the speech (`heditor new <work> <video> --style gravidade|circuito`):
+  - `gravidade` (the speech has weight): labelled blocks land on their words with baked Rapier physics; problems
+    pile up readable, the turn lands as a heavy block that throws the heap and releases its rotation, the answer
+    stacks as a straight tower in the clearest lane of the floor (chosen from the bake, cleared by a shockwave);
+    room viewport faded into the page, impact flash in the impact colour, silence before the impact.
+  - `circuito` (the explanation is a circuit board): the speaker becomes the main chip; zones, components (outline
+    and icon drawn with DrawSVG, silkscreen decoded), copper traces on the verbs, data pulses (MotionPath),
+    icon morphs (MorphSVG), LEDs and flags, silkscreen titles (SplitText), push-button CTA.
+  - Style files, style packs (long form), INDEX, SKILL, README (PT/EN) and long-form rows; idea bank updated.
+- physkit: `land_on()` (bake, measure the first contact of each body, correct its spawn until it lands on its
+  word; ≤ 1 frame in 3 passes), `landings()`, body locks `"lock": "rotation"|"vertical"` and `lockRotationAxes`
+  (locked components of the initial velocities are zeroed), `blast(..., unlock=...)` to release locked rotations
+  at the blast. Lessons in `physics-3d.md` (8 substeps for heavy impacts on locked bodies, weights pin heaps,
+  lanes from the bake, labels only on camera faces, tone-mapped background seams).
+- svgkit: `single_path()` merges a multi-shape icon (rect with rx, circle, ellipse, line, polyline, polygon) into one
+  path for MorphSVG, rewriting each sub-path's leading relative moveto; pixel-identical on Lucide icons.
+- reelkit: `rk.page(..., caption_pill=(text, pill))` and `captions_js(..., pill=...)` for the active-word colours
+  in pill mode (defaults unchanged).
+- gsap-craft.md: SplitText inside a flex container loses the spaces between words (split an inner span).
+- Tests: single_path (structure and pixel check), pill colours, locks/unlock/land_on.
+
 ## 2.4.0 — 2026-10-20
 - **GSAP plugins offline.** Setup downloads SplitText, DrawSVG, MorphSVG, MotionPath, CustomEase, CustomWiggle,
   CustomBounce, Text, Physics2D, PhysicsProps, ScrambleText and EasePack (free since GSAP 3.13); `rk.setup_assets`

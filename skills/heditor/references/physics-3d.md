@@ -41,6 +41,18 @@ dynamic `bodies` with `shape` = `box` | `roundbox` (`size` [w, h, d], `radius`) 
 `{t, center, radius, strength, lift, exclude}` (radial blast, scaled by each body's mass). Units are metres and
 seconds; a key cap is about 0.5 × 0.26 × 0.5.
 
+Body options for readable, art-directed physics: `"lock": "rotation"` (falls and slides but never turns: labels
+stay facing the camera), `"lock": "vertical"` (no rotation and no sideways motion: perfectly straight stacks that
+later impacts cannot topple), `"lockRotationAxes": [x, y, z]` (e.g. `[true, true, false]`: tumbles only in the
+screen plane), `linearDamping` / `angularDamping`. An impulse with `"unlock"` (`pk.blast(..., unlock=[False, False,
+True])`) releases the locked rotations of every existing body at that moment: blocks that piled up readable tumble
+after the blast.
+
+**Land on the word.** `stats, err = pk.land_on(work, scene, {"b3": 6.6, ...}, name)` bakes, measures the first
+contact of each body (`pk.landings(bake)`: a sudden drop of the falling speed) and shifts its spawn until it lands
+on its target time; three passes reach ≤ 1 frame. Bodies falling onto a pile land earlier than onto the floor, and
+every change of one body moves the others, so never compute fall times by hand.
+
 **Find event times from the bake, never by guessing.** Bake once, read `qa/physics-<name>.json`, and take the first
 frame where the falling body reaches the pile (`tracks[id][f*7+1] < top_of_pile`). Use that time for the blast, the
 SFX hit, the flash and the camera shake; re-bake with the blast. Tracks are flat arrays of 7 numbers per frame
@@ -112,6 +124,18 @@ deterministic scramble, DrawSVG icon on the impact).
 - Final caption: above the tray, in the gap the hero left, with a dark backing; never across the tray walls.
 - Contain the scatter: tray walls as tall as the visual walls, blast `strength` 3–5 with `lift` ≤ 0.8 (mass-scaled),
   rain `area` ≈ 65 % of the tray's inner size so few keys land outside.
+
+## Lessons from the `gravidade` reference build
+
+- **Heavy body + rotation-locked bodies needs 8 substeps**: with 4, the solver launched a 9× heavier block 4 m up
+  out of the frame when it landed on the heap.
+- **A weight resting on a heap pins it**: friction under a heavy body stops any blast; land the weight beside the
+  heap and blast from its contact point, centred a little to the side you want the debris to fly away from.
+- **Free space is not where you planned it**: debris slides anywhere. Choose lanes from the bake (positions at the
+  time the next element falls) and clear the lane with a small shockwave just before the element lands.
+- **Labels**: label only the faces that face the camera (front/back); a top-face label shows mirrored copies.
+- **Seams**: ACES tone mapping darkens the 3D background; match the page background to the *rendered* colour and
+  fade the canvas edges with a CSS mask.
 
 ## Cost and QA
 

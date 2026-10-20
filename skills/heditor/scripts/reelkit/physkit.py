@@ -94,12 +94,17 @@ def rain(n, area=(2.0, 1.0), height=(4.0, 9.0), size=(0.4, 0.2, 0.4), t=(0.0, 1.
     return out
 
 
-def blast(t, center=(0, 0, 0), radius=2.5, strength=6.0, lift=0.5, exclude=()):
+def blast(t, center=(0, 0, 0), radius=2.5, strength=6.0, lift=0.5, exclude=(), unlock=None):
     """Radial impulse at time t: bodies inside radius are pushed away from center (and up by `lift`).
     The impulse scales with each body's mass (same velocity change for light and heavy bodies); list the
-    body that causes the blast (the falling weight) in `exclude` so it is not thrown away by its own blast."""
-    return {"t": t, "center": list(center), "radius": radius, "strength": strength, "lift": lift,
-            "exclude": list(exclude)}
+    body that causes the blast (the falling weight) in `exclude` so it is not thrown away by its own blast.
+    `unlock` ([x, y, z] booleans or True) releases locked rotations of every existing body at that moment: bodies
+    that fell with `"lock": "rotation"` (labels readable) tumble freely after the blast."""
+    out = {"t": t, "center": list(center), "radius": radius, "strength": strength, "lift": lift,
+           "exclude": list(exclude)}
+    if unlock:
+        out["unlock"] = unlock
+    return out
 
 
 def bake(work, scene_dict, name="scene"):
@@ -124,6 +129,46 @@ def bake(work, scene_dict, name="scene"):
     module.write_text("export default " + out_json.read_text() + ";\n")
     stats["module"] = str(module)
     return stats
+
+
+def landings(bake, ids=None, min_drop=2.0):
+    """First contact time of each body after its spawn: the first frame whose vertical speed drops by more than
+    `min_drop` m/s from the previous frame (a collision), read from the bake. {id: seconds or None}."""
+    fps = bake["fps"]
+    out = {}
+    for bid, tr in bake["tracks"].items():
+        if ids and bid not in ids:
+            continue
+        f0 = int(round(bake["bodies"][bid].get("spawn", 0) * fps)) + 1
+        hit, prev = None, None
+        for f in range(max(1, f0), bake["frames"]):
+            vy = (tr[f * 7 + 1] - tr[(f - 1) * 7 + 1]) * fps
+            if prev is not None and prev < -1.0 and vy - prev > min_drop:
+                hit = (f - 1) / fps
+                break
+            prev = vy
+        out[bid] = hit
+    return out
+
+
+def land_on(work, scene_dict, targets, name="scene", passes=3, tolerance=1 / 30):
+    """Shift each body's spawn so it *lands* on its target time (a spoken word), then bake.
+    targets: {id: seconds}. Bodies falling onto a pile land earlier than onto the floor, so this bakes, measures
+    the real contact, corrects the spawn and repeats. Returns (stats, {id: landing error in s})."""
+    by_id = {b["id"]: b for b in scene_dict["bodies"] if b.get("id") in targets}
+    err, stats = {}, {}
+    for k in range(passes):
+        stats = bake(work, scene_dict, name)
+        bk = json.loads((Path(work) / f"qa/physics-{name}.json").read_text())
+        hits = landings(bk, set(targets))
+        err = {i: (None if hits[i] is None else round(hits[i] - targets[i], 3)) for i in targets}
+        if k == passes - 1 or all(e is not None and abs(e) <= tolerance for e in err.values()):
+            break  # the module on disk always matches the reported errors
+        for i, e in err.items():
+            if e is not None:
+                by_id[i]["spawn"] = round(max(0.0, by_id[i]["spawn"] - e), 4)
+    stats["landing_error"] = err
+    return stats, err
 
 
 def main(argv):

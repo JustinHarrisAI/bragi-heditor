@@ -100,6 +100,15 @@ function spawnBody(b) {
     .setLinearDamping(d.linearDamping ?? 0.05)
     .setAngularDamping(d.angularDamping ?? 0.1)
     .setCcdEnabled(d.ccd ?? true);
+  // "lock": "rotation" keeps the body upright (clean towers, labels facing the camera);
+  // "vertical" also locks x and z translation (a perfectly straight stack that later impacts cannot topple)
+  if (d.lock === "rotation" || d.lock === "vertical") desc.lockRotations().setAngvel({ x: 0, y: 0, z: 0 });
+  if (d.lock === "vertical") desc.enabledTranslations(false, true, false).setLinvel(0, (d.vel ?? [0, 0, 0])[1], 0);
+  if (d.lockRotationAxes) {
+    const av = d.angvel ?? [0, 0, 0];
+    desc.enabledRotations(...d.lockRotationAxes.map((v) => !v))
+      .setAngvel({ x: d.lockRotationAxes[0] ? 0 : av[0], y: d.lockRotationAxes[1] ? 0 : av[1], z: d.lockRotationAxes[2] ? 0 : av[2] });
+  }
   b.rb = world.createRigidBody(desc);
   world.createCollider(colliderDesc(d), b.rb);
 }
@@ -134,6 +143,12 @@ for (let frame = 0; frame < nFrames; frame++) {
     const t = step * dt;
     while (nextImpulse < impulses.length && impulses[nextImpulse].t <= t + 1e-9) {
       const im = impulses[nextImpulse++];
+      if (im.unlock) {
+        // release locked rotations (e.g. labels kept readable while falling, free to tumble after a blast)
+        const ax = im.unlock === true ? [true, true, true] : im.unlock;
+        for (const b of bodies) if (b.rb && b.def.lock !== "vertical") b.rb.setEnabledRotations(ax[0], ax[1], ax[2], true);
+        if (!im.radius && !im.impulse) continue;
+      }
       for (const b of bodies) {
         if (!b.rb) continue;
         const p = b.rb.translation();

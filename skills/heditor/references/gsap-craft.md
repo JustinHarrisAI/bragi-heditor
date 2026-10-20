@@ -64,6 +64,9 @@ index array with `rnd()` and stagger with a function: `stagger: (i) => order[i] 
 
 ## SplitText in a render
 
+0. Never split an element that is a flex container: the words become flex items and the spaces between them
+   disappear. Put the text in an inner block span and split the span.
+
 1. Split once, before building the timeline: `const s = SplitText.create("#title", { type: "words,chars" });`
 2. Split only what you animate (`"chars"`, `"words"`, or `"words,chars"`). Splitting `"lines"` measures the layout,
    so it must run after the fonts load: build the timeline inside `document.fonts.ready.then(...)` and register it
@@ -83,6 +86,10 @@ index array with `rnd()` and stagger with a function: `stagger: (i) => order[i] 
   `"100% 100%"` wipes off forward, `"40% 60%"` → `"0% 100%"` grows from the middle.
 - Prefer single-segment paths; a path with several `M` sub-paths draws all of them at once. Split complex artwork
   into one path per stroke and stagger them.
+- MorphSVG morphs one path into one path. For icons made of several shapes (Lucide), merge them first:
+  `svgkit.single_path(svg_text)` converts rect (with rx), circle, ellipse, line, polyline and polygon and joins
+  everything into one `d` (a sub-path's leading relative `m` is rewritten so it stays where it was); the result is
+  pixel-identical to the icon. Morph with the raw string: `morphSVG: {shape: d, type: "rotational"}`.
 - MorphSVG converts shapes and adds points itself, but the start point matters: run once with
   `shapeIndex: "log"`, read the value in the console of a preview, then write the number in the build. Try
   `type: "rotational"` (and `curveMode: true` in 3.14) when a morph kinks halfway. `precompile: "log"` once for very

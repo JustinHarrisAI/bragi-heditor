@@ -14,7 +14,8 @@ import reelkit as rk
 - `rk.ensure_icons(["name", ...])` downloads Lucide SVGs; `rk.icon(name, cls="ic")` returns inline SVG.
 - `rk.setup_assets` also copies the GSAP plugins into `assets/gsap/`; `rk.gsap_plugin_tags(["SplitText", "DrawSVG", ...])` returns the `<script>` tags + `gsap.registerPlugin(...)` for a hand-written page (insert right after `gsap.min.js`). Names: `SplitText`, `DrawSVG`, `MorphSVG`, `MotionPath`, `CustomEase`, `CustomWiggle`, `CustomBounce`, `Text`, `Physics2D`, `PhysicsProps`, `ScrambleText`, `EasePack` (rules in `gsap-craft.md`).
 - `import svgkit as sk`: `sk.optimize(src, dst, mode="static"|"draw"|"morph")` → report (bytes, element counts, `visual` diff, `ok`, `check_sheet`); `sk.inline(src, cls, mode, out_dir)` → cleaned inline markup, raises when the optimised SVG does not look like the original. CLI: `heditor svg`.
-- `import physkit as pk`: `pk.setup(work)`, `pk.scene(...)`, `pk.rain(...)`, `pk.blast(...)`, `pk.bake(work, scene, name)` → `assets/physics-<name>.js`, `pk.importmap()`. Recipe in `physics-3d.md`.
+- `import physkit as pk`: `pk.setup(work)`, `pk.scene(...)`, `pk.rain(...)`, `pk.blast(..., exclude, unlock)`, `pk.bake(work, scene, name)` → `assets/physics-<name>.js`, `pk.land_on(work, scene, {id: t}, name)` (spawns corrected until each body lands on its word), `pk.landings(bake)`, `pk.importmap()`. Body locks: `"lock": "rotation"|"vertical"`, `lockRotationAxes`. Recipe in `physics-3d.md`.
+- `svgkit.single_path(svg_text)` → one path `d` for a multi-shape icon (MorphSVG).
 - `rk.prepare_camera(work, width=960)` → upscaled, lightly sharpened `camera-hd.mp4` (returns width, height).
 - `rk.styled_camera(work, name, vf)` → `camera-<name>.mp4` from camera-hd with an ffmpeg filter chain. Examples: CCTV `eq=saturation=0.25:contrast=1.2,colorbalance=gs=.08,noise=alls=18:allf=t` · pixel `scale=160:-2:flags=neighbor,scale=960:-2:flags=neighbor` · warm film `curves=preset=increase_contrast,colortemperature=temperature=4800,noise=alls=6:allf=t` · radar green `format=gray,format=rgb24,colorchannelmixer=.2:.2:.2:0:.7:.7:.7:0:.25:.25:.25:0`.
 - `rk.prepare_voice(work)` → `voice-master.wav` (declip, high-pass, adaptive denoise, -2.5 dB @250 Hz, +2.5 dB @3.2 kHz, de-esser, 3:1 compressor, limiter).
@@ -26,7 +27,7 @@ import reelkit as rk
 - `rk.captions_html(caps)` / `rk.captions_js(caps, mode="text"|"pill")` → default caption band (Anton, uppercase, y 1222–1472). Write your own renderer for world-native captions but keep `plan["captions"]` identical to what appears.
 
 ## Page skeleton (optional)
-`rk.page(title, duration, card_w, card_h, face_origin, videos, scenes_html, css, js, keys, caps, world_back="", overlays="", caption_mode="text", brand_work=work, plugins=())` builds a HyperFrames page with:
+`rk.page(title, duration, card_w, card_h, face_origin, videos, scenes_html, css, js, keys, caps, world_back="", overlays="", caption_mode="text", brand_work=work, plugins=(), caption_pill=("#000000", "#ffd84d"))` (`caption_pill`: active-word text and pill colours in pill mode) builds a HyperFrames page with:
 `#stage > #world > #bg, world_back, #glow-a/#glow-b, .floor, #horizon, .speed, #rig-aura, #rig > #squeeze > #frame > #cam-zoom > #cam-breath > #cam-jump > videos, #cam-tint, #cam-scan, #cam-over, #border; scenes_html; overlays; #vignette; .conf` + caption band + `#grain`, `#flash` + `audio#master`. CSS variables `--bg --bg2 --accent --accent2 --alert --ok` come from the brand.
 - `rk.rig_states(card_w, card_h)` → `{"hero": {...}, "top": {...}}` (add your own states, e.g. `pip`). `keys["rig"] = [[t, state, dur], ...]`.
 - `rk.SAFE_TOP = 270`, `rk.CARD_BOTTOM_MAX = 1200`, `rk.PANEL_TOP_MIN = 670`.
