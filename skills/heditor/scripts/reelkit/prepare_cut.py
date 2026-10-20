@@ -83,12 +83,27 @@ def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.35, edge=0.12, t
     assets.mkdir(parents=True, exist_ok=True)
     (work / "clips").mkdir(exist_ok=True)
     (work / "qa").mkdir(exist_ok=True)
-    blocks = [tuple(bl) + (0.2,) * (5 - len(bl)) for bl in blocks]  # (chave, início, fim, raio_fim, raio_início)
-    levels = np.concatenate([_rms10(_pcm(source, bl[1], bl[2] - bl[1])) for bl in blocks])
+    # ("PAUSE", seconds[, key]) inserts digital silence + black frames (style trailer: dramatic beats for
+    # title cards and hits). Pauses are listed in edl["pauses"]; gaps/tests count only the silence around them.
+    blocks = [tuple(bl) if str(bl[0]).upper() == "PAUSE" else tuple(bl) + (0.2,) * (5 - len(bl)) for bl in blocks]
+    speech = [bl for bl in blocks if str(bl[0]).upper() != "PAUSE"]
+    levels = np.concatenate([_rms10(_pcm(source, bl[1], bl[2] - bl[1])) for bl in speech])
     floor = float(np.percentile(levels, 10))
     thr = min(-32.0, max(-48.0, floor + 12))
-    voice, videos, chunks, trims, cursor = [], [], [], [], 0.0
-    for g, (key, a, b, rb, ra) in enumerate(blocks):
+    voice, videos, chunks, trims, pauses, cursor = [], [], [], [], [], 0.0
+    for g, block in enumerate(blocks):
+        if str(block[0]).upper() == "PAUSE":
+            frames = max(1, round(float(block[1]) * fps))
+            key = block[2] if len(block) > 2 else f"pause-{g}"
+            span = frames / fps
+            voice.append(np.zeros(frames * SR // fps))
+            pauses.append({"key": key, "out_start": cursor, "out_end": cursor + span})
+            chunks.append({"block": key, "pause": True, "source_in": None, "source_out": None,
+                           "out_start": cursor, "out_end": cursor + span, "speed": 1.0})
+            cursor += span
+            videos.append(("PAUSE", g, frames))
+            continue
+        key, a, b, rb, ra = block
         qa_, da = _quiet(source, a, ra)
         qb_, db_ = _quiet(source, b, rb)
         f0, f1 = round(qa_ * fps), math.floor(qb_ * fps + 1e-6)
@@ -152,6 +167,18 @@ def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.35, edge=0.12, t
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(raw_clip), "-filter_complex", graph, "-map", "[v]", "-an",
                         "-r", str(fps), "-c:v", "libx264", "-crf", "14", "-preset", "fast", str(clip)], check=True)
         videos.append(clip)
+    real = [v for v in videos if not isinstance(v, tuple)]
+    if len(real) < len(videos):
+        size = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries", "stream=width,height",
+                               "-of", "csv=p=0", str(real[0])], capture_output=True, text=True, check=True).stdout.strip()
+        vw, vh = map(int, size.split(",")[:2])
+        for i, v in enumerate(videos):
+            if isinstance(v, tuple):
+                clip = work / "clips" / f"pause-{v[1]}.mp4"
+                subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "lavfi", "-i", f"color=c=black:s={vw}x{vh}:r={fps}",
+                                "-frames:v", str(v[2]), "-pix_fmt", "yuv420p", "-c:v", "libx264", "-crf", "14",
+                                "-preset", "fast", str(clip)], check=True)
+                videos[i] = clip
     lst = work / "clips/list.txt"
     lst.write_text("".join(f"file '{p}'\n" for p in videos))
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy",
@@ -170,6 +197,7 @@ def prepare_cut(source, work, blocks, crop, fps=24, min_pause=0.35, edge=0.12, t
     edl = {"source": str(source), "format": fmt or "9:16", "fps": fps, "crop": crop, "speed": 1.0, "voice_duration": len(v) / SR,
            "noise_floor_dbfs": round(floor, 1), "silence_threshold_dbfs": round(thr, 1), "min_pause_s": min_pause,
            "pause_edge_s": edge, "lead_s": lead, "tail_s": tail,
-           "chunks": chunks, "silence_trims": trims, "removed_seconds": sum(x["removed_s"] for x in trims)}
+           "chunks": chunks, "pauses": pauses, "silence_trims": trims,
+           "removed_seconds": sum(x["removed_s"] for x in trims)}
     (work / "edl.json").write_text(json.dumps(edl, ensure_ascii=False, indent=2))
     return edl

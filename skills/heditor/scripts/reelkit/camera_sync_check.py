@@ -91,7 +91,8 @@ def sync_against_source(work, samples=10):
     edl = json.loads((work / "edl.json").read_text())
     a = work / "composition/assets"
     src, fps = edl["source"], float(edl.get("fps", FPS))
-    chunks = [c for c in edl["chunks"] if c["out_end"] - c["out_start"] > 1.6] or edl["chunks"]
+    speech = [c for c in edl["chunks"] if not c.get("pause")]
+    chunks = [c for c in speech if c["out_end"] - c["out_start"] > 1.6] or speech
     total = edl["voice_duration"]
     picks = []
     for k in range(samples):

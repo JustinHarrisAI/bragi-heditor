@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.3.0 — 2026-10-19
+- **New style `trailer`** (movie trailer): hard cuts between the graded speaker and black, dramatic pauses inserted in
+  the speech, words on the wall behind the speaker (inside the camera rig, under the speaker matte), letter-by-letter
+  titles revealed by light, a real object of the set as the date device, "lights on" into the final act, a smash to
+  silence before the climax and a score built in layers. Beats measured on real suspense and product-reveal trailers
+  (card durations, silence before hits, hit spacing). `references/styles/trailer.md`, style pack and long-form row.
+- `prepare_cut`: `("PAUSE", seconds, "key")` blocks insert digital silence + black frames; `edl["pauses"]` lists them.
+- `gaps` / `test_no_dead_air`: declared pauses count only for the silence around them (`excess`); an uncut pause next to
+  a beat still fails.
+- `rk.mix`: `plan["duck_open"]` releases the voice ducking inside pauses (hits land at full level instead of being held
+  ~650 ms); `plan["mix"]` overrides the bed targets when the user asks for a louder bed (`test_voice_first_balance`
+  reads the same targets).
+- `track_faces` / `_probe`-style ffprobe reads take the first two fields (some files print a trailing comma).
+- `camera_sync_check`: pause chunks are skipped when sampling the source.
+
 ## 2.2.0 — 2026-10-19
 - New reference `references/pre-production.md`: recording plan and edit plan from written scripts, before anything is recorded. Covers exporting a shared Google Doc, measuring the scripts by code (edited duration and the position of the first brand/campaign mention), inventorying the set from photos and previous contact sheets with vision, checking existing screen recordings before reusing them, fact-checking cited studies (including later "out of date" notices), recording rules that save editing (two setups, gestures tied to words, locked tripod for mattes and screen projection, narrated demos with a clap and a visible timer), a teleprompter generated and verified from the source, a speech-structure → style table for batches and a quote audit for the plan.
 - `SKILL.md`: pre-production row in the mode table and in the references list.

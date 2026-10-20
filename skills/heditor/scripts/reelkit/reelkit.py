@@ -199,7 +199,7 @@ def prepare_camera(work, width=960):
     src = a / "camera-src.mp4"
     w, h = map(int, subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries",
                                     "stream=width,height", "-of", "csv=p=0", str(src)],
-                                   capture_output=True, text=True, check=True).stdout.strip().split(","))
+                                   capture_output=True, text=True, check=True).stdout.strip().split(",")[:2])
     height = round(width * h / w / 2) * 2
     out = a / "camera-hd.mp4"
     if _stale(out, src):
@@ -492,7 +492,7 @@ def track_faces(work, video="camera-hd.mp4", step=0.2):
     path = Path(work) / "composition/assets" / video
     w, h = map(int, subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v", "-show_entries",
                                     "stream=width,height", "-of", "csv=p=0", str(path)],
-                                   capture_output=True, text=True, check=True).stdout.strip().split(","))
+                                   capture_output=True, text=True, check=True).stdout.strip().split(",")[:2])
     # Detect on a downscaled copy: positions are fractions, and 5 fps of full-HD RGB frames
     # (~6 MB each) exhausts the memory of a small VPS on cuts longer than ~40 s.
     if w > 640:
@@ -530,8 +530,19 @@ def jump_segments(work, faces, voice_end, default=(0.45, 0.5)):
 
 def mix(work, plan, sfx_lib, music_body_db=-21.0, music_duck=0.80, sfx_offset_db=-7.0, sfx_duck=0.85,
         multiband=True, low_duck=0.55):
-    """Voice-first mix: music ~21.5 dB under the voice (median), background >= 12 dB under at p95."""
+    """Voice-first mix: music ~21.5 dB under the voice (median), background >= 12 dB under at p95.
+
+    plan["mix"] can override the targets when the user explicitly asks for a louder bed (style trailer):
+    {"music_median_db": -17, "bed_p95_db": -9, "music_duck": .7, "low_duck": .45, "sfx_duck": .7}. The same
+    targets are read by test_voice_first_balance; record the user's request in the cut's DESIGN.md."""
     work = Path(work)
+    over = plan.get("mix", {})
+    music_duck = over.get("music_duck", music_duck)
+    low_duck = over.get("low_duck", low_duck)
+    sfx_duck = over.get("sfx_duck", sfx_duck)
+    sfx_offset_db = over.get("sfx_offset_db", sfx_offset_db)
+    target_med = float(over.get("music_median_db", -21.5))
+    target_p95 = float(over.get("bed_p95_db", -12.0))
     a = work / "composition/assets"
     duration = plan["duration"]
     n = round(duration * SR)
@@ -539,6 +550,16 @@ def mix(work, plan, sfx_lib, music_body_db=-21.0, music_duck=0.80, sfx_offset_db
         voice = np.frombuffer(src.readframes(src.getnframes()), "<i2") / 32768.0
     vfull = np.pad(voice, (0, max(0, n - len(voice))))[:n]
     env = voice_envelope(voice, n)
+    # Dramatic pauses (style trailer): inside these windows the voice is digital silence, so the ducking is
+    # released at once instead of holding ~650 ms; hits, braams and the music swell land at full level.
+    for w0, w1 in plan.get("duck_open", []):
+        s0, s1 = max(0, round(w0 * SR)), min(n, round(w1 * SR))
+        r = min(round(0.03 * SR), max(1, (s1 - s0) // 4))
+        if s1 - s0 > 2 * r:
+            win = np.ones(s1 - s0)
+            win[:r] = np.linspace(0, 1, r)
+            win[-r:] = np.linspace(1, 0, r)
+            env[s0:s1] *= 1 - win
     music = np.zeros((n, 2))
     music_low = np.zeros((n, 2))
     log = []
@@ -614,13 +635,13 @@ def mix(work, plan, sfx_lib, music_body_db=-21.0, music_duck=0.80, sfx_offset_db
     vr = lv(vfull)
     # effective speech windows: within 15 dB of the loudest window (pauses and tails excluded)
     vo = vr > (vr.max() - 15)
-    # auto-calibration: music ~21.5 dB under voice (median), background >= 12 dB under at p95
+    # auto-calibration: music ~21.5 dB under voice (median), background >= 12 dB under at p95 (or plan["mix"])
     for _ in range(4):
         mr = lv(music.mean(1))
         br = lv((music + sfx).mean(1))
         med = float(np.median(mr[vo] - vr[vo]))
         p95 = float(np.percentile(br[vo] - vr[vo], 95))
-        adj = min(-21.5 - med, -12.0 - p95, 0.0) if (med > -21.5 or p95 > -12.0) else 0.0
+        adj = min(target_med - med, target_p95 - p95, 0.0) if (med > target_med or p95 > target_p95) else 0.0
         if abs(adj) < 0.2:
             break
         music *= db(adj)

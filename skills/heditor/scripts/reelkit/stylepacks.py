@@ -475,6 +475,29 @@ STYLES = {
                       "oak like a projected slide); chapters are syllabus items whose '?' turns into ✓; concept-map "
                       "set pieces are drawn live on the trigger words (±0.15 s); a SUMMARY board closes each chapter.",
     },
+    "trailer": {
+        "name": "Trailer (movie trailer)", "family": "organic",
+        "palette": {"bg": "#000000", "bg2": "#03090e", "surface": "#03090e", "text": "#eceaf2", "muted": "#cfc6ff",
+                    "accent": "#9a7cff", "accent2": "#edc580", "alert": "#ff5a4f"},
+        "fonts": {"display": "Geist", "caption": "Geist", "body": "Geist"},
+        "captions": {"weight": 700, "case": "upper", "box": "rgba(3,9,14,.46)", "stroke": "5px #03090e", "fg": "#ffffff",
+                     "active_fg": "#03090e", "active_bg": "#ffffff"},
+        "frame": {"border": "1.5px solid rgba(236,234,242,.7)", "camera_radius": 0, "screen_radius": 18,
+                  "letterbox": True},
+        "overlay": {"grain": 0.11, "vignette": 0.4},
+        "transition": {"kind": "flash", "dur": 0.3},
+        "chapter_card": "serif", "lower_third": "plate",
+        "camera_grade": "selectivecolor=magentas='-0.25 0.32 0.12 0':yellows='0 0 -0.10 0',huesaturation=hue=-10:"
+                        "saturation=-0.6:colors=m,colortemperature=temperature=7000:mix=0.5,eq=contrast=1.30:"
+                        "brightness=-0.05:saturation=0.76:gamma=1.07,vignette=PI/3.9",
+        "sfx": {"chapter": "trailer_hit", "callout": "bass_impact", "set_piece": "riser", "transition": "whoosh"},
+        "font_note": "Geist caps, tracking 0.3-0.42 em; Mixkit cinematic stems by id in references/styles/trailer.md",
+        "music": {"ids": [871, 677, 686], "mood": "suspense → escalation → reveal (v2 used Mixkit 614/1011/678/686)"},
+        "long_notes": "Chapters open as black title cards (gold serif, hit + braam in a short inserted pause, voice at "
+                      "1x); the speaker stays full frame with the trailer grade and letterbox, screen shares sit in a "
+                      "gold-bordered window. Keep the big beats (black cards, silence, climax) for the 3-5 key "
+                      "moments of the video: a long video cannot carry trailer density end to end.",
+    },
     "nativo": {
         "name": "Nativo (clean native edit)", "family": "native",
         "palette": {"bg": "#000000", "bg2": "#0a0a0a", "surface": "#000000", "text": "#ffffff", "muted": "#c9c9c9",

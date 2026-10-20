@@ -90,9 +90,10 @@ def test_no_editorial_tags():
 
 def test_voice_first_balance():
     b = json.loads((WORK / "qa/balance.json").read_text())
-    assert b["music_minus_voice_median_db"] <= -21.0
-    assert b["bed_minus_voice_p95_db"] <= -11.5
-    assert b["windows_bed_within_10db_pct"] < 5
+    over = PLAN.get("mix", {})          # user-approved louder bed (e.g. style trailer), see rk.mix
+    assert b["music_minus_voice_median_db"] <= float(over.get("music_median_db", -21.5)) + 0.5
+    assert b["bed_minus_voice_p95_db"] <= float(over.get("bed_p95_db", -12.0)) + 0.5
+    assert b["windows_bed_within_10db_pct"] < float(over.get("within_10db_pct", 5))
 
 
 def test_numbers_only_from_speech():
@@ -108,7 +109,8 @@ def test_numbers_only_from_speech():
 def test_no_dead_air():
     """Uncut pauses read as sloppy editing: no silence inside the speech may exceed 0.45 s (heditor gaps)."""
     from gaps import find_gaps
-    long = [g for g in find_gaps(WORK) if g["dur"] > PLAN.get("max_gap_s", 0.6 if LONG else 0.45)]
+    # declared dramatic pauses (edl.json "pauses", style trailer) count only for the silence around them
+    long = [g for g in find_gaps(WORK) if g.get("excess", g["dur"]) > PLAN.get("max_gap_s", 0.6 if LONG else 0.45)]
     assert not long, [(round(g["start"], 2), g["dur"], g["before"], g["after"]) for g in long]
 
 
