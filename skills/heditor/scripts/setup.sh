@@ -73,6 +73,13 @@ say "warming up hyperframes@$HYPERFRAMES_VERSION and its Chrome"
 npx --yes "hyperframes@$HYPERFRAMES_VERSION" browser ensure >/dev/null
 CHROME_PATH="$(npx --yes "hyperframes@$HYPERFRAMES_VERSION" browser path 2>/dev/null | tail -1)"
 
+# 3b) node tools: SVGO (SVG clean-up before animation) and Rapier (physics baking for 3D scenes) ---------------
+say "installing node tools (svgo, rapier) in $HEDITOR_HOME/node"
+mkdir -p "$HEDITOR_HOME/node"
+[[ -f "$HEDITOR_HOME/node/package.json" ]] || echo '{"name":"heditor-node-tools","private":true}' > "$HEDITOR_HOME/node/package.json"
+npm install --prefix "$HEDITOR_HOME/node" --no-audit --no-fund --silent svgo@4.1.0 @dimforge/rapier3d-compat@0.21.0 || \
+  say "node tools failed; 'heditor svg' and 'heditor physics' will not work until setup is re-run"
+
 # 4) assets -------------------------------------------------------------------
 say "downloading fonts, GSAP, face/person/hand models, music and SFX (first run takes a few minutes)"
 HEDITOR_HOME="$HEDITOR_HOME" "$VENV/bin/python" "$SKILL_DIR/scripts/fetch_assets.py" --whisper "$WHISPER" ${FETCH_ARGS[@]+"${FETCH_ARGS[@]}"} || \

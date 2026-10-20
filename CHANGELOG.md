@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.4.0 — 2026-10-20
+- **GSAP plugins offline.** Setup downloads SplitText, DrawSVG, MorphSVG, MotionPath, CustomEase, CustomWiggle,
+  CustomBounce, Text, Physics2D, PhysicsProps, ScrambleText and EasePack (free since GSAP 3.13); `rk.setup_assets`
+  copies them and `rk.page(..., plugins=(...))` / `rk.gsap_plugin_tags()` load and register them.
+- New reference `references/gsap-craft.md`: the official GSAP skills (greensock/gsap-skills) audited against the
+  HyperFrames seek model. Documents the `Math.random` calls inside GSAP that break renders (ScrambleText,
+  `stagger: {from: "random"}`, `gsap.utils.random/shuffle`, CustomWiggle `random`, RoughEase), SplitText in a render
+  (split once, lines only after fonts, no autoSplit, masks), DrawSVG/MorphSVG practice, directional rotation,
+  `svgOrigin`, grid staggers, CSS variables and what not to use in video (ScrollTrigger, Flip, quickTo, matchMedia).
+- BASE_JS: deterministic `scramble(sel, text, t, dur)` (seeded, precomputed, seek-safe).
+- **`heditor svg`** (`svgkit`): SVGO 4 clean-up in three modes (`static`, `draw` keeps shapes/separate paths for
+  DrawSVG, `morph` converts shapes to paths) with a pixel comparison of original vs result in the render Chrome
+  (`ok`, side-by-side check sheet); `svgkit.inline()` for build.py.
+- **`heditor physics`** (`physkit`): Rapier rigid bodies baked at a fixed step into per-frame transforms
+  (`assets/physics-<name>.js`), played back by `physics_player.js` at any HyperFrames time; helpers for floors,
+  trays, seeded rain, mass-scaled radial blasts with exclusions; three.js post-processing addons (bloom, depth of
+  field, output) and an importmap for offline 3D. New reference `references/physics-3d.md` with look values and
+  framing rules from the pilot QA; working pilot `templates/physics/pilot_build.py`.
+- Setup installs svgo and rapier in `~/.heditor/node`; doctor reports plugins, addons and node tools.
+- Tests: `scripts/reelkit/test_motion.py` (plugin tags, SVGO modes and visual check, bake determinism, settling,
+  spawn visibility and interpolation in the player).
+
 ## 2.3.0 — 2026-10-19
 - **New style `trailer`** (movie trailer): hard cuts between the graded speaker and black, dramatic pauses inserted in
   the speech, words on the wall behind the speaker (inside the camera rig, under the speaker matte), letter-by-letter

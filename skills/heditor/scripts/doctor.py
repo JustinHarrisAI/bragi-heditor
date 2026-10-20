@@ -35,6 +35,14 @@ check("chrome for previews/render", bool(chrome) and Path(chrome).exists(), "run
 fonts = list((ASSETS / "fonts").glob("*.ttf"))
 check(f"fonts ({len(fonts)})", len(fonts) >= 15, "run setup.sh")
 check("gsap", (ASSETS / "js/gsap.min.js").exists(), "run setup.sh")
+n_plugins = len(list((ASSETS / "js/gsap").glob("*.min.js"))) if (ASSETS / "js/gsap").exists() else 0
+check(f"gsap plugins ({n_plugins}/12)", n_plugins >= 12, "run setup.sh (SplitText, DrawSVG, MorphSVG…)", required=False)
+check("three.js post-processing addons", (ASSETS / "js/three-addons/postprocessing/UnrealBloomPass.js").exists(),
+      "run setup.sh (bloom/depth of field for 3D layers)", required=False)
+NODE = HOME / "node/node_modules"
+check("node: svgo", (NODE / "svgo").exists(), "run setup.sh (heditor svg)", required=False)
+check("node: rapier3d-compat", (NODE / "@dimforge/rapier3d-compat").exists(), "run setup.sh (heditor physics)",
+      required=False)
 check("face model", (ASSETS / "models/blaze_face_short_range.tflite").exists(), "run setup.sh")
 for mod, attr in [("onnxruntime", None), ("cv2", "ximgproc")]:
     try:

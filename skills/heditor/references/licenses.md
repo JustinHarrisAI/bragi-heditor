@@ -12,6 +12,10 @@
 | ONNX Runtime | depth inference | MIT | pip |
 | OpenCV (contrib) | guided filter, optical flow, drawing | Apache-2.0 | pip |
 | three.js r181 | 3D objects in layered edits | MIT | downloaded by setup from jsDelivr (with LICENSE) |
+| three.js addons r181 (EffectComposer, UnrealBloomPass, BokehPass, OutputPass, RoundedBoxGeometry and their shaders) | bloom, depth of field, rounded bodies (physkit) | MIT | downloaded by setup from jsDelivr |
+| GSAP 3.14.2 plugins (SplitText, DrawSVG, MorphSVG, MotionPath, CustomEase, CustomWiggle, CustomBounce, Text, Physics2D, PhysicsProps, ScrambleText, EasePack) | text, SVG and easing effects | GSAP standard "no charge" licence (same as the core) | downloaded by setup from jsDelivr |
+| SVGO 4.1.0 | SVG clean-up before animation (`heditor svg`) | MIT | npm, installed by setup in `~/.heditor/node` |
+| Rapier 3D (`@dimforge/rapier3d-compat` 0.21.0) | rigid-body physics baked before render (`heditor physics`) | Apache-2.0 | npm, installed by setup in `~/.heditor/node` |
 | FFmpeg | cutting, grading, audio, encoding | LGPL/GPL (system build) | system package |
 | Playwright (Python) | deterministic frame previews | Apache-2.0 | pip |
 | NumPy, Pillow, pytest | processing, images, tests | BSD/MIT-CMU/MIT | pip |

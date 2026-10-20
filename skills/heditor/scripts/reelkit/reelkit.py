@@ -168,13 +168,49 @@ def ensure_icons(names):
                             f"https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/{n}.svg"], check=True)
 
 
+GSAP_PLUGINS = {  # file stem in ~/.heditor/assets/js/gsap -> global to register (None: registers itself)
+    "SplitText": "SplitText", "DrawSVGPlugin": "DrawSVGPlugin", "MorphSVGPlugin": "MorphSVGPlugin",
+    "MotionPathPlugin": "MotionPathPlugin", "CustomEase": "CustomEase", "CustomWiggle": "CustomWiggle",
+    "CustomBounce": "CustomBounce", "TextPlugin": "TextPlugin", "Physics2DPlugin": "Physics2DPlugin",
+    "PhysicsPropsPlugin": "PhysicsPropsPlugin", "ScrambleTextPlugin": "ScrambleTextPlugin", "EasePack": None,
+}
+GSAP_ALIASES = {"DrawSVG": "DrawSVGPlugin", "MorphSVG": "MorphSVGPlugin", "MotionPath": "MotionPathPlugin",
+                "Text": "TextPlugin", "Physics2D": "Physics2DPlugin", "PhysicsProps": "PhysicsPropsPlugin",
+                "ScrambleText": "ScrambleTextPlugin"}
+
+
+def gsap_plugin_tags(names):
+    """<script> tags + registerPlugin for GSAP plugins copied by setup_assets (offline, after gsap.min.js).
+    CustomWiggle needs CustomEase; it is added automatically. See references/gsap-craft.md for the seek-safe rules."""
+    stems = []
+    for n in names:
+        stem = GSAP_ALIASES.get(n, n)
+        if stem not in GSAP_PLUGINS:
+            raise ValueError(f"unknown GSAP plugin {n!r}; known: {', '.join(GSAP_PLUGINS)}")
+        if stem in ("CustomWiggle", "CustomBounce") and "CustomEase" not in stems:
+            stems.append("CustomEase")
+        if stem not in stems:
+            stems.append(stem)
+    if not stems:
+        return ""
+    tags = "".join(f'<script src="assets/gsap/{s}.min.js"></script>' for s in stems)
+    regs = [GSAP_PLUGINS[s] for s in stems if GSAP_PLUGINS[s]]
+    return tags + (f"<script>gsap.registerPlugin({','.join(regs)});</script>" if regs else "")
+
+
 def setup_assets(work):
-    """Copy fonts, GSAP, grain, licences and the brand logo into <work>/composition/assets."""
+    """Copy fonts, GSAP (+ plugins), grain, licences and the brand logo into <work>/composition/assets."""
     a = Path(work) / "composition/assets"
     a.mkdir(parents=True, exist_ok=True)
     for src in list(FONTS.glob("*")) + [ASSETS / "js/gsap.min.js", ASSETS / "grain.png", ASSETS / "licenses/Lucide-LICENSE.txt"]:
         if src.is_file() and not (a / src.name).exists():
             (a / src.name).write_bytes(src.read_bytes())
+    plugin_dir = ASSETS / "js/gsap"
+    if plugin_dir.exists():
+        (a / "gsap").mkdir(exist_ok=True)
+        for src in plugin_dir.glob("*.min.js"):
+            if not (a / "gsap" / src.name).exists():
+                (a / "gsap" / src.name).write_bytes(src.read_bytes())
     brand = load_brand(work)
     logo = Path(brand["logo"]).expanduser() if brand.get("logo") else ASSETS / "logo-placeholder.png"
     if logo.exists() and not (a / "logo.png").exists():
@@ -282,6 +318,7 @@ const S=(s,v,t)=>tl.set(s,v,t);
 const TO=(s,v,t)=>tl.to(s,v,t);
 const FT=(s,a,b,t)=>tl.fromTo(s,a,Object.assign({},E,b),t);
 let seed=K.seed||20261012;function rnd(){seed=(seed*1664525+1013904223)%4294967296;return seed/4294967296;}
+function scramble(sel,text,t,dur,chars,fps){chars=chars||'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*<>/';fps=fps||15;const n=Math.max(2,Math.round(dur*fps)),fr=[];for(let i=0;i<=n;i++){const k=Math.floor(text.length*i/n);let s=text.slice(0,k);for(let j=k;j<text.length;j++)s+=/\s/.test(text[j])?text[j]:chars[Math.floor(rnd()*chars.length)];fr.push(s);}fr[n]=text;const el=document.querySelector(sel);if(el)el.textContent=fr[0];const o={p:0};tl.fromTo(o,{p:0},{p:1,duration:dur,ease:'none',immediateRender:false,onUpdate:()=>{if(el)el.textContent=fr[Math.min(n,Math.floor(o.p*n+1e-6))];}},t);}
 const RIG=K.rigStates;
 gsap.set('#rig',RIG.hero);gsap.set('#rig-aura',RIG.hero);gsap.set('#world',{x:0,y:0});gsap.set('#cam-zoom',{scale:1});gsap.set('#flash',{opacity:0});
 TO('#glow-a',{x:180,y:260,duration:D,ease:'sine.inOut'},0);
@@ -364,9 +401,10 @@ def rig_states(card_w, card_h, hero_y=500, top_scale=0.5, top_y=SAFE_TOP + 10):
 
 
 def page(*, title, duration, card_w, card_h, face_origin, videos, scenes_html, css, js, keys, caps,
-         world_back="", overlays="", caption_mode="text", brand_work=None, fmt=None):
+         world_back="", overlays="", caption_mode="text", brand_work=None, fmt=None, plugins=()):
     """Reel page skeleton. `fmt` (formats key, default 9:16) only changes the canvas size: the Reel layout
-    (caption band, rig states) is vertical; long-form/horizontal compositions use longkit."""
+    (caption band, rig states) is vertical; long-form/horizontal compositions use longkit.
+    `plugins`: GSAP plugins to load offline and register, e.g. ("SplitText", "DrawSVG", "MorphSVG")."""
     import formats
     canvas = formats.get(fmt)
     brand = load_brand(brand_work)
@@ -386,7 +424,7 @@ def page(*, title, duration, card_w, card_h, face_origin, videos, scenes_html, c
     extra_css = (root + size_css + f"#rig,#rig-aura{{width:{card_w}px;height:{card_h}px}}"
                  f"#cam-zoom,#cam-breath,#cam-jump{{transform-origin:{face_origin}}}")
     return f"""<!doctype html><html lang="{brand.get('lang', 'pt')}"><head><meta charset="utf-8"><title>{html.escape(title)}</title>
-<script src="assets/gsap.min.js"></script><style>{BASE_CSS}{extra_css}{css}</style></head><body>
+<script src="assets/gsap.min.js"></script>{gsap_plugin_tags(plugins)}<style>{BASE_CSS}{extra_css}{css}</style></head><body>
 <main id="stage" data-composition-id="main" data-start="0" data-duration="{duration:.4f}" data-width="{canvas.width}" data-height="{canvas.height}" data-fps="30">
 <div id="world">
 <div id="bg"></div>{world_back}<div class="glow" id="glow-a"></div><div class="glow" id="glow-b"></div>

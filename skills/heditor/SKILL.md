@@ -4,7 +4,7 @@ description: Use when the user wants to edit a talking-head, class, live or podc
 license: MIT
 metadata:
   author: PycodeBR (Felipe Azambuja)
-  version: 2.3.0
+  version: 2.4.0
   homepage: https://github.com/pycodebr/heditor
 ---
 
@@ -96,6 +96,12 @@ pack* (`heditor long styles`); creative mode lives in set pieces at key moments.
 
 Text and objects *behind* the speaker, captions painted on a wall, 3D objects passing between the speaker and the room, depth fog, contour scans, point clouds and objects that follow the hands come from depthkit: `heditor matte|depth|look|hands|plane <work>` (models download on first use). Read `references/depth-and-3d.md` before using them in any style or in creative mode; layouts, illustrations, hooks and CTAs borrowed from creator Reels are in `references/technique-catalogue.md`.
 
+### Motion tools (any mode)
+
+- **GSAP plugins offline:** SplitText, DrawSVG, MorphSVG, MotionPath, CustomEase/Bounce/Wiggle, Text, Physics2D/Props and EasePack ship with setup; load them with `rk.page(..., plugins=("SplitText", "DrawSVG"))`. Read `references/gsap-craft.md` first: some GSAP features call `Math.random` (ScrambleText, `stagger from: "random"`, `gsap.utils.random`) and break the render; the kit has seeded replacements (`rnd()`, `scramble()`).
+- **SVG preparation:** `heditor svg <in.svg> [out.svg] [static|draw|morph]` cleans exported SVGs with SVGO for the animation they will get and proves, pixel by pixel in the render Chrome, that they still look the same.
+- **Real physics:** `heditor physics` / `physkit` bakes a Rapier rigid-body simulation (falling piles, impacts, blasts) into per-frame transforms that a three.js layer with bloom and depth of field reads at any time. Recipe, framing and look values in `references/physics-3d.md`; working pilot in `templates/physics/pilot_build.py`.
+
 ## 2. Workflow (all modes)
 
 Follow `references/workflow.md` step by step. Summary:
@@ -130,6 +136,8 @@ Follow `references/workflow.md` step by step. Summary:
 - `references/creative-mode.md` — creative mode, reference-directed creative mode, research method, idea bank.
 - `references/kit-api.md` — reelkit functions, page skeleton, GSAP helpers, plan/sound/music formats.
 - `references/depth-and-3d.md` — depthkit: speaker matte, depth map, scans, planes, tracking, three.js, layered recipes and QA.
+- `references/gsap-craft.md` — GSAP plugins available offline, seek-safety rules (determinism hazards inside GSAP), SplitText/DrawSVG/MorphSVG in a render, SVG preparation with `heditor svg`.
+- `references/physics-3d.md` — physkit: baked Rapier physics, scene format, three.js page with bloom/depth of field, look values and framing that passed QA.
 - `references/technique-catalogue.md` — creator layouts (A/B page, morphs, insets, bands), illustrations, camera moves, caption systems, hooks and CTAs.
 - `references/sound-design.md` — voice chain, mix targets, SFX vocabulary, music catalog and section design.
 - `references/captions-and-layout.md` — caption systems, contrast rules, safe zones, camera treatments.
