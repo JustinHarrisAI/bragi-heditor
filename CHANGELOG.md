@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.5.1 — 2026-10-20
+- troubleshooting.md: a shot set at t = 0 that shows in the preview but is blank in the rendered MP4 (set the
+  opening state outside the timeline, start timeline calls at 0.001, `decoding="sync" loading="eager"` on images);
+  Python tuples written into page JS read as the comma operator (emit lists or `json.dumps`).
+- CONTRIBUTING.md: release procedure (version in SKILL.md, CHANGELOG section, CI, annotated tag, GitHub release).
+- Every version since 1.0.0 is now tagged and published as a GitHub release.
+
 ## 2.5.0 — 2026-10-20
 - **Two new named styles built on the motion tools, each with a runnable reference build** driven by a
   `beats.json` written from the speech (`heditor new <work> <video> --style gravidade|circuito`):

@@ -12,5 +12,14 @@ Obrigado por querer melhorar o heditor.
 - Rode `bash skills/heditor/scripts/setup.sh` e um corte completo (`heditor new` → `finalize`) antes de abrir o PR.
 - Não adicione arquivos de áudio, vídeo ou fontes ao repositório: use o catálogo (`assets/catalog.json`) e o `fetch_assets.py`.
 
+## Versões e releases
+Toda alteração publicada no `main` sai como versão, com tag e release no GitHub.
+1. Atualize `metadata.version` em `skills/heditor/SKILL.md` (semver: patch para correções e documentação, minor para estilos, comandos e recursos novos, major para mudanças incompatíveis).
+2. Abra a seção `## X.Y.Z — AAAA-MM-DD` no topo do `CHANGELOG.md`.
+3. Faça o commit com a mensagem `heditor X.Y.Z: <resumo>`, dê push no `main` e espere o CI passar nesse commit.
+4. Crie a tag anotada e publique a release com as notas da seção do CHANGELOG:
+   `git tag -a vX.Y.Z -m "heditor X.Y.Z: <resumo>" && git push origin vX.Y.Z`
+   `gh release create vX.Y.Z --verify-tag --title "heditor X.Y.Z: <resumo>" --notes-file <notas.md> --latest`
+
 ## Issues
 Descreva sistema operacional, agente usado, saída do `heditor doctor` e o comando que falhou.
