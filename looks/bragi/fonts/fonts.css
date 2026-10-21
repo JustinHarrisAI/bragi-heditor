@@ -1,0 +1,6 @@
+/* Bragi brand fonts (SIL Open Font License). Pinned static instances, same files as JHAI scripts/content-engine/fonts. */
+@font-face{font-family:'Piazzolla';font-style:normal;font-weight:400;font-display:block;src:url('Piazzolla-Regular.ttf') format('truetype');}
+@font-face{font-family:'Piazzolla';font-style:italic;font-weight:600;font-display:block;src:url('Piazzolla-SemiBoldItalic.ttf') format('truetype');}
+@font-face{font-family:'Piazzolla';font-style:italic;font-weight:700;font-display:block;src:url('Piazzolla-BoldItalic.ttf') format('truetype');}
+@font-face{font-family:'Geist';font-style:normal;font-weight:600;font-display:block;src:url('Geist-SemiBold.ttf') format('truetype');}
+@font-face{font-family:'Geist Mono';font-style:normal;font-weight:400;font-display:block;src:url('GeistMono-Regular.ttf') format('truetype');}
