@@ -4,7 +4,7 @@ description: Use when the user wants to edit a talking-head, class, live or podc
 license: MIT
 metadata:
   author: PycodeBR (Felipe Azambuja)
-  version: 2.5.1
+  version: 2.5.2
   homepage: https://github.com/pycodebr/heditor
 ---
 
@@ -149,3 +149,17 @@ Follow `references/workflow.md` step by step. Summary:
 - `references/troubleshooting.md` — known failures and fixes.
 - `references/licenses.md` — third-party components and asset licences.
 - `references/styles/` — one file per named style.
+
+## 5. Changing heditor itself
+
+Every change pushed to `main` ships as a version, never as a loose commit:
+
+1. Bump `metadata.version` in this file (semver: patch for fixes and docs, minor for styles, commands and features, major for breaking changes).
+2. Add a `## X.Y.Z — YYYY-MM-DD` section at the top of `CHANGELOG.md`.
+3. Commit as `heditor X.Y.Z: <summary>`, push to `main` and wait for CI to pass on that commit.
+4. Create the annotated tag and the GitHub release with that CHANGELOG section as notes:
+   `git tag -a vX.Y.Z -m "heditor X.Y.Z: <summary>" && git push origin vX.Y.Z`
+   `gh release create vX.Y.Z --verify-tag --title "heditor X.Y.Z: <summary>" --notes-file <notes.md> --latest`
+5. Read it back: `gh release view vX.Y.Z` shows the release as Latest and `git ls-remote --tags origin` lists the tag.
+
+Full procedure in the repository's `CONTRIBUTING.md`.

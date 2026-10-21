@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.2 — 2026-10-20
+- SKILL.md: new section "Changing heditor itself" — every change pushed to `main` ships as a version with
+  CHANGELOG section, passing CI, annotated tag and GitHub release, read back before it counts as published.
+
 ## 2.5.1 — 2026-10-20
 - troubleshooting.md: a shot set at t = 0 that shows in the preview but is blank in the rendered MP4 (set the
   opening state outside the timeline, start timeline calls at 0.001, `decoding="sync" loading="eager"` on images);
