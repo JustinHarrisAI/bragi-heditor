@@ -71,6 +71,8 @@
 | Long form: a segment renders but looks different from the preview | stale segment folder or an edited `index.html` | never edit `segments/`: change `build.py`/JSON and `heditor long produce`; segment pages are regenerated and re-rendered by hash |
 | Long form: the screen share is unreadable in 9:16/1:1 | a 16:9 screen in a narrow canvas | use `screen` layout with `zoom` on the region being discussed, or `callout` set pieces; keep 16:9 as the master |
 | Long form: render very slow | 4K, heavy SVG filters, many workers on a shared machine | render 1080p, keep heavy graphics inside set pieces, ≤ 2 workers; segments resume after a failure |
+| A screenshot/label set at t = 0 shows in `heditor preview` but is blank in the rendered MP4 (and later shots work) | a class-wide hide plus a show of one element at the same time 0 (`tl.set('.shot',{autoAlpha:0},0)` then `tl.set('#a',{autoAlpha:1},0)`), or large images decoded lazily | set the opening state outside the timeline (`gsap.set(...)` before building `tl`) and start timeline calls at 0.001; give `<img>` `decoding="sync" loading="eager"`; check frames 0.1/1.0 s of `render.mp4` with ffmpeg, not only the preview |
+| Python tuples passed into the page JS animate nothing | an f-string writes `(s, x, y)`, which JS reads as the comma operator (only the last value) | emit lists or `json.dumps(...)` for every array handed to JS |
 
 ## Picture and voice out of sync after changing the cut
 
