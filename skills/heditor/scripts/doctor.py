@@ -23,6 +23,14 @@ def check(name, ok, hint="", required=True):
 
 for tool in ["ffmpeg", "ffprobe", "node", "npx", "git", "curl"]:
     check(tool, shutil.which(tool) is not None, "install it and re-run setup.sh")
+node_major = 0
+if shutil.which("node"):
+    try:
+        node_major = int(subprocess.run(["node", "-p", "process.versions.node.split('.')[0]"], capture_output=True,
+                                        text=True, timeout=20).stdout.strip() or 0)
+    except (ValueError, OSError, subprocess.SubprocessError):
+        node_major = 0
+check("node >= 22 (HyperFrames)", node_major >= 22, f"current major {node_major}; install Node.js 22+ and re-run setup.sh")
 check("python 3.10-3.13", (3, 10) <= sys.version_info[:2] <= (3, 13), f"current {sys.version.split()[0]}")
 for mod in ["numpy", "PIL", "faster_whisper", "mediapipe", "playwright", "pytest"]:
     try:

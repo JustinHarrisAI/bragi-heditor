@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.3 — 2026-10-21
+- setup.sh: requires Node.js 22 or newer (HyperFrames 0.8.x declares `engines.node >= 22`); before, a Node 18 or 20
+  install passed the check and could fail later at preview or render. On apt it installs Node 22 from NodeSource.
+- doctor: new required check `node >= 22 (HyperFrames)` with the current major version in the hint.
+- README: installation section says Node.js ≥ 22.
+
 ## 2.5.2 — 2026-10-20
 - SKILL.md: new section "Changing heditor itself" — every change pushed to `main` ships as a version with
   CHANGELOG section, passing CI, annotated tag and GitHub release, read back before it counts as published.

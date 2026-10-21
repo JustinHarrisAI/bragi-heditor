@@ -44,11 +44,12 @@ done
 if ! have ffmpeg || ! have ffprobe; then
   say "installing ffmpeg"; install_pkgs ffmpeg || { say "please install ffmpeg (https://ffmpeg.org/download.html)"; exit 1; }
 fi
-if ! have node || [[ $(node -p 'process.versions.node.split(".")[0]') -lt 18 ]]; then
-  say "installing Node.js >= 18"
+# HyperFrames (hyperframes@0.8.x) declares engines.node >= 22; an older Node passes npx but can fail at render.
+if ! have node || [[ $(node -p 'process.versions.node.split(".")[0]') -lt 22 ]]; then
+  say "installing Node.js >= 22"
   if have brew; then brew install node
   elif have apt-get; then curl -fsSL https://deb.nodesource.com/setup_22.x | $SUDO bash - && $SUDO apt-get install -y nodejs
-  else install_pkgs nodejs npm || { say "please install Node.js >= 18 (https://nodejs.org)"; exit 1; }; fi
+  else install_pkgs nodejs npm || { say "please install Node.js >= 22 (https://nodejs.org)"; exit 1; }; fi
 fi
 PY=""
 for cand in python3.13 python3.12 python3.11 python3.10 python3; do

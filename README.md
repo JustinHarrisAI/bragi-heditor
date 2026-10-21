@@ -153,7 +153,7 @@ curl -fsSL https://raw.githubusercontent.com/pycodebr/heditor/main/install.sh | 
 
 O instalador detecta os agentes instalados (Claude Code, Codex, OpenCode, Cursor e Hermes), cria o link da skill em cada um e roda o `setup.sh`, que:
 
-- instala o que faltar: ffmpeg, Node.js ≥ 18, Python 3.10–3.13, git e curl (via apt, brew, dnf ou pacman);
+- instala o que faltar: ffmpeg, Node.js ≥ 22, Python 3.10–3.13, git e curl (via apt, brew, dnf ou pacman);
 - cria o ambiente Python em `~/.heditor/venv` com faster-whisper, MediaPipe, Playwright, NumPy, Pillow e pytest;
 - prepara o HyperFrames 0.8.147 e o Chrome de renderização;
 - baixa fontes (OFL), GSAP, o modelo de rosto, o modelo de transcrição e a biblioteca de 18 trilhas e 85 efeitos (Mixkit);
